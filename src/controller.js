@@ -130,19 +130,14 @@ function Controller(game) {
                         return hovered.use(entity);
                     }
 
-                    if (hovered.mail || hovered.trade || hovered.craft) {
+                    if (hovered.check) {
                         cleanup = function(){};
                         return hovered.use(entity);
-                    }
-
-                    if (hovered.vendor) {
-                        return hovered.use(entity, hovered);
                     }
 
                     if (hovered.build) {
                         return controller.craft.blank.use(entity);
                     }
-
 
                     if (hovered.containerSlot) {
                         var slot = hovered.containerSlot;
@@ -698,6 +693,7 @@ function Controller(game) {
         this.mail = new Mail();
         this.shop = new Shop();
         this.trade = new Trade();
+        this.users = new Users();
         this.fpsStats = this.system.fps;
         this.inventory = {panel: {}};
 
@@ -706,9 +702,10 @@ function Controller(game) {
         this.createButton(this.inventory.panel, "inventory");
         this.createButton(this.skills.panel, "skills");
         this.createButton(this.craft.panel, "craft");
-        this.createButton(this.minimap.panel, "map");
+        // this.createButton(this.minimap.panel, "map");
         this.createButton(this.chat.panel, "chat");
         this.createButton(this.journal.panel, "journal");
+        this.createButton(this.users.panel, "social");
         this.createButton(this.system.panel, "system");
         this.createButton(this.help.panel, "help");
 
@@ -1276,13 +1273,11 @@ function Controller(game) {
     };
 
     this.addPlayer = function(name) {
-        if (controller.system)
-            controller.system.users.addPlayer(name);
+        this.users && this.users.addPlayer(name);
     };
 
     this.removePlayer = function(name) {
-        if (controller.system)
-            controller.system.users.removePlayer(name);
+        this.users && this.users.removePlayer(name);
     };
 
     this.syncMinimap = function(data) {
@@ -1334,7 +1329,8 @@ function Controller(game) {
                 result = "blue team wins!";
 
             controller.showAnnouncement(TT("Match ended: {result}", {result: result}));
-        } else {
+        } else if (data.Remaining > 0) {
+            // TODO: use interval
             timer = dom.div("remaining", {text: util.formatTime(data.Remaining)});
             setTimeout(function tick() {
                 timer.textContent = util.formatTime(--data.Remaining);

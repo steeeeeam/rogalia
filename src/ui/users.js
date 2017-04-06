@@ -82,7 +82,14 @@ function Users() {
         };
     }
 
+
+    this.battleground = new Battleground();
+
     this.tabs = dom.tabs([
+        {
+            title: T("PVP"),
+            contents: this.battleground.contents,
+        },
         {
             title: T("Online players"),
             update: makeTabUpdate("player-list", "OnlinePlayers", "")
@@ -133,4 +140,38 @@ function Users() {
     this.getOnlinePlayers = function() {
         return lists.OnlinePlayers.data;
     };
+}
+
+class Battleground {
+    constructor() {
+        this.inQueue = false;
+        this.enqueueButton = dom.button(T("Find battle"), "", () => this.enqueue());
+        this.cancelButton = dom.button(T("Cancel"), "", () => this.cancel());
+        this.contents = dom.wrap("battleground", this.enqueueButton);
+    }
+
+    cancel() {
+        game.network.send("battleground", {Action: "cancel"}, () => {
+            this.reset();
+
+        });
+    }
+
+    enqueue() {
+        game.network.send("battleground", {Action: "enqueue"}, () => {
+            dom.setContents(this.contents, this.cancelButton);
+        });
+    }
+
+    reset() {
+        dom.setContents(this.contents, this.enqueueButton);
+    }
+
+    confirm() {
+        game.popup.confirm(T("Accept battle?"), () => {
+            game.network.send("battleground", {Action: "accept"});
+            game.popup.alert(T("Waiting for others to accept"));
+            this.reset();
+        });
+    }
 }

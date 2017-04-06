@@ -13,6 +13,7 @@ Entity.LOCATION_VENDOR = 4;
 Entity.LOCATION_BANK = 5;
 Entity.LOCATION_POST = 6;
 Entity.LOCATION_TRADE = 7;
+Entity.LOCATION_SOCKET = 8;
 
 Entity.queueable = function(action) {
     return _.includes([
@@ -55,6 +56,8 @@ Entity.groupTags = {
     "lasso": ["tool"],
     "insect-net": ["tool"],
     "needle": ["tool"],
+    "biom-converter": ["tool"],
+    "chisel": ["tool"],
 
     "knife": ["tool", "weapon", "melee-weapon"],
 

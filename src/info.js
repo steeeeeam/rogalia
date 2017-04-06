@@ -151,6 +151,9 @@ function Info(message, character) {
         ]);
         panel.show();
         return;
+    case ".battleground":
+        game.controller.users.battleground.confirm();
+        return;
     case ".trade":
         game.controller.trade.update(this.data);
         return;

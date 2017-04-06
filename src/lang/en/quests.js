@@ -59,6 +59,25 @@ Quest.quests =  {
         desc: "Well, I did my job.",
         final: "It's time to move to the town."
     },
+    "claim-get-license": {
+        name: "License",
+        desc: "Hello newbie. Money run this world, got it? And you better not leave your money on a road. I'm gonna teach you to protect your privacy. You know you can keep cash in my bank, right? But you also have to keep your belongings safe. That's what Claim is for.",
+        tip: "You can get a license from Scrooge (see Bank).",
+    },
+    "claim-build": {
+        name: "Build",
+        desc: [
+            "It will cost you some, yeah, but safety worth it.",
+            "You can protect any free place with Claim and further extend it.",
+            "Don't rush, choose wisely. Anytime you want to move it or buy another, we'll charge you.",
+            "Place a respawn stone nearby - that's how you won't lose the place and get to it quickly.",
+        ],
+    },
+    "claim-extend": {
+        name: "Extend",
+        desc: "Good for ya. You can extend your claim but don't forget that rent enlarges too. Always keep an eye on your bank account and check if there's enough to pay a rent, otherwise you're at risk to lose the claim and turn unprotected.",
+        final: "Seems to be done, yeah? Now you can settle and build on your own. Ofcourse, people still can rob you, but now you can punish the crime. The Law is on your side for now. By the way, go visit the butcher, he seems to have something to say you."
+    },
     "tp-return-home": {
         name: "Return to home" ,
         desc: "Are you interested in portals? I'll tell you about the ways you travel around the world.<br> While you're on the surface and under the Synode protection you can easily return to your homestead. I mean, to your respawn stone, if you built one, or to the town. Give it a try.",

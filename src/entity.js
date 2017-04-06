@@ -1,4 +1,4 @@
-/* global dom, T, util, game, Panel, config, Point, Container, Character, BBox, TS, Permission, ParamBar, SlotMachine, CELL_SIZE, Sprite, ImageFilter, FONT_SIZE */
+/* global dom, T, util, game, Panel, config, Point, Container, Character, BBox, TS, Permission, ParamBar, SlotMachine, CELL_SIZE, Sprite, ImageFilter, FONT_SIZE, ContainerSlot */
 
 "use strict";
 function Entity(type, id) {
@@ -133,11 +133,13 @@ Entity.prototype = {
                 return head.Name;
             }
             break;
+        case "named-point":
+            return "Point: " + this.Props.Text;
         }
 
         if (this.isContainer()) {
             const {current, max} = Entity.containerSize(this);
-            title += ` [${current}/${max}]`;
+            suffix += ` [${current}/${max}]`;
         }
 
         if (this.Type.contains("-corpse") || this.Type == "head")
@@ -214,6 +216,60 @@ Entity.prototype = {
             elements.push(requirement);
         }
 
+        if (this.Sockets) {
+            elements.push(dom.wrap("item-info-sockets slots-wrapper", this.Sockets.map((id, socket) => {
+                const slot = new ContainerSlot({panel, entity: {}, inspect: true});
+                slot.element.classList.add("socket-" + ["yellow", "green", "blue", "red", "black"][socket]);
+                switch (id) {
+                case 0:
+                    slot.lock();
+                    slot.element.onclick = () => {
+                        game.popup.confirm(T("Unlock?"), () => {
+                            game.network.send("socket", {
+                                Action: "unlock",
+                                Id: this.Id,
+                                Socket: socket
+                            });
+                        });
+                    };
+                    break;
+                case -1:
+                    slot.element.check = ({entity}) => entity.is("jewel");
+                    slot.element.use = (entity) => {
+                        game.popup.confirm(T("Encrust?"), () => {
+                            const slot = Container.getEntitySlot(entity);
+                            if (slot) {
+                                slot.unlock();
+                            }
+                            game.network.send("socket", {
+                                Action: "encrust",
+                                Id: this.Id,
+                                Jewel: entity.Id,
+                                Socket: socket
+                            });
+                        });
+                        return true;
+                    };
+                    break;
+                default:
+                    const jewel = Entity.get(id);
+                    if (jewel) {
+                        slot.set(jewel);
+                    }
+                    slot.element.onclick = () => {
+                        game.popup.confirm(T("Purify?"), () => {
+                            game.network.send("socket", {
+                                Action: "purify",
+                                Id: this.Id,
+                                Socket: socket
+                            });
+                        });
+                    };
+                }
+                return slot.element;
+            })));
+        }
+
         elements.push(dom.hr());
         if (this.Comment) {
             elements.push(this.Comment);
@@ -226,7 +282,7 @@ Entity.prototype = {
             elements.push(Permission.make(this.Id, this.Perm));
         }
 
-        new Panel("item-info", TS(this.Name), elements).setEntity(this).show();
+        var panel = new Panel("item-info", TS(this.Name), elements).setEntity(this).show();
     },
     nonEffective: function() {
         if (!this.EffectiveParam || this.Lvl <= 1) {

@@ -1330,7 +1330,7 @@ Character.prototype = {
             }
             var action = {
                 "taming": ["lasso", "tame"],
-                "tool": ["tool", "use-tool"],
+                "biom-converter": ["tool", "use-tool"],
                 "shovel": ["shovel", "dig"],
                 "pickaxe": ["pickaxe", "dig"],
             }[entity.Group];

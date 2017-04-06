@@ -39,6 +39,8 @@ function Statistics() {
                         "Online (hours)": util.toFixed(stats.Online / (60 * 60)),
                         "Kills": stats.Kills,
                         "Death": stats.Death,
+                        "Elo rating": Math.floor(stats.Elo.Rating),
+                        "Elo battles": stats.Elo.Battles,
                     })
                 ],
             },

@@ -409,7 +409,7 @@ function WorldMap() {
 
     this.draw = function() {
         if (config.graphics.fastRender) {
-            game.pixi.drawMap();
+            game.pixi && game.pixi.drawMap();
             // this.fastDraw();
         } else {
             this.layerDraw();

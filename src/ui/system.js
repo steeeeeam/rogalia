@@ -1,4 +1,4 @@
-/* global game, dom, T, Panel, FpsStats, Users, Settings, Profile */
+/* global game, dom, T, Panel, FpsStats, Settings, Profile */
 
 "use strict";
 
@@ -10,11 +10,9 @@ function System() {
 
     this.ping = dom.div("#ping");
 
-    this.users = new Users();
     this.settings = new Settings();
     this.profile = new Profile();
 
-    const users = dom.button(T("Users"), "", () => this.users.panel.toggle());
     const settings = dom.button(T("Settings"), "", () => this.settings.panel.toggle());
     const profile = dom.button(T("Profile"), "", () => this.profile.panel.toggle());
 
@@ -49,9 +47,7 @@ function System() {
             ]),
             dom.hr(),
             settings,
-            users,
             profile,
-            dom.hr(),
             game.args["steam"] ?
                 dom.button(T("Change character"), "", game.reload)
                 : game.button.lobby(),

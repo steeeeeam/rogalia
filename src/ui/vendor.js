@@ -404,8 +404,9 @@ Vendor.prototype = {
     },
     showInfo: function(item) {
         item.showInfo();
-        if (item.isContainer())
+        if (item.isContainer()) {
             Container.show(item);
+        }
     },
     saveItems: function(items) {
         for (var id in items) {

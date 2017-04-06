@@ -771,7 +771,6 @@ class Craft {
                     this.updateIngredientCounter(kind, required, recipe.IsBuilding);
                     return true;
                 };
-                slot.element.craft = true;
                 return slot;
             }));
         }, []);

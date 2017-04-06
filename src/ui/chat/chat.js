@@ -83,14 +83,14 @@ function Chat() {
                     game.network.send(
                         "friend-add",
                         {Name: name},
-                        game.controller.system.users.updateFriendsTab
+                        game.controller.users.updateFriendsTab
                     );
                 },
                 removeFromFriends: function() {
                     game.network.send(
                         "friend-remove",
                         {Name: name},
-                        game.controller.system.users.updateFriendsTab
+                        game.controller.users.updateFriendsTab
                     );
                 },
             },
@@ -100,14 +100,14 @@ function Chat() {
                     game.network.send(
                         "blacklist-add",
                         {Name: name},
-                        game.controller.system.users.updateBlacklistTab
+                        game.controller.users.updateBlacklistTab
                     );
                 },
                 removeFromBlacklist: function() {
                     game.network.send(
                         "blacklist-remove",
                         {Name: name},
-                        game.controller.system.users.updateBlacklistTab
+                        game.controller.users.updateBlacklistTab
                     );
                 },
             }
@@ -244,7 +244,7 @@ function Chat() {
     myMessages.loadFromStorage();
 
     this.autocomplete = function(message) {
-        var players = game.controller.system.users.getOnlinePlayers();
+        var players = game.controller.users.getOnlinePlayers();
         var candidates = players.filter(function(player) {
             return player.indexOf(message) == 0 && player.length > message.length;
         });

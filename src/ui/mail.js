@@ -167,7 +167,7 @@ Mail.prototype = {
 
         var slots = this.slots = util.dotimes(4, function() {
             var slot = dom.slot();
-            slot.mail = true;
+            slot.check = () => true;
             slot.use = function(entity) {
                 var from = Container.getEntityContainer(entity);
                 if (!from)
