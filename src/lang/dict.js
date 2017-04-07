@@ -74,7 +74,8 @@ T.init = function(lang, callback) {
                 if (++loaded == scripts.length) {
                     callback();
                 }
-            }
+            },
+            false
         );
     });
 };

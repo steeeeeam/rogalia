@@ -1919,4 +1919,5 @@ T.dict = {
     "Sacrifice": "Жертвоприношение",
     "Place daemon essence inside": "Поместите внутрь демоническую эссенцию",
     "Can revive only domestical animals": "Можно оживить только домашних животных",
+    "Find battle": "Найти битву",
 };

@@ -33,11 +33,12 @@ var util = new function() {
         oReq.send(null);
     };
 
-    this.loadScript = function(url, callback)
+    this.loadScript = function(url, callback, async = true)
     {
         var script = document.createElement("script");
         script.type = "text/javascript";
         script.src = url;
+        script.async = async;
         if (callback)
             script.onload = callback;
         document.head.appendChild(script);
