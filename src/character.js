@@ -1116,25 +1116,7 @@ Character.prototype = {
             this.sprite.lastUpdate = now;
         }
 
-        // TODO: remove after sprites update
-        if (false) {
-            var start = 0, end = 0;
-            var current = this.sprite.frames[animation];
-            if (Array.isArray(current)) {
-                start = current[0];
-                end = current[1];
-            } else {
-                for (var i in this.sprite.frames) {
-                    if (animation == i) {
-                        end = start + this.sprite.frames[i];
-                        break;
-                    }
-                    start += this.sprite.frames[i];
-                }
-            }
-        } else {
-            var start = 0, end = this.sprite.image.width / this.sprite.width;
-        }
+        var start = 0, end = this.sprite.image.width / this.sprite.width;
 
         if (this.sprite.frame < start || this.sprite.frame >= end) {
             this.sprite.frame = start;

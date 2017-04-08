@@ -23,7 +23,11 @@ class ContainerSearch {
 
         const search = () => {
             const re = new RegExp(_.escapeRegExp(name.value), "i");
+            let totalSize = container.slots.length;
             const found = container.filter(entity => {
+                if (entity.isContainer()) {
+                    totalSize += entity.Props.Slots.length;
+                }
                 return entity.Quality >= minQuality.value &&
                     entity.Quality <= maxQuality.value &&
                     (re.test(entity.title) || re.test(entity.Type));
@@ -33,11 +37,14 @@ class ContainerSearch {
                 slot.set(entity);
                 return slot.element;
             }));
+            this.counter.textContent = `${found.length}/${totalSize}`;
         };
 
         name.onkeyup = search;
         minQuality.onkeyup = search;
         maxQuality.onkeyup = search;
+
+        this.counter = dom.span("", "container-search-counter");
 
         const panel = new Panel("container-item-search", T("Search") + " - " + T(container.name), [
             dom.wrap("container-search-header", [
@@ -45,6 +52,7 @@ class ContainerSearch {
                 dom.make("label", [
                     T("Quality"), ":", minQuality, " - ", maxQuality,
                 ]),
+                this.counter,
             ]),
             dom.hr(),
             dom.scrollable("container-search-results", results),

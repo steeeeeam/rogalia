@@ -100,27 +100,15 @@ Character.spritesInfo = {
         width: 32,
         height: 32,
         angle: Math.PI/2,
-        frames: {
-            idle: 1,
-            run: [0, 3],
-        },
     },
     "ultra-zombie": {
         width: 96,
         height: 96,
         angle: Math.PI/2,
-        frames: {
-            idle: 1,
-            run: [0, 3],
-        },
     },
     "jesus": {
         width: 64,
         height: 96,
-        frames: {
-            idle: 4,
-            run: 8,
-        },
     },
     "charles": {
         width: 67,
@@ -130,10 +118,6 @@ Character.spritesInfo = {
         width: 74,
         height: 95,
         angle: Math.PI*2,
-        frames: {
-            idle: 1,
-            run: 0,
-        },
     },
     "abu": {
         width: 120,
@@ -162,54 +146,35 @@ Character.spritesInfo = {
         width: 64,
         height: 64,
         angle: Math.PI*2,
-        frames: {
-            idle: 3,
-            run: 0,
-        },
     },
     "wyvern": {
         width: 256,
         height: 256,
-        frames: {
-            idle: 4,
-            run: 4,
-        },
         speed: 20000,
     },
     "imp": {
         width: 107,
         height: 68,
-        frames: {
-            idle: 3,
-            run: 4,
-        },
         speed: 20000,
     },
     "lesser-daemon": {
         width: 160,
         height: 102,
-        frames: {
-            idle: 3,
-            run: 4,
-        },
         speed: 40000,
     },
     "higher-daemon": {
         width: 214,
         height: 136,
-        frames: {
-            idle: 3,
-            run: 4,
-        },
+        speed: 50000,
+    },
+    "prince-of-darkness": {
+        width: 214,
+        height: 135,
         speed: 50000,
     },
     "daemon": {
         width: 160,
         height: 102,
-        frames: {
-            idle: 3,
-            run: 4,
-        },
         speed: 50000,
     },
     "small-spider": {

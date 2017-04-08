@@ -945,6 +945,8 @@ T.dict = {
     "Wake up": "Разбудить",
     "Saw": "Пила",
     "Split": "Раздробить",
+    "Plunder": "Разграбить",
+
     "Daemon heart": "Сердце демона",
     "Damned heart": "Проклятое сердце",
     "Rabbit corpse": "Труп кролика",
@@ -960,7 +962,9 @@ T.dict = {
     "Mocherator corpse": "Труп мочератора",
     "Cow corpse": "Труп коровы",
     "Omsk corpse": "Труп Омска",
-    "Plunder": "Разграбить",
+    "Prince of darkness corpse": "Труп принца тьмы",
+
+    "Prince of darkness": "Принц тьмы",
     "Abu": "Абу",
     "Mocherator": "Мочератор",
     "Senior mocherator": "Старший мочератор",
