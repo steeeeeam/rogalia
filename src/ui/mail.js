@@ -61,7 +61,7 @@ Mail.prototype = {
             return T("No mail");
 
         var self = this;
-        return dom.wrap("letters", mail.map(function(letter) {
+        return dom.scrollable("letters", mail.map(function(letter) {
             if (letter.From == "Rogalia Shop") {
                 letter.class = "shop";
                 letter.From = T(letter.From);
@@ -118,7 +118,7 @@ Mail.prototype = {
                 })
             ;
         });
-        return [
+        return dom.scrollable("letter-container", [
             dom.button(T("Back"), "back-button", function() {
                 self.tabs[0].update();
             }),
@@ -140,12 +140,12 @@ Mail.prototype = {
                 letter.Body,
             ]),
             attachment,
-        ];
+        ]);
 
         function makeAttachment() {
             if (!self.hasAttachment(letter))
                 return null;
-            var attachment = dom.div("letter-attachment");
+            var attachment = dom.div("letter-attachment slots-wrapper");
             game.network.send("get-letter", {Id: self.mailbox.Id, Letter: self.letterId(letter)}, function(data) {
                 dom.setContents(attachment, data.Items.map(function(item) {
                     var slot = new ContainerSlot({panel: self.panel, entity: {}}, 0);

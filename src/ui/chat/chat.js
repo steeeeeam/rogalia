@@ -356,7 +356,7 @@ function Chat() {
                             return dom.button(
                                 entity.title + " / " + entity.Type,
                                 "add-entity-button", () =>  {
-                                    game.controller.newCreatingCursor(entity.Type, "entity-add");
+                                    game.controller.newCreatingCursor(entity.Type);
                                 }
                             );
                         })

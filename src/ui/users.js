@@ -106,7 +106,7 @@ function Users() {
 
     this.panel = new Panel(
         "users",
-        "Users",
+        "Social",
         this.tabs
     );
 

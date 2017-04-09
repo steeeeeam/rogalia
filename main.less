@@ -2782,6 +2782,7 @@ big {
 }
 
 #minimap-container {
+    .cursor-pointer;
     top: 28px;
     right: 0;
 }
@@ -3526,8 +3527,9 @@ input[type=number], .lot-quantity > input, .price > input {
     max-width: none;
 }
 .mail-body {
-    width: 300px;
+    width: 100%;
     height: 100px;
+    box-sizing: border-box;
 }
 .mail-to, .mail-subject  {
     display: flex;
@@ -3553,63 +3555,65 @@ input[type=number], .lot-quantity > input, .price > input {
         height: 237px;
     }
 
-    .tabs-contents {
-        overflow-x: hidden;
-        overflow-y: auto;
+    .letters, .letter-container {
+        height: 210px;
     }
-}
-.letter {
-    .cursor-pointer;
-    min-height: 32px;
-    position: relative;
-    border: 1px solid #23282d;
-    border-radius: 3px;
-    margin: 3px;
-    padding: 1px 4px;
-}
 
-.letter:hover {
-    background: #23282d;
-}
+    .letter {
+        .cursor-pointer;
+        width: 100%;
+        min-height: 32px;
+        position: relative;
+        border: 1px solid #23282d;
+        border-radius: 3px;
+        margin: 3px;
+        padding: 1px 4px;
+    }
 
-.letter.shop {
-    color: #78d8d9;
-}
+    .letter:hover {
+        background: #23282d;
+    }
 
-.letter-delete {
-    min-width: 0;
-    position: absolute;
-    right: 0;
-    top: 0;
-    padding: 1px 6px;
-}
-.letter-has-attachment {
-    width: 16px;
-    height: 16px;
-    background-image: url("assets/icons/attachment.png");
-    position: absolute;
-    top: 26px;
-    right: 2px;
-}
+    .letter.shop {
+        color: #78d8d9;
+    }
 
-.letter-subject {
-    max-width: 232px;
-}
+    .letter-delete {
+        min-width: 0;
+        position: absolute;
+        right: 0;
+        top: 0;
+        padding: 1px 6px;
+    }
+    .letter-has-attachment {
+        width: 16px;
+        height: 16px;
+        background-image: url("assets/icons/attachment.png");
+        position: absolute;
+        top: 26px;
+        right: 2px;
+    }
 
-.letter-from {
-    .allow-user-select;
-    font-size: 15px;
-    font-weight: bold;
-    text-shadow: 0 0 2px #000;
-}
+    .letter-subject {
+        max-width: 232px;
+    }
 
-.letter-subject, .letter-created {
-    font-size: smaller;
-}
+    .letter-from {
+        .allow-user-select;
+        font-size: 15px;
+        font-weight: bold;
+        text-shadow: 0 0 2px #000;
+    }
 
-.letter-attachment {
-    overflow: auto;
-    height: 50px;
+    .letter-subject, .letter-created {
+        font-size: smaller;
+    }
+
+    .letter-attachment {
+        overflow: auto;
+        height: 50px;
+    }
+
 }
 
 #instances {
