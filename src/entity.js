@@ -878,6 +878,25 @@ Entity.prototype = {
             return;
         }
 
+        this.drawSprite();
+
+        if (this.Creator && this.almostBroken()) {
+            this.drawBox("red");
+        }
+
+        if (game.debug.entity.box) {
+            this.drawBox();
+            this.drawCenter();
+        }
+
+        if (game.debug.entity.position) {
+            var text = "(" + (this.X) + " " + (this.Y) + ")";
+            text += " id:" + this.Id;
+            game.ctx.fillStyle = "#e2e9ec";
+            game.drawStrokedText(text, p.x, p.y);
+        }
+    },
+    drawSprite: function() {
         if (this.Group != "plow") {
             var cycle = null;
             if (this.Lifetime) {
@@ -937,22 +956,6 @@ Entity.prototype = {
                 this.sprite.draw(p);
             }
         }
-
-        if (this.Creator && this.almostBroken()) {
-            this.drawBox("red");
-        }
-
-        if (game.debug.entity.box) {
-            this.drawBox();
-            this.drawCenter();
-        }
-
-        if (game.debug.entity.position) {
-            var text = "(" + (this.X) + " " + (this.Y) + ")";
-            text += " id:" + this.Id;
-            game.ctx.fillStyle = "#e2e9ec";
-            game.drawStrokedText(text, p.x, p.y);
-        }
     },
     drawClaim: function() {
         var no = this.North*CELL_SIZE;
@@ -980,11 +983,11 @@ Entity.prototype = {
             game.controller.setBlinkingWarning(T("Check your stake claim!"));
         }
     },
-    drawBox: function(color) {
+    drawBox: function(fill = "#ccc", stroke = "#e2e9ec", alpha = 0.3) {
         game.ctx.save();
-        game.ctx.globalAlpha = 0.3;
-        game.ctx.strokeStyle = "#e2e9ec";
-        game.ctx.fillStyle = color || "#ccc";
+        game.ctx.globalAlpha = alpha;
+        game.ctx.strokeStyle = stroke;
+        game.ctx.fillStyle = fill;
         var p = this.screen();
         if (this.round) {
             game.iso.fillStrokedCircle(this.X, this.Y, this.Radius);

@@ -1109,15 +1109,16 @@ function Controller(game) {
         var data = entity.alignedData(p);
         if (data) {
             game.ctx.fillStyle = "rgba(0, 0, 0, 0.2)";
-            game.iso.fillRect(data.x, data.y, data.w, data.h);
-            game.ctx.strokeStyle = "#00ffff";
-            game.iso.strokeRect(data.x, data.y, data.w, data.h);
+            game.ctx.strokeStyle = "#e2e9ec";
+            game.iso.fillStrokedRect(data.x, data.y, data.w, data.h);
             var fill = data.fill;
             if (fill) {
                 game.ctx.fillStyle = fill.color;
                 game.iso.fillRect(data.x - fill.w/2, data.y - fill.h/2, fill.w, fill.h);
                 game.iso.strokeRect(data.x - fill.w/2, data.y - fill.h/2, fill.w, fill.h);
             }
+        } else {
+            entity.drawBox("rgba(0, 0, 0, 0.2)", "#e2e9ec", 1);
         }
     };
 
@@ -1136,19 +1137,22 @@ function Controller(game) {
         var cursor = this.world.cursor;
         var hovered = this.world.hovered;
         if (cursor) {
+            let align = null;
             if (cursor.Sprite) {
-                if (this.modifier.shift && cursor.Sprite._align) {
-                    cursor.Sprite.Align = cursor.Sprite._align;
+                align = cursor.Sprite.Align;
+                if (this.modifier.shift) {
+                    cursor.Sprite.Align = null;
                 } else if (!cursor.Sprite.Align.X) {
-                    cursor.Sprite = JSON.parse(JSON.stringify(cursor.Sprite));
-                    cursor.Sprite._align = cursor.Sprite.Align;
                     cursor.Sprite.Align = {X: CELL_SIZE/2, Y: CELL_SIZE/2};
                 }
             }
 
             cursor.setPoint(this.world.point);
-            cursor.draw();
+            cursor.drawSprite();
             this.drawAlign(cursor, this.world.point);
+            if (align) {
+                cursor.Sprite.Align = align;
+            }
         } else if (hovered) {
             // If non-interface element (like menu) is over
             // and item is not outside of the visible area

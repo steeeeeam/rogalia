@@ -182,7 +182,7 @@ Entity.sync = function(data, remove) {
     containers.forEach(container => container.syncReq());
     ContainerSearch.update();
     game.controller.updateActiveQuest();
-},
+};
 
 Entity.get = function(id) {
     return game.entities.get(parseInt(id));
