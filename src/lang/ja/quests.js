@@ -53,23 +53,24 @@ Quest.quests =  {
         final: "仕事も終わったことですし。 町に戻る時間です。",
     },
     "claim-get-license": {
-        name: "License",
-        desc: "Hello newbie. Money run this world, got it? And you better not leave your money on a road. I'm gonna teach you to protect your privacy. You know you can keep cash in my bank, right? But you also have to keep your belongings safe. That's what Claim is for.",
-        tip: "You can get a license from Scrooge (see Bank).",
+        name: "権利書",
+        desc: "新人の方ですね、こんにちは。突然ですが、この世界を動かしているのはお金です。そんな大切なお金を道端に置いておくわけにはいきませんよね。今日はそんな大切なお金と、貴重な荷物を安全に保管する方法をお教えましょう。私の銀行にお金を預けられる事はもうご存知ですよね？荷物に関しては、ご自分の土地に保管してみてはいかがでしょう？この権利書があれば、お好きな場所に土地を持つ事ができますよ。",
+        tip: "銀行にいるスクルージから土地の権利書を購入する事ができます",
     },
     "claim-build": {
-        name: "Build",
+        name: "建築",
         desc: [
-            "It will cost you some, yeah, but safety worth it.",
-            "You can protect any free place with Claim and further extend it.",
-            "Don't rush, choose wisely. Anytime you want to move it or buy another, we'll charge you.",
-            "Place a respawn stone nearby - that's how you won't lose the place and get to it quickly.",
+            "安全と安心の為です。多少の出費は我慢してくださいね。",
+            "これであなたは好きな土地を手に入れる事ができ、更にはその土地を拡張する事もできます。",
+            "まあそう焦らないで、落ち着いてじっくり探しましょう。引っ越しや、新たな土地を購入する事も可能ですが、その都度お金がかかりますからね。",
+            "土地を手に入れたら、復活の石を設置するのを忘れないで下さいね。素早く帰還出来るようになりますよ。",
         ],
+        tip: "土地を見つけたら、作成画面(Fキー)から領有地のシンボルを作りましょう",
     },
     "claim-extend": {
-        name: "Extend",
-        desc: "Good for ya. You can extend your claim but don't forget that rent enlarges too. Always keep an eye on your bank account and check if there's enough to pay a rent, otherwise you're at risk to lose the claim and turn unprotected.",
-        final: "Seems to be done, yeah? Now you can settle and build on your own. Ofcourse, people still can rob you, but now you can punish the crime. The Law is on your side for now. By the way, go visit the butcher, he seems to have something to say you."
+        name: "拡張",
+        desc: "素敵な場所が見つかったようで 良かったですね。ご希望であれば土地を拡張する事ができますよ。もちろん、領地税も増えてしまいますがね。常に銀行の預金残高には目を配っておきましょう。領地税が支払えないと、大切な土地を失うことになってしまいますからね。",
+        final: "私からは以上になります。これであなたは自由に建築を行うことができます。最後に、強盗には気を付けて下さいね。腕に自信があるなら犯罪者をこらしめるのも良し、法は常に正しい者の味方ですから。そういえば、肉屋さんがあなたに何か伝えたい事があるそうですよ。会いに行ってみて下さい。"
     },
     "tp-return-home": {
         name: "テレポート: リターン・ホーム" ,
@@ -113,7 +114,7 @@ Quest.quests =  {
     },
     "chrismas-presents": {
         name: "クリスマスの贈り物だよ.",
-        desc: "さ～クリスマスプレゼントが欲しいですか？?",
+        desc: "さ〜クリスマスプレゼントが欲しいですか？?",
         final: "ここに貴方へのプレゼントがあります。",
     },
 
