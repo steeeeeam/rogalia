@@ -10,14 +10,14 @@ T.time = function(time) {
 
     if (minutes) {
         txt = minutes + " ";
-        txt += one(minutes) ? "minute" : "minutes";
+        txt += one(minutes) ? "minuto" : "minutos";
     }
     var seconds = time % 60;
     if (seconds) {
         if (minutes)
             txt += " ";
         txt += seconds + " ";
-        txt += one(seconds) ? "second" : "seconds";
+        txt += one(seconds) ? "segundo" : "segundos";
     }
     return txt;
 };

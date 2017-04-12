@@ -1,11 +1,11 @@
 /* global Professions */
 
 Professions.descriptions = {
-    "Blacksmith": "Blacksmiths make tools every settler need: armor, gear and other brilliant masterpieces of smithy!",
-    "Tailor": "The most romantic job in the whole Empire. Tailors make majestic clothes and paint beautiful pictures.",
-    "Alchemyst": "Almost everyone respects Rogalia's alchemists. These mighty people can control the atomic powers, invent ingenious machinery and enchant a magic scrolls of destructive power.",
-    "Farmer": "The primary food suppliers. They grow everything that grows in the New Lands. Hard and patient workers.",
-    "Carpenter": "People who make a beautiful and robust carpentry everyone need.",
-    "Cook": "Rogalia's cooks make delicious meals, tasty, juicy and full of vitamins.",
-    "Hunter": "A men who know how to survive the wild lands, find a safe place to sleep and food to eat. Careful and agile, they win every battle with the beast.",
+    "Blacksmith": "Ferreiros fazem ferramentas que qualquer cidadão precisa: armaduras, equipamentos e outras brilhantes obras-primas da forja!	",
+    "Tailor": "O trabalho mais romancista de todo o império. Alfaiates fazem roupas majestosas e lindas pinturas.",
+    "Alchemyst": "Todos respeitam os alquimistas de Rogalia. Essas pessoas poderosas podem controlar poderes atômicos, invetam máquinas engenhosas e encantam pergaminhos com poderes destrutivos.",
+    "Farmer": "Os fornecedores de alimentos. Eles cultivam qualquer coisa que pode ser plantada nas Novas Terras. Trabalham duro e são muito pacientes.",
+    "Carpenter": "Pessoas que fazem trabalho lindo e robusto de carpintaria que todos precisam.",
+    "Cook": "Os cozinheiros de Rogalia fazem refeições maravilhosas, saborosas, suculentas e cheias de vitaminas.",
+    "Hunter": "Um cidadão que sabe como sobreviver nas terras selvagens, encontrar locais seguros para dormir e comida. Cuidadoso e ágil, eles ganham todas as batalhas contra qualquer besta.",
 };

@@ -3,9 +3,9 @@
 "use strict";
 
 Shop.descriptions = {
-    "hairstyle": "Select the desired hair color first. With new hairstyle, your character will stand out among the others.",
-    "misc": "Perfect method to get noticed by very important people.",
-    "chopper": "This vehicle doesn't need food. You may summon it in the claim only.",
-    "wall": "64 plan copies. Now you can build your house.",
-    "how-to": "Instructions to collect the purchase",
+    "hairstyle": "Selecione a cor desejada primeiro. Com o novo estilo, seu personagem vai aparecer no meio da multidão.",
+    "misc": "Método perfeito para ser percebido por pessoas importantes.",
+    "chopper": "Este veículo não precisa de alimento. Você só pode chamá-lo em sua posse.",
+    "wall": "64 cópias de planta. Agora você pode construir a sua casa.",
+    "how-to": "Instruções de como efetuar a compra",
 };

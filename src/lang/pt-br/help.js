@@ -5,54 +5,36 @@
 T.help = {
     fight: function(combos) {
         return dom.wrap("", [
-            dom.make("h3", "Melee fighting"),
-            dom.make("p", "Buffs can be activated by hitting an enemy (except for Nya)."),
-            dom.make("p", "Irimi gives small speed up if character has any buff."),
-            dom.table(["Name", "Combo", "Description"], combos),
+            dom.make("h3", "Combate físico"),
+            dom.make("p", "Efeito pode ser ativado ao bater em um inimigo (Exceto Nya)."),
+            dom.make("p", "Irimi dá um pouco de velocidade quase o personagem tenha algum efeito ativo."),
+            dom.table(["Nome", "Combo", "Descrição"], combos),
             dom.hr(),
-            dom.make("h3", "Ranged fighting"),
-            dom.make("p", "To use ranged weapon your second hand must be empty."),
-            dom.make("p", "Ammo is used to make a shot. It depends on weapon type."),
-            dom.make("p", "You don't need ammo in the arena."),
+            dom.make("h3", "Combate a distância"),
+            dom.make("p", "Para usar uma arma de ataque à distância, sua segunda mão tem de estar livre."),
+            dom.make("p", "Munição é usada para atirar. Depende do tipo de arma."),
+            dom.make("p", "Você não precisa de munição na arena."),
             dom.wrap("", [
-                "Every range weapon has:",
+                "Toda arma de ataque à distância possui:",
                 dom.ul([
-                    "Maximum range: targets outside it cannot be shot.",
-                    "Effective range: inside this radius you got 100% accuracy.",
-                    "Shooting speed: how fast you can launch a missile",
-                    "Ammo type: for example stones, arrows, atoms",
-                    "Ammo speed: how fast missile will reach the target.",
+                    "Alcance máximo: alvos fora de alance não serão atingidos.",
+                    "Alcance efetivo: Será computada 100% da  inside this radius you got 100% accuracy.",
+                    "Velocidade de disparo: o quão rápido um disparo é atirado",
+                    "Tipo de munição: por exemplo pedras, flechas, átomos",
+                    "Velocidade de munição: o quão rápido um disparo atingi um alvo.",
                 ])
             ]),
-            dom.make("p", "To see maximum and effective range press ctrl+shift."),
-            dom.make("p", "The target can evade your if it leaves shot radius."),
-            dom.make("p", "Outside of the effective zone you get increasing chance of missing."),
+            dom.make("p", "Para ver o alcance máximo, pressione ctrl+shift."),
+            dom.make("p", "O alvo pode esquivar-se, caso o alvo saia do alcance."),
+            dom.make("p", "Fora da zona de alcance efetivo, as chances de errar aumentam."),
         ]);
     },
     combos: {
-        de: {
-            desc: "Buff",
-            effect: "+absorb, +shield block chance",
-        },
-        su: {
-            desc: "Buff",
-            effect: "+damage, +crit chance",
-        },
-        nya: {
-            desc: "AoE Buff",
-            effect: "+crit chance for [de], +absorb for [su]",
-        },
-        ikkyo: {
-            desc: "Strike",
-            effect: "taunt, pvp: 50% stun for 1-5 secs",
-        },
-        shihonage: {
-            desc: "Strike",
-            effect: "a lot of damage, slow for 5 secs",
-        },
-        iriminage: {
-            desc: "Strike",
-            effect: "20% stun for 2 secs",
-        },
+        de: "Efeito (+absorver, +chance de bloqueio pelo escudo)",
+        su: "Efeito (+dano, +chance de ataque crítico)",
+        nya: "AOE Efeito (+chance de crítico para De, +absorção para Su)",
+        ikkyo: "Combate (Provocação, pvp: 50% atordoamento de 1-5 segundos)",
+        shihonage: "Combate (bastante dano, velocidade reduzida por 5 segundos)",
+        iriminage: "Combate (20% de chance de atordoamento por 2 segundos)",
     },
 };

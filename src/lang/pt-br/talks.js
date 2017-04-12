@@ -4,24 +4,24 @@ Talks.npcs = {
     "charles": {
         "default": {
             "male": [
-                "Hello, pal!",
-                "I'm Charles, the secretary of local Imperial chancellery. And I'm also an official ambassador of the Imperial Sinode here in these lands.",
-		"You can take a rest from work and trade your stuff in this place.",
-		"People are different here, so I'm the one who keeps the order.",
-                "So, let's talk about:"
+                "Olá, amigo!",
+				"Eu sou Charles, secretário do chanceller imperial. E também sou o embaixador oficial dos clérigos nestas terras.",
+        "Você pode descansar e vender suas coisas aqui.",
+		"Pessoas são diferentes aqui, eu sou quem mantém a ordem.",
+                "Então, vamos conversar:"
             ],
             "female": [
-                "Have a good day, young lady!",
-                "I'm Charles, the secretary of local Imperial chancellery. And I'm also an official ambassador of the Imperial Sinode here in these lands.",
-		"You can take a rest from work and trade your stuff in this place.",
-		"People are different here, so I'm the one who keeps the order.",
-                "So, let's talk about:"
+                "Bom dia, Senhorita!",
+                "Eu sou Charles, secretário do chanceller imperial. E também sou o embaixador oficial dos clérigos nestas terras.",
+		"Você pode descansar e vender suas coisas aqui.",
+		"Pessoas são diferentes aqui, eu sou quem mantém a ordem.",
+                "Então, vamos conversar:"
             ]
         },
         "empire": {
             "male": [
-                "Glad to see you again, pal!",
-                "It's good to see you still keeping your loyalty to the Emperor even when times are like this. Not lost your faith to the lord and not charmed with sweet tongue of confederates... Keep this up, friend! God help me and all my chancery if I won't help you, pal. I'm Charles and I'm your servant.",
+                "É bom velo novamente, amigo!",
+                "É bom vê-lo sendo leal ao Imperador mesmo em épocas como esta. Não perca sua fé e não caia na conversa dos confederados... Mantenha-se firme, amigo! Deus seja minha testemunha de como lhe ajudarei. Sou Charles, seu servo.",
             ],
             "female": [
                 "Nice to meet you, lady!",

@@ -8,125 +8,125 @@ Settings.descriptions = {
         ],
 
         hideHelmet: [
-            "Hide helmet",
-            "Hide your helmet for you and others.",
+            "Esconder Elmo",
+            "Esconde o elmo para você e para os outros.",
         ],
         rotateWasd: [
-            "Rotate WASD",
-            "Movemovent based on the map coordinates",
+            "Girar com WASD",
+            "Movimentação baseada nos pontos cardeais do mapa",
         ],
         autoTarget: [
-            "Auto target",
-            "Automatically select the nearest to the cursor target.",
+            "Auto selecionar alvo",
+            "Automaticamente seleciona o alvo mais próximo do cursor.",
         ],
     },
     ui: {
         language: [
-            "Language",
-            "Switch game language.",
+            "Idioma",
+            "Mudar o idioma do jogo.",
         ],
         hp: [
-            "Health bar",
-            "Show health bar above the character.",
+            "Barra de pontos de vida",
+            "Mostra a barra de pontos de vida acima do personagem.",
         ],
         name: [
-            "Nickname",
-            "Show characters' nicknames.",
+            "Nomes",
+            "Mostra o nome dos personagens.",
         ],
         npc: [
             "NPC",
-            "Show nicknames and health bars above NPCs.",
+            "Mostra os nomes e pontos de vida dos NPC.",
         ],
         minimapObjects: [
-            "Minimap items",
-            "Show items on minimap.",
+            "Itens do minimapa",
+            "Mostra os itens no minimapa.",
         ],
         allowSelfSelection: [
-            "Character selection",
-            "Allows character selection and mouse interaction. Right button activates action.",
+            "Seleção de personagem selection",
+            "Permite selecionar o personagem e interagir com o mouse. Botão direito do mouse aciona.",
         ],
         fillClaim: [
-            "Fill the claim area",
-            "Fill claims areas.",
+            "Preencher a área de posse",
+            "Mostra toda demarcação das posses.",
         ],
         strokeClaim: [
-            "Claim borders",
-            "Stroke claim borders.",
+            "Bordas da terra",
+            "Deixa visível as bordas da posse.",
         ],
         chatAttached: [
-            "Pin the chat window",
-            "Pin the chat window or make it separate.",
+            "Fixar janela de chat",
+            "Fixa ou deixa separada a janela do chat.",
         ],
         chatBalloons: [
-            "Message bubbles",
-            "Show message bubbles above character's head.",
+            "Bolhas de mensagens",
+            "Mostra bolhas de mensagens sobre a cabeça dos personagens.",
         ],
         chatEnterBlur: [
-            "Unfocus chat on Enter",
-            "When message is empty Enter key will unfocus the chat.",
+            "Tirar o foco da janela de chat com Enter",
+            "Quando a mensagem estiver vazia, apertar enter fará com que a janela de chat saia de focus.",
         ],
         showAttackRadius: [
-            "Attack area",
-            "Show character's attack area.",
+            "Área de ataque",
+            "Mostra a área de ataque do personagem.",
         ],
         comboHelper: [
             "Combo",
-            "Show combo tips.",
+            "Mostra dicas de combos.",
         ],
 
     },
     graphics: {
         snowflakes: [
-            "Snowflakes",
-            "Show falling snow.",
+            "Flocos de neve",
+            "Mostra a neve caindo.",
         ],
         movingSpace: [
-            "Space movement",
-            "Enable space movement on the map edge.",
+            "Espaço de movimento",
+            "Ativa espaço de movimentação na beira do mapa.",
         ],
         autoHideWalls: [
-            "Auto hide walls",
-            "Automatically hide walls inside buildings.",
+            "Esconder paredes automaticamente",
+            "Automaticamente esconde as paredes quando se está dentro de construções.",
         ],
         autoHighlightDoors: [
-            "Highlight doors",
-            "Highlight doors on mouse hover. If disabled, highlights door with Ctrl pressed.",
+            "Destacar portas",
+            "Destaca portas ao passar o cursor. Se desativado, destaca portas quando a tecla Ctrl é pressionada.",
         ],
         centerScreen: [
-            "Center screen",
-            "If enabled, game area centers on screen center.",
-            "If disabled, game area is placed on the left.",
+            "Centralizar tela",
+            "Se ativada, a tela do jogo mantem-se no meio da tela.",
+            "Se desativada, a tela do jogo é mantida à esquerda.",
         ],
     },
     sound:  {
         playSound: [
-            "Sound",
-            "Play game sounds.",
+            "Som",
+            "Toca os sons do jogo.",
         ],
         playMusic: [
-            "Ambient",
-            "Play ambient.",
+            "Ambiente",
+            "Sons do meio ambiente.",
         ],
         soundVolume: [
-            "Sound volume",
-            "Sound effects volume.",
+            "Volume",
+            "Volume dos efeitos sonoros.",
         ],
         musicVolume: [
-            "Music volume",
-            "Background music volume.",
+            "Volume da música",
+            "Volume da música de fundo.",
         ],
         voiceVolume: [
-            "Voice volume",
-            "NPC volume.",
+            "Volume da voz",
+            "Volume da voz dos NPCs.",
         ],
 
         jukebox: [
             "Jukebox",
-            "Play jukeboxes music.",
+            "Toca as músicas da Jukebox.",
         ],
         chatNotifications: [
-            "Chat notifications",
-            "Show tray chat notifications",
+            "Notificações do chat",
+            "Mostra notificações do chat",
         ],
     }
 };

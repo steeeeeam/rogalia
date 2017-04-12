@@ -1,9 +1,8 @@
 /* global Craft */
 
 Craft.help = {
-    "stick": "To get a stick right click on a bough and select \"Break off\" option.",
-    "twig": "To get a twig right click on a branch and select \"Break off\" option.",
-    "stone": "Stone can be \"chipped\" with a pickaxe from a boulder or stone block, or you can simply find one on the ground",
-    "leather": "Dry raw hides using a drying frame. Use tanning tub to make leather from the dried hide." ,
-
+	"stick": "Para pegar conseguir um graveto, clique em um galho grande e selecione a opção \"Break off\".",
+	"twig": "Para conseguir um ramo, clique em um galho pequeno e selecione a opção \"Break off\".",
+	"stone": "Pedra podem ser \"chipped\" com uma picareta de um pedregulho ou bloco de pedra, ou você pode simplesmente encontrá-las no chão.",
+	"leather": "Seque pele crua usando a estrutura de secagem. Use a bacia de tingimento para fazer couro da pele crua.", 
 };
