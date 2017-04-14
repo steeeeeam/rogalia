@@ -325,7 +325,7 @@ Talks.npcs = {
         "default": {
             "male": [
                 "Welcome to the hotel, stranger.",
-                "I'm Alfred the battler. If you're in need for a warm and cosy bed, you'll find it here. That's not a room for queen, but it'll provide you a good rest.",
+                "I'm Alfred the butler. If you're in need for a warm and cosy bed, you'll find it here. That's not a room for queen, but it'll provide you a good rest.",
             ],
         },
     },

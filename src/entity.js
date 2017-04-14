@@ -396,7 +396,6 @@ Entity.prototype = {
         case "herb-rack":
         case "bookshelf":
         case "wooden-trough":
-        case "steel-pike":
         case "stack-of-wood":
         case "stack-of-boards":
         case "bundle-of-wood":
@@ -405,17 +404,18 @@ Entity.prototype = {
         case "bloody-altar":
         case "bar-stand":
         case "flower-pot":
+        case "dyed-flowerpot":
         case "wine-rack-small":
         case "wine-rack-average":
         case "wine-rack-big":
         case "potions-cabinet-small":
         case "potions-cabinet-average":
         case "potions-cabinet-big":
+        case "steel-pike":
         case "sandbox":
-            if (!this.Props.Slots)
-                break;
-            if (this.Props.Slots.some(function(id){ return id != 0; }))
+            if (_.some(this.Props.Slots, (id) => id != 0)) {
                 path += "-full";
+            }
             break;
         case "respawn":
             if (game.player.Respawn && this.X == game.player.Respawn.X && this.Y == game.player.Respawn.Y) {
