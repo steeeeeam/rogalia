@@ -1027,17 +1027,36 @@ class Craft {
 
     makeRecipePreview(type) {
         const entity = new Entity(type);
-        const element = dom.wrap("recipe-preview", entity.icon(), {
-            onclick: () => {
-                if (!entity.Sprite.Variants) {
-                    return;
+        let icon = entity.icon();
+        const variant = dom.wrap(
+            "recipe-preview-variant",
+            entity.Sprite.Variants && `1/${entity.Sprite.Variants}`
+        );
+        const element = dom.wrap(
+            "recipe-preview",
+            [
+                icon,
+                variant,
+            ],
+            {
+                onclick: () => {
+                    if (game.player.IsAdmin && game.controller.modifier.ctrl) {
+                        this.panel.hide();
+                        entity.Variant = entity.Variant; // force OwnProperty
+                        game.controller.creatingCursor(entity);
+                        return;
+                    }
+                    if (!entity.Sprite.Variants) {
+                        return;
+                    }
+                    entity.Variant = (entity.Variant % entity.Sprite.Variants) + 1;
+                    this.current.variant = entity.Variant;
+                    entity.initSprite();
+                    icon = dom.replace(icon, entity.icon());
+                    variant.textContent = `${entity.Variant}/${entity.Sprite.Variants}`;
                 }
-                entity.Variant = (entity.Variant % entity.Sprite.Variants) + 1;
-                this.current.variant = entity.Variant;
-                entity.initSprite();
-                dom.setContents(element, entity.icon());
             }
-        });
+        );
         return element;
     }
 

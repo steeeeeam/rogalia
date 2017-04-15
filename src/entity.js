@@ -412,6 +412,7 @@ Entity.prototype = {
         case "potions-cabinet-average":
         case "potions-cabinet-big":
         case "steel-pike":
+        case "hatstand":
         case "sandbox":
             if (_.some(this.Props.Slots, (id) => id != 0)) {
                 path += "-full";
@@ -589,8 +590,8 @@ Entity.prototype = {
         return {
             x: p.x,
             y: p.y,
-            w: Math.max(w, align.x),
-            h: Math.max(h, align.y),
+            w,
+            h,
             fill: (this.Group == "claim") && {
                 w: 20 * CELL_SIZE,
                 h: 20 * CELL_SIZE,

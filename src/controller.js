@@ -818,7 +818,7 @@ function Controller(game) {
         }
 
         this.lastAction.set(() => {
-            this.newCreatingCursor(entity.Type, command, callback, cancel);
+            this.creatingCursor(entity, command, callback, cancel);
         }, entity.Type);
 
         if (cancel) {

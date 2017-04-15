@@ -845,6 +845,8 @@ T.dict = {
     "Altar": "Алтарь",
     "Steel knife": "Стальной нож",
     "Swordsman statue": "Статуя мечника",
+    "Sage statue": "Статуя мудреца",
+    "Guard statue": "Статуя стражника",
     "Palm tree seed": "Семена пальмы",
     "Palm tree plant": "Саженец пальмы",
     "Titanium ore": "Титановая руда",
