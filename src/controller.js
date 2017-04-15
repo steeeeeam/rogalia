@@ -753,38 +753,36 @@ function Controller(game) {
                 else
                     this.scale--;
             },
-            draw: function() {
-                var size = CELL_SIZE;
-
-                var p = game.controller.world.point.clone();
-                p.x /= size;
-                p.y /= size;
-                p.floor();
-                p.x *= size;
-                p.y *= size;
-
-                size *= this.scale;
-
-                var s = p.clone().toScreen();
-
-                game.ctx.drawImage(
-                    tile,
-                    0,
-                    0,
-                    CELL_SIZE * 2,
-                    CELL_SIZE,
-                    s.x - CELL_SIZE,
-                    s.y,
-                    CELL_SIZE * 2,
-                    CELL_SIZE
-                );
-
+            getDrawPoint() {
+                return game.controller.world.point
+                    .clone()
+                    .div(CELL_SIZE)
+                    .floor()
+                    .mul(CELL_SIZE);
+            },
+            drawBox() {
+                const p = this.getDrawPoint();
+                const size = CELL_SIZE * this.scale;
                 game.ctx.strokeStyle = "#0ff";
                 game.iso.strokeRect(
                     p.x,
                     p.y,
                     size,
                     size
+                );
+            },
+            drawSprite: function() {
+                const p = this.getDrawPoint().toScreen();;
+                game.ctx.drawImage(
+                    tile,
+                    0,
+                    0,
+                    CELL_SIZE * 2,
+                    CELL_SIZE,
+                    p.x - CELL_SIZE,
+                    p.y,
+                    CELL_SIZE * 2,
+                    CELL_SIZE
                 );
             }
         };

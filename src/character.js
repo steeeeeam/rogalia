@@ -1898,23 +1898,21 @@ Character.prototype = {
         return Math.hypot(this.X - e.X, this.Y - e.Y);
     },
     selectNextTarget: function(p = new Point(this)) {
-        var self = this;
-        var party = self.Party || [];
-        var list = game.findCharsNear(p.x, p.y, 5*CELL_SIZE).filter(function(c) {
-            if (c == self)
+        var party = this.Party || [];
+        var list = game.findCharsNear(p.x, p.y, 5*CELL_SIZE).filter(c => {
+            if (c == this || c == this.target || c == this.mount) {
                 return false;
-            if (c == self.target)
-                return false;
-            if (c.Team && c.Team == self.Team)
+            }
+            if (c.Team && c.Team == this.Team)
                 return false;
             if (c.IsNpc && !c.IsMob)
                 return false;
             return party.indexOf(c.Name) == -1;
-        }).sort(function(a, b) {
-            return new Point(a).distanceTo(p) - new Point(b).distanceTo(p);
-        });
-        if (list.length > 0)
+        }).sort((a, b) => new Point(a).distanceTo(p) - new Point(b).distanceTo(p));
+
+        if (list.length > 0) {
             this.setTarget(list[0]);
+        }
     },
     setTarget: function(target) {
         this.target = target;

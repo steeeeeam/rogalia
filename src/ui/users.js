@@ -138,7 +138,7 @@ function Users() {
     };
 
     this.getOnlinePlayers = function() {
-        return lists.OnlinePlayers.data;
+        return lists.OnlinePlayers && lists.OnlinePlayers.data || [];
     };
 }
 

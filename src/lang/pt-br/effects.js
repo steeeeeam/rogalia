@@ -39,7 +39,7 @@ Effects.descriptions = {
     "Hangover": {
         "class": "",
 		"effect": " +9 de força, -9 de destreza.",
-		"desc"; "Status obtido quando o personagem consome álcool (cerveja, vinho, etc.).",
+		"desc": "Status obtido quando o personagem consome álcool (cerveja, vinho, etc.).",
 		"note": "Não é acumulável.",
     },
     "Sitting": {
