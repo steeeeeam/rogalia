@@ -573,27 +573,30 @@ Entity.prototype = {
             return false;
         return this.isTool();
     },
-    alignedData: function(p) {
-        var align = this.Sprite && this.Sprite.Align;
-        if (align && align.X) {
-            var w = this.Width || 2*this.Radius;
-            var h = this.Height || 2*this.Radius;
-            p.x -= w/2;
-            p.y -= h/2;
-            p.align(new Point(align));
-            return {
-                x: p.x,
-                y: p.y,
-                w: Math.max(w, align.X),
-                h: Math.max(h, align.Y),
-                fill: (this.Group == "claim") ? {
-                    w: 20 * CELL_SIZE,
-                    h: 20 * CELL_SIZE,
-                    color: "rgba(0, 0, 0, 0.1)",
-                } : null,
-            };
+    alignedData: function(p, shift = false) {
+        const align = new Point(this.Sprite && this.Sprite.Align);
+        if (align.isZero()) {
+            if (shift) {
+                return null;
+            }
+            align.set(CELL_SIZE/2, CELL_SIZE/2);
+        }
+        const w = this.Width || 2*this.Radius;
+        const h = this.Height || 2*this.Radius;
+        p.x -= w/2;
+        p.y -= h/2;
+        p.align(align);
+        return {
+            x: p.x,
+            y: p.y,
+            w: Math.max(w, align.x),
+            h: Math.max(h, align.y),
+            fill: (this.Group == "claim") && {
+                w: 20 * CELL_SIZE,
+                h: 20 * CELL_SIZE,
+                color: "rgba(0, 0, 0, 0.1)",
+            },
         };
-        return null;
     },
     defaultActionSuccess: function(data) {
     },
