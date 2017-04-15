@@ -829,7 +829,15 @@ function Controller(game) {
             if (!controller.mouse.isValid())
                 return false;
             var p = entity.point;
-            var data = entity.alignedData(p);
+            var data = entity.alignedData(p, this.modifier.shift);
+            // if (entity.Sprite) {
+            //     if (this.modifier.shift) {
+            //         cursor.Sprite.Align = null;
+            //     } else if (!cursor.Sprite.Align.X) {
+            //         cursor.Sprite.Align = {X: CELL_SIZE/2, Y: CELL_SIZE/2};
+            //     }
+            // }
+
             if (data) {
                 p.x = data.x + data.w/2;
                 p.y = data.y + data.h/2;
@@ -1104,7 +1112,7 @@ function Controller(game) {
     };
 
     this.drawAlign = function(entity, p) {
-        var data = entity.alignedData(p);
+        var data = entity.alignedData(p, this.modifier.shift);
         if (data) {
             game.ctx.fillStyle = "rgba(0, 0, 0, 0.2)";
             game.ctx.strokeStyle = "#e2e9ec";
@@ -1135,22 +1143,9 @@ function Controller(game) {
         var cursor = this.world.cursor;
         var hovered = this.world.hovered;
         if (cursor) {
-            let align = null;
-            if (cursor.Sprite) {
-                align = cursor.Sprite.Align;
-                if (this.modifier.shift) {
-                    cursor.Sprite.Align = null;
-                } else if (!cursor.Sprite.Align.X) {
-                    cursor.Sprite.Align = {X: CELL_SIZE/2, Y: CELL_SIZE/2};
-                }
-            }
-
             cursor.setPoint(this.world.point);
             cursor.drawSprite();
             this.drawAlign(cursor, this.world.point);
-            if (align) {
-                cursor.Sprite.Align = align;
-            }
         } else if (hovered) {
             // If non-interface element (like menu) is over
             // and item is not outside of the visible area
