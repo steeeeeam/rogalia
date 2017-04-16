@@ -1924,4 +1924,12 @@ T.dict = {
     "Place daemon essence inside": "Поместите внутрь демоническую эссенцию",
     "Can revive only domestical animals": "Можно оживить только домашних животных",
     "Find battle": "Найти битву",
+    "Modern picture": "Современная картина",
+    "Poster": "постер",
+    "Iron barrier": "Ограждение железное",
+    "Wooden barrier": "Ограждение деревянное",
+    "Boundary post": "Пограничный столб",
+    "White banner": "Белое знамя",
+    "Red banner": "Красное знамя",
+    "Hatstand": "Вешалка",
 };
