@@ -1,4 +1,4 @@
-/* global game, FormData, dom, Panel */
+/* global game, FormData, dom, Panel, Stage, T */
 
 "use strict";
 
@@ -25,8 +25,12 @@ function loginStage() {
         password.onkeydown = submitSignin;
 
         var email = dom.input(T("Email"));
-        email.onkeydown = submitSignup;
+        // email.onkeydown = submitSignup;
         dom.hide(email.label);
+
+        var invite = dom.input(T("Invite"));
+        invite.onkeydown = submitSignup;
+        dom.hide(invite.label);
 
         var signinButton = dom.button(T("Sign in"), "", submitSignin);
         var signupButton = dom.button(T("Sign up"), "", startSignup);
@@ -35,6 +39,7 @@ function loginStage() {
             password.onkeydown = submitSignin;
             dom.hide(cancelSignupButton);
             dom.hide(email.label);
+            dom.hide(invite.label);
             dom.show(signinButton);
             signupButton.onclick = startSignup;
             selectFocus();
@@ -45,6 +50,7 @@ function loginStage() {
             login.label,
             password.label,
             email.label,
+            invite.label,
             dom.hr(),
             signinButton,
             signupButton,
@@ -79,7 +85,7 @@ function loginStage() {
             if (!validate(email, "Please enter email"))
                 return;
 
-            signup(login.value, password.value, email.value);
+            signup(login.value, password.value, email.value, invite.value);
         }
 
         function validateLoginAndPassword() {
@@ -101,11 +107,8 @@ function loginStage() {
         }
 
         function startSignup() {
-            if (document.location.host == "rogalia.ru") {
-                document.location.href = "http://store.steampowered.com/app/528460/";
-                return;
-            }
             dom.show(email.label);
+            dom.show(invite.label);
             dom.show(cancelSignupButton);
             dom.hide(signinButton);
             password.onkeydown = null;
@@ -124,8 +127,8 @@ function loginStage() {
 
         var req = new XMLHttpRequest();
         req.open("POST", game.gateway + "/login", true);
-        req.onload = onload;
-        req.onerror = onload;
+        req.onload = onsignin;
+        req.onerror = onsignin;
         req.send(formData);
     }
 
@@ -142,8 +145,8 @@ function loginStage() {
 
             var req = new XMLHttpRequest();
             req.open("POST", game.gateway + "/token", true);
-            req.onload = onload;
-            req.onerror = onload;
+            req.onload = onsignin;
+            req.onerror = onsignin;
             req.send(formData);
 
             return true;
@@ -181,7 +184,7 @@ function loginStage() {
         game.setStage("lobby", data);
     }
 
-    function signup(login, password, email) {
+    function signup(login, password, email, invite) {
         game.setLogin(login);
         game.clearServerInfo();
 
@@ -189,13 +192,14 @@ function loginStage() {
         formData.append("login", login);
         formData.append("password", password);
         formData.append("email", email);
+        formData.append("invite", invite);
 
         var req = new XMLHttpRequest();
         req.open("POST", game.gateway + "/register", true);
         req.send(formData);
 
-        req.onload = onload;
-        req.onerror = onload;
+        req.onload = onsignup;
+        req.onerror = onsignup;
     }
 
     function validate(input, message) {
@@ -268,7 +272,18 @@ function loginStage() {
 
     }
 
-    function onload() {
+    function onsignin() {
+        onload.call(this, () => {
+            game.clearSessionToken();
+            showLoginForm();
+        });
+    }
+
+    function onsignup() {
+        onload.call(this, () => {});
+    }
+
+    function onload(onerror) {
         switch (this.status) {
         case 200:
             var token = JSON.parse(this.responseText).Token;
@@ -282,8 +297,7 @@ function loginStage() {
             break;
         case 202:
             game.popup.alert(T(this.response.trim()));
-            game.clearSessionToken();
-            showLoginForm();
+            onerror();
             break;
         default:
             console.error(this.response);
