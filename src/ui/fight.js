@@ -90,14 +90,13 @@ function Fight() {
             }
             if (prepare) {
                 game.controller.setClick(
-                    function() {
-                        apply(action);
-                    },
-                    function() {
+                    () => apply(action),
+                    () => {
                         const p = new Point(game.controller.world.point).sub(new Point(game.player));
                         const angle = Math.atan2(-p.y, p.x);
                         game.player.drawAttackRadius(angle);
-                    });
+                    }
+                );
                 return;
             }
         }

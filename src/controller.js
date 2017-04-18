@@ -807,7 +807,6 @@ function Controller(game) {
     };
 
     this.creatingCursor = function(entity, command = "entity-add", callback, cancel) {
-
         this.world.cursor = entity;
 
         if (this.lastAction.type != entity.Type)
@@ -881,14 +880,13 @@ function Controller(game) {
             this.clearCursors();
             return true;
         };
-        if (draw) {
-            this.world.cursor = {
-                setPoint: function() {},
-                alignedData: function(){},
-                drawSprite: draw,
-                drawBox: () => {},
-            };
-        }
+        this.world.cursor = {
+            setPoint: () => {},
+            alignedData: () => {},
+            drawSprite: () => {},
+            drawAura: draw,
+            drawBox: () => {},
+        };
     };
 
     this.processActionQueue = function process(data) {
@@ -1092,7 +1090,7 @@ function Controller(game) {
 
     this.rotate = function(delta) {
         var cursor = this.world.cursor;
-        if (!cursor)
+        if (!cursor || !cursor.rotate)
             return;
         cursor.rotate(delta);
         this.lastAction.rotation += delta;
@@ -1133,6 +1131,8 @@ function Controller(game) {
     this.drawAura = function() {
         if (this.world.hovered) {
             this.world.hovered.drawAura();
+        } else if (this.world.cursor && this.world.cursor.drawAura) {
+            this.world.cursor.drawAura();
         }
     };
 

@@ -1087,9 +1087,14 @@ Character.prototype = {
         }
     },
     drawAttackRadius: function(angle = this.AttackAngle) {
-        game.ctx.strokeStyle = game.ctx.fillStyle = (this.isPlayer) ?
-            "rgba(255, 255, 255, 0.4)"
-            : "rgba(255, 0, 0, 0.2)";
+        game.ctx.strokeStyle = (this.isPlayer)
+            ? "rgba(0, 255, 0, 0.4)"
+            : "rgba(255, 0, 0, 0.4)";
+
+        game.ctx.fillStyle = (this.isPlayer)
+            ? "rgba(255, 255, 255, 0.3)"
+            : "rgba(255, 0, 0, 0.3)";
+
         if (this.target) {
             const attackVector = new Point(game.controller.world.point).sub(new Point(game.player));
             const attackAngle = Math.atan2(-attackVector.y, attackVector.x);
@@ -1100,7 +1105,7 @@ Character.prototype = {
                 diff = 2*Math.PI - diff;
             }
             if (diff < Math.PI/4 && this.distanceTo(this.target) < 2*CELL_SIZE) {
-                game.ctx.strokeStyle = game.ctx.fillStyle = "rgba(0, 255, 0, 0.4)";
+                game.ctx.fillStyle = "rgba(0, 255, 0, 0.3)";
             }
         }
         const start = -angle - Math.PI/4;
