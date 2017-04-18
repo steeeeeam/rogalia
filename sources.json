@@ -68,7 +68,6 @@
     "./src/menu.js",
     "./src/iso-drawer.js",
     "./src/screen.js",
-    "./src/potential-fields.js",
     "./src/professions.js",
     "./src/game.js",
     "./src/ui/trade.js",
