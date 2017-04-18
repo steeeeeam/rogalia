@@ -1004,7 +1004,7 @@ Entity.prototype = {
         if (this.Group == "gate" || this.Type.indexOf("-arc") != -1) {
             return (this.CanCollide) ? "violet" : "magenta";
         }
-        return ""; //default
+        return "rgba(0, 0, 0, 0.5)";
     },
     drawCenter: function() {
         var p = this.screen();

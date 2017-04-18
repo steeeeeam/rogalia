@@ -1364,7 +1364,7 @@ function Controller(game) {
     };
 
     this.wantShot = function() {
-        return (this.modifier.ctrl && this.actionButton.action == "bow");
+        return (this.modifier.ctrl && this.actionButton.action == "shot");
     };
 
     this.updateActiveQuest = function() {

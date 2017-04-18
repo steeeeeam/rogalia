@@ -156,8 +156,12 @@ Character.prototype = {
             this.syncPosition(data.X, data.Y);
         }
 
-        if (data.Dst && (data.Dst.X != 0 || data.Dst.Y != 0)) {
-            this.updateVelocity(data.Dst.X, data.Dst.Y);
+        if (data.Dst) {
+            if (data.Dst.X != 0 || data.Dst.Y != 0) {
+                this.updateVelocity(data.Dst.X, data.Dst.Y);
+            } else {
+                this.updateVelocity(this.X, this.Y);
+            }
         }
 
         if (data.Messages) {
@@ -178,14 +182,14 @@ Character.prototype = {
             this.reloadSprite();
         }
 
-        if (data.Dir !== undefined) {
+        if ("Dir" in data) {
             this.sprite.position = data.Dir;
         }
 
-        if (data.AvailableQuests) {
+        if ("AvailableQuests" in data) {
             this.updateActiveQuest();
         }
-        if (data.Party) {
+        if ("Party" in data) {
             this.updateParty(data.Party);
         }
 
@@ -996,8 +1000,7 @@ Character.prototype = {
     animate: function() {
         var animation = "idle";
         var self = (this.mount) ? this.mount : this;
-        var position = self.sprite.position;
-
+        var position = (this.IsNpc) ? self.Dir : self.sprite.position;
         if (self.sprite.angle == 0) {
             position = 0;
         } else if (self.sprite.angle == Math.PI/2 && position > 4) {
@@ -1095,6 +1098,7 @@ Character.prototype = {
             ? "rgba(255, 255, 255, 0.3)"
             : "rgba(255, 0, 0, 0.3)";
 
+        const attackRadius = 1.5 * CELL_SIZE;
         if (this.target) {
             const attackVector = new Point(game.controller.world.point).sub(new Point(game.player));
             const attackAngle = Math.atan2(-attackVector.y, attackVector.x);
@@ -1104,14 +1108,14 @@ Character.prototype = {
             if (diff > Math.PI) {
                 diff = 2*Math.PI - diff;
             }
-            if (diff < Math.PI/4 && this.distanceTo(this.target) < 2*CELL_SIZE) {
+            if (diff < Math.PI/4 && this.distanceTo(this.target) < attackRadius) {
                 game.ctx.fillStyle = "rgba(0, 255, 0, 0.3)";
             }
         }
         const start = -angle - Math.PI/4;
         const end = -angle + Math.PI/4;
-        game.iso.fillSector(this.X, this.Y, 2*CELL_SIZE, start, end);
-        game.iso.strokeSector(this.X, this.Y, 2*CELL_SIZE, start, end);
+        game.iso.fillSector(this.X, this.Y, attackRadius, start, end);
+        game.iso.strokeSector(this.X, this.Y, attackRadius, start, end);
     },
     toggleActionSound: function() {
         if (this.action.name)
