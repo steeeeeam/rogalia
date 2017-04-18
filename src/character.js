@@ -156,18 +156,19 @@ Character.prototype = {
             this.syncPosition(data.X, data.Y);
         }
 
-        if (data.Dst) {
+        if (data.Dst && (data.Dst.X != 0 || data.Dst.Y != 0)) {
             this.updateVelocity(data.Dst.X, data.Dst.Y);
         }
 
-        if (data.Messages)
+        if (data.Messages) {
             this._messages = this._messages.concat(data.Messages);
+        }
 
-        if (data.PrivateMessages)
+        if (data.PrivateMessages) {
             this._messages = this._messages.concat(data.PrivateMessages);
+        }
 
-
-        if ("Waza" in data) {
+        if (data.Waza) {
             game.controller.updateCombo(data.Waza);
         }
 
@@ -181,14 +182,14 @@ Character.prototype = {
             this.sprite.position = data.Dir;
         }
 
-        if ("AvailableQuests" in data) {
+        if (data.AvailableQuests) {
             this.updateActiveQuest();
         }
-        if ("Party" in data) {
+        if (data.Party) {
             this.updateParty(data.Party);
         }
 
-        if ("ChatChannels" in data) {
+        if (data.ChatChannels) {
             game.chat && game.chat.updateChannels(data.ChatChannels);
         }
 
