@@ -45,6 +45,26 @@ class IsoDrawer {
         });
     }
 
+    fillSector(x, y, r, startAngle, endAngle) {
+        this._draw(x, y, () => {
+            this.ctx.beginPath();
+            this.ctx.moveTo(0, 0);
+            this.ctx.arc(0, 0, r * Math.SQRT2, startAngle, endAngle);
+            this.ctx.lineTo(0, 0);
+            this.ctx.fill();
+        });
+    }
+
+    strokeSector(x, y, r, startAngle, endAngle) {
+        this._draw(x, y, () => {
+            this.ctx.beginPath();
+            this.ctx.moveTo(0, 0);
+            this.ctx.arc(0, 0, r * Math.SQRT2, startAngle, endAngle);
+            this.ctx.lineTo(0, 0);
+            this.ctx.stroke();
+        });
+    }
+
     fillStrokedCircle(x, y, r) {
         this.fillCircle(x, y, r);
         this.strokeCircle(x, y, r);

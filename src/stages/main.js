@@ -98,8 +98,6 @@ function mainStage(data) {
         game.characters.forEach(drawAura);
         game.claims.forEach(drawClaim);
 
-        // this.drawPotentialFields();
-
         if (config.graphics.topologicalSort) {
             this.drawTopologic();
         } else {
@@ -153,23 +151,6 @@ function mainStage(data) {
     };
 
     this.end = function() {};
-
-    /* experimental and debug features */
-    this.drawPotentialFields = function() {
-        var fields = game.player.potentialFields();
-        var D = 500;
-        var STEP = 8;
-        for (var y = game.player.Y - D; y < game.player.Y + D; y += STEP) {
-            for (var x = game.player.X - D; x < game.player.X + D; x += STEP) {
-                var potential = game.potentialAt(fields, {x, y});
-                var color = (potential > 0)
-                    ? "rgba(0, " + Math.round(potential) + ",0, 0.3)"
-                    : "rgba(" + Math.round(-potential) + ", 0, 0, 0.3)";
-                game.ctx.fillStyle = color;
-                game.iso.fillRect(x, y, STEP, STEP);
-            }
-        }
-    };
 
     this.drawOrder = function() {
         var i = 0;

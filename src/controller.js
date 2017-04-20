@@ -885,7 +885,8 @@ function Controller(game) {
             this.world.cursor = {
                 setPoint: function() {},
                 alignedData: function(){},
-                draw: draw,
+                drawSprite: draw,
+                drawBox: () => {},
             };
         }
     };

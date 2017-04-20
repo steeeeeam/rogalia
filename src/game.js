@@ -225,7 +225,7 @@ class Game {
         };
 
         T.update();
-        this._tick();
+        this.mainLoop();
     }
 
     _initArgs(args) {
@@ -486,14 +486,6 @@ class Game {
         });
     }
 
-    potentialAt(fields, p) {
-        var potential = 0;
-        for (var i = 0, l = fields.length; i < l; i++) {
-            potential += fields[i].potentialAt(p.x, p.y);
-        }
-        return potential;
-    }
-
     toggleFullscreen() {
         this.fullscreen = !this.fullscreen;
         this.screen.update();
@@ -524,7 +516,7 @@ class Game {
         throw "Fatal error";
     }
 
-    _tick(currentTime) {
+    mainLoop(currentTime) {
         this.controller.fpsStatsBegin();
 
         this.update(currentTime);
@@ -532,6 +524,6 @@ class Game {
 
         this.controller.fpsStatsEnd();
 
-        requestAnimationFrame((dt) => this._tick(dt));
+        requestAnimationFrame((dt) => this.mainLoop(dt));
     }
 }

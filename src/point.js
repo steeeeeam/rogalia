@@ -117,9 +117,14 @@ Point.prototype = {
         return Math.hypot(this.x, this.y);
     },
     normalize: function() {
-        var len = this.length();
-        this.x /= len;
-        this.y /= len;
+        const len = this.length();
+        if (len == 0) {
+            this.x = 0;
+            this.y = 0;
+        } else {
+            this.x /= len;
+            this.y /= len;
+        }
         return this;
     },
     rotate: function(angle) {

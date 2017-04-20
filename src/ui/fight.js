@@ -94,9 +94,9 @@ function Fight() {
                         apply(action);
                     },
                     function() {
-                        var p = new Point(game.controller.world.point).sub(new Point(game.player));
-                        var sector = game.player.sector(Math.PI/4, p.x, p.y);
-                        game.player.drawAttackRadius(sector);
+                        const p = new Point(game.controller.world.point).sub(new Point(game.player));
+                        const angle = Math.atan2(-p.y, p.x);
+                        game.player.drawAttackRadius(angle);
                     });
                 return;
             }

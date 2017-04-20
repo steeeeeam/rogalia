@@ -3480,11 +3480,18 @@ input[type=number], .lot-quantity > input, .price > input {
 .chess-toggle > .slot {
     transform: scaleY(-1);
 }
-.chess-table > .slot > sup {
-    display: none;
-}
-.chess-table > .slot {
-    background: #dbaf54;
+.chess-table {
+    display: flex;
+    justify-content: center;
+
+    > .slot > sup {
+        display: none;
+    }
+    > .slot {
+        margin: 0;
+        border: none;
+        background: #dbaf54;
+    }
 }
 .chess-table > :nth-child(-2n+8),
 .chess-table > :nth-child(8) ~ :nth-child(-2n+15),

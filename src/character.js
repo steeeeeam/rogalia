@@ -1,4 +1,4 @@
-/* global util, RectPotentialField, CELL_SIZE, game, CirclePotentialField, Point, Info, dom, T, Panel, Talks, BBox, loader, config, Avatar, Effect, TS, TT, Customization, ImageFilter, FONT_SIZE, astar, ContainerSlot, Quest */
+/* global util, CELL_SIZE, game, Point, Info, dom, T, Panel, Talks, BBox, loader, config, Avatar, Effect, TS, TT, Customization, ImageFilter, FONT_SIZE, astar, ContainerSlot, Quest */
 
 "use strict";
 function Character(id) {
@@ -25,6 +25,8 @@ function Character(id) {
         Y: 0,
     };
 
+    this.velocity = new Point();
+
     this.dst = {
         x: 0,
         y: 0,
@@ -34,8 +36,6 @@ function Character(id) {
 
     this.target = null;
 
-    this.Dx = 0;
-    this.Dy = 0;
     this.Radius = CELL_SIZE / 4;
     this.isMoving = false;
     this.Speed = {Current: 0};
@@ -65,8 +65,6 @@ function Character(id) {
 
     this.animation = {up: null, down: null};
 
-    this.path = [];
-
     this.sprites = {};
     Character.animations.forEach(function(animation) {
         var s = new Sprite();
@@ -77,16 +75,14 @@ function Character(id) {
 
     this._parts = "{}"; // defaults for npcs
 
-    // this._lerp = new Point();
-
     this._marker = {
         opacity: 1,
         delta: -1,
     };
 
-    this._pathHistory = [];
-
     this._messages = [];
+    this._remote = new Point();
+
 }
 
 Character.prototype = {
@@ -99,34 +95,21 @@ Character.prototype = {
     set X(x) {},
     set Y(y) {},
     positionSyncRequired: function(x, y) {
-        const tooFar =  (Math.abs(this.x - x) > CELL_SIZE) || (Math.abs(this.y - y) > CELL_SIZE);
-        if (tooFar) {
-            this.path = [];
-        }
-        if (this.Dx == 0 && this.Dy == 0) {
-            this.stop();
-            return true;
-        }
-        return tooFar;
+        return (Math.abs(this.x - x) > CELL_SIZE) || (Math.abs(this.y - y) > CELL_SIZE);
     },
     syncPosition: function(x, y) {
-        // this._lerp.set(x, y).sub(new Point(this));
         if (this.positionSyncRequired(x, y)) {
-            this._pathHistory = [];
             this.setPos(x, y);
+            // this._remote.set(0, 0);
+        } else {
+            // this._remote.set(x, y).sub(this);
         }
     },
     getZ: function() {
         return 0;
     },
 
-    /**
-     * @return {string}
-     */
     get Name() {
-        // TODO: remove fix
-        if (this.IsMob && this.name.match(/-\d+/))
-            return util.ucfirst(this.Type);
         return this.name || util.ucfirst(this.Type);
     },
     set Name(name) {
@@ -169,18 +152,23 @@ Character.prototype = {
     },
     sync: function(data, init) {
         Character.copy(this, data);
-        if (data.X && data.Y) {
+        if (data.X || data.Y) {
             this.syncPosition(data.X, data.Y);
         }
 
-        if (data.Messages)
+        if (data.Dst && (data.Dst.X != 0 || data.Dst.Y != 0)) {
+            this.updateVelocity(data.Dst.X, data.Dst.Y);
+        }
+
+        if (data.Messages) {
             this._messages = this._messages.concat(data.Messages);
+        }
 
-        if (data.PrivateMessages)
+        if (data.PrivateMessages) {
             this._messages = this._messages.concat(data.PrivateMessages);
+        }
 
-
-        if ("Waza" in data) {
+        if (data.Waza) {
             game.controller.updateCombo(data.Waza);
         }
 
@@ -194,14 +182,14 @@ Character.prototype = {
             this.sprite.position = data.Dir;
         }
 
-        if ("AvailableQuests" in data) {
+        if (data.AvailableQuests) {
             this.updateActiveQuest();
         }
-        if ("Party" in data) {
+        if (data.Party) {
             this.updateParty(data.Party);
         }
 
-        if ("ChatChannels" in data) {
+        if (data.ChatChannels) {
             game.chat && game.chat.updateChannels(data.ChatChannels);
         }
 
@@ -298,7 +286,6 @@ Character.prototype = {
         this.IsMob = "Aggressive" in data;
 
         this.sync(data, true);
-        // this._lerp.set(0, 0);
         this.loadSprite();
     },
     initSprite: function() {
@@ -575,8 +562,7 @@ Character.prototype = {
         var len_y = character.Y - this.Y;
         return util.distanceLessThan(len_x, len_y, Math.hypot(game.screen.width, game.screen.height));
     },
-    setDst: function(x, y, usePathfinding = true) {
-        this.path = [];
+    setDst: function(x, y) {
         if (this.Speed.Current <= 0 || this.Disabled)
             return;
         var leftBorder, rightBorder, topBorder, bottomBorder;
@@ -600,40 +586,16 @@ Character.prototype = {
         if (x == this.Dst.X && y == this.Dst.Y)
             return;
 
-        if (usePathfinding && config.character.pathfinding) {
-            this.path = astar(new Point(this), new Point(x, y));
-            if (this.path.length) {
-                const next = this.path.pop();
-                x = next.x;
-                y = next.y;
-            }
-        }
-
-        // this._setDst(x, y);
-        // if (this.willCollide(this.findMovePosition())) {
-        //     this.stop();
-        //     return;
-        // }
-
-        game.network.send("set-dst", {x: x, y: y});
+        game.network.send("set-dst", {x, y});
         game.controller.resetAction();
         this.dst.x = x;
         this.dst.y = y;
         this.dst.radius = 9;
         this.dst.time = Date.now();
-        this._setDst(x, y);
+        this.updateVelocity(x, y);
     },
-    _setDst: function(x, y) {
-        var len_x = x - this.X;
-        var len_y = y - this.Y;
-        var len  = Math.hypot(len_x, len_y);
-
-        this.Dst.X = x;
-        this.Dst.Y = y;
-
-        this.Dx = len_x / len;
-        this.Dy = len_y / len;
-        this._pathHistory = [];
+    updateVelocity: function(x = this.Dst.X, y = this.Dst.Y) {
+        this.velocity.set(x, y).sub(this).normalize();
     },
     getDrawPoint: function() {
         var p = this.screen();
@@ -1023,13 +985,13 @@ Character.prototype = {
         return null;
     },
     idle: function() {
-        return this.Dx == 0 && this.Dy == 0 && this.Action.Name == "";
+        return this.velocity.isZero() && this.Action.Name == "";
     },
     sector: function(angle, x, y) {
         var sectors = 2*Math.PI / angle;
-        var alpha = Math.atan2(-y, x);
-        var sector = Math.round(alpha / angle);
-        return (sector + sectors + 1) % sectors;
+        var alpha = Math.atan2(-y, x) + Math.PI;
+        var sector = ((alpha + angle/2) / angle) << 0;
+        return (sector + sectors/2) % sectors;
     },
     animate: function() {
         var animation = "idle";
@@ -1042,12 +1004,12 @@ Character.prototype = {
             position = (position / 2)<<0;
         }
 
-        if (self.Dx || self.Dy) {
+        if (self.velocity.x || self.velocity.y) {
             animation = "run";
             var angle = self.sprite.angle;
-            var sector = this.sector(angle, self.Dx, self.Dy);
+            var sector = this.sector(angle, self.velocity.x, self.velocity.y);
             var multiple = angle / this.sprite.angle;
-            position = sector * multiple;
+            position = (sector + 1) * multiple % (2*Math.PI / angle);
         } else if (this.Effects.Sitting) {
             animation = "sit";
             var seat = Entity.get(this.Effects.Sitting.SeatId);
@@ -1124,13 +1086,27 @@ Character.prototype = {
                 this.sprite.lastUpdate = now + util.rand(5, 60) * 60;
         }
     },
-    drawAttackRadius: function(position) {
-        var p = new Point(this);
-        var sector = (position || this.sprite.position) - 1;
-        var offset = new Point(CELL_SIZE, 0).rotate(2*Math.PI - sector * Math.PI/4);
-        p.add(offset);
-        game.ctx.fillStyle = (this.isPlayer) ? "rgba(255, 255, 255, 0.4)" : "rgba(255, 0, 0, 0.2)";
-        game.iso.fillCircle(p.x, p.y, CELL_SIZE);
+    drawAttackRadius: function(angle = this.AttackAngle) {
+        game.ctx.strokeStyle = game.ctx.fillStyle = (this.isPlayer) ?
+            "rgba(255, 255, 255, 0.4)"
+            : "rgba(255, 0, 0, 0.2)";
+        if (this.target) {
+            const attackVector = new Point(game.controller.world.point).sub(new Point(game.player));
+            const attackAngle = Math.atan2(-attackVector.y, attackVector.x);
+            const distanceVector = new Point(this.target).sub(new Point(this));
+            const distanceAngle = Math.atan2(-distanceVector.y, distanceVector.x);
+            let diff = Math.abs(attackAngle - distanceAngle);
+            if (diff > Math.PI) {
+                diff = 2*Math.PI - diff;
+            }
+            if (diff < Math.PI/4 && this.distanceTo(this.target) < 2*CELL_SIZE) {
+                game.ctx.strokeStyle = game.ctx.fillStyle = "rgba(0, 255, 0, 0.4)";
+            }
+        }
+        const start = -angle - Math.PI/4;
+        const end = -angle + Math.PI/4;
+        game.iso.fillSector(this.X, this.Y, 2*CELL_SIZE, start, end);
+        game.iso.strokeSector(this.X, this.Y, 2*CELL_SIZE, start, end);
     },
     toggleActionSound: function() {
         if (this.action.name)
@@ -1421,7 +1397,8 @@ Character.prototype = {
     findMovePosition: function(k = 16/1000) {
         var delta = this.Speed.Current * k;
         var biom = game.map.biomAt(this.X, this.Y);
-        if (biom) {
+        if (biom && biom.Speed != 0) {
+            // Client is ahead of server so we can get into blocked tile here but not on server.
             delta *= biom.Speed;
         }
 
@@ -1432,95 +1409,17 @@ Character.prototype = {
             return dst;
         }
 
-        p.x += this.Dx * delta;
-        p.y += this.Dy * delta;
-
-        return p;
-
-
-        if (!this.Settings.Pathfinding) {
-            return p;
-        }
-
-        var fields = this.potentialFields();
-        var maxPotential = game.potentialAt(fields, p);
-        var angleStep = Math.PI / 8;
-        var startAngle = Math.atan2(this.Dy, this.Dx) + angleStep;
-        var endAngle = startAngle + 2*Math.PI;
-        for (var angle = startAngle; angle <= endAngle; angle += angleStep) {
-            dst.x = this.X;
-            dst.y = this.Y;
-            var dx = Math.cos(angle);
-            var dy = Math.sin(angle);
-            dst.x += dx * delta;
-            dst.y += dy * delta;
-
-            var potential = game.potentialAt(fields, dst);
-            if (potential - maxPotential > delta) {
-                maxPotential = potential;
-                p.fromPoint(dst);
-                this.Dx = dx;
-                this.Dy = dy;
-            }
-        }
-
-        this._pathHistory.push(new CirclePotentialField(this.X, this.Y, -100, 50));
-        if (this._pathHistory.length > 32) {
-            this._pathHistory.splice(0, 1);
-        }
-
-        return p;
+        const v = this.velocity.clone().mul(delta);
+        return p.add(v);
     },
     canCollideNow: function() {
         return true;
-    },
-    potentialFields: function() {
-        var base = 1000;
-        var fields = this._pathHistory.slice(0);
-        var radius = this.Radius;
-        fields.push(new CirclePotentialField(this.Dst.X, this.Dst.Y, 5000, 5));
-        game.entities.forEach(function(entity) {
-            if (entity == this || !entity.canCollideNow())
-                return;
-
-            var field = (entity.round)
-                ? new CirclePotentialField(
-                    entity.X,
-                    entity.Y,
-                    -(1 + radius + entity.Radius)*base,
-                    base
-                )
-                : new RectPotentialField(
-                    entity.X - entity.Width/2,
-                    entity.Y - entity.Height/2,
-                    entity.Width,
-                    entity.Height,
-                    -base * (1 + radius),
-                    base/2
-                );
-            fields.push(field);
-        });
-        _.forEach(game.map.data, function(row, y) {
-            _.forEach(row, function(cell, x) {
-                if (cell.biom.Blocked) {
-                    fields.push(new RectPotentialField(
-                        game.player.Location.X + (x + 0.5) * CELL_SIZE,
-                        game.player.Location.Y + (y + 0.5) * CELL_SIZE,
-                        CELL_SIZE,
-                        CELL_SIZE,
-                        -base,
-                        base/2
-                    ));
-                }
-            });
-        });
-        return fields;
     },
     updatePosition: function(k) {
         if (this.mount)
             return;
 
-        if (this.Dx == 0 && this.Dy == 0) {
+        if (this.X == this.Dst.X && this.Y == this.Dst.Y) {
             return;
         }
 
@@ -1528,13 +1427,15 @@ Character.prototype = {
         if (p.x == this.Dst.X && p.y == this.Dst.Y) {
             this.setPos(p.x, p.y);
             this.stop();
-        // } else if (this.isPlayer && this.willCollide(p)) {
-        //     this.stop();
         } else {
-            // const interpolation = 0.5;
-            // p.x += this._lerp.x * k * interpolation;
-            // p.y += this._lerp.y * k * interpolation;
-
+            // const lerp = this._remote.clone();
+            // if (lerp.length() < 0.1) {
+            //     this._remote.set(0, 0);
+            // } else {
+            //     lerp.mul(0.05);
+            //     this._remote.sub(lerp);
+            // }
+            // p.sub(lerp);
             this.setPos(p.x, p.y);
         }
 
@@ -1568,7 +1469,7 @@ Character.prototype = {
         this.plow.setPoint(p);
         this.plow.sprite.position = this.sprite.position;
 
-        if (this.Dx || this.Dy)
+        if (this.velocity.x || this.velocity.y)
             this.plow.sprite.animate();
     },
     pickUp: function() {
@@ -1614,15 +1515,9 @@ Character.prototype = {
         }
     },
     stop: function() {
-        if (this.path.length > 0) {
-            const next = this.path.pop();
-            this._setDst(next.x, next.y);
-            game.network.send("set-dst", {x: next.x, y: next.y});
-            return;
-        }
-        this.Dx = 0;
-        this.Dy = 0;
-        this._pathHistory = [];
+        this.Dst.X = this.dst.x = this.X;
+        this.Dst.Y = this.dst.y = this.Y;
+        this.velocity.set(0, 0);
     },
     isNear: function(entity) {
         const target = this.mount || this;
