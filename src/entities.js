@@ -93,6 +93,7 @@ Entity.groupTags = {
     "liquid-container-liftable": ["vessel"],
 
     "potion": ["consumable"],
+    "rune": ["consumable"],
     "alcohol": ["consumable"],
     "drug": ["consumable"],
     "smoke": ["consumable"],

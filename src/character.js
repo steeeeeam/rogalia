@@ -98,11 +98,22 @@ Character.prototype = {
         return (Math.abs(this.x - x) > CELL_SIZE) || (Math.abs(this.y - y) > CELL_SIZE);
     },
     syncPosition: function(x, y) {
+        this._remote.set(x, y);
         if (this.positionSyncRequired(x, y)) {
             this.setPos(x, y);
-            // this._remote.set(0, 0);
+        }
+    },
+    syncDst(x, y) {
+        if (x != 0 || y != 0) {
+            this.updateDst(x, y);
+            return;
+        }
+
+        if ((Math.abs(this.x - this._remote.x) < 2) || (Math.abs(this.y - this._remote-y) < 2)) {
+            this.setPos(this._remote.x, this._remote.y);
+            this.stop();
         } else {
-            // this._remote.set(x, y).sub(this);
+            this.updateDst(this._remote.x, this._remote.y);
         }
     },
     getZ: function() {
@@ -157,11 +168,7 @@ Character.prototype = {
         }
 
         if (data.Dst) {
-            if (data.Dst.X != 0 || data.Dst.Y != 0) {
-                this.updateVelocity(data.Dst.X, data.Dst.Y);
-            } else {
-                this.updateVelocity(this.X, this.Y);
-            }
+            this.syncDst(data.Dst.X, data.Dst.Y);
         }
 
         if (data.Messages) {
@@ -587,18 +594,18 @@ Character.prototype = {
             y = bottomBorder;
         }
 
-        if (x == this.Dst.X && y == this.Dst.Y)
+        if (x == this.dst.x && y == this.dst.y)
             return;
 
         game.network.send("set-dst", {x, y});
         game.controller.resetAction();
-        this.dst.x = x;
-        this.dst.y = y;
         this.dst.radius = 9;
         this.dst.time = Date.now();
-        this.updateVelocity(x, y);
+        this.updateDst(x, y);
     },
-    updateVelocity: function(x = this.Dst.X, y = this.Dst.Y) {
+    updateDst: function(x, y) {
+        this.dst.x = x;
+        this.dst.y = y;
         this.velocity.set(x, y).sub(this).normalize();
     },
     getDrawPoint: function() {
@@ -1412,7 +1419,7 @@ Character.prototype = {
         }
 
         var p = new Point(this);
-        var dst = new Point(this.Dst.X, this.Dst.Y);
+        var dst = new Point(this.dst.x, this.dst.y);
         var distToDst = p.distanceTo(dst);
         if (distToDst < delta) {
             return dst;
@@ -1428,23 +1435,15 @@ Character.prototype = {
         if (this.mount)
             return;
 
-        if (this.X == this.Dst.X && this.Y == this.Dst.Y) {
+        if (this.X == this.dst.x && this.Y == this.dst.y) {
             return;
         }
 
         let p = this.findMovePosition(k);
-        if (p.x == this.Dst.X && p.y == this.Dst.Y) {
+        if (p.x == this.dst.x && p.y == this.dst.y) {
             this.setPos(p.x, p.y);
             this.stop();
         } else {
-            // const lerp = this._remote.clone();
-            // if (lerp.length() < 0.1) {
-            //     this._remote.set(0, 0);
-            // } else {
-            //     lerp.mul(0.05);
-            //     this._remote.sub(lerp);
-            // }
-            // p.sub(lerp);
             this.setPos(p.x, p.y);
         }
 
@@ -1530,11 +1529,12 @@ Character.prototype = {
     },
     isNear: function(entity) {
         const target = this.mount || this;
-        var padding = target.Radius * 2;
+        const correction = new Point(target).sub(target._remote).length();
+        const padding = target.Radius * 2 + correction;
 
-
-        if (entity.belongsTo(game.player))
+        if (entity.belongsTo(game.player)) {
             return true;
+        }
         if (entity.Width) {
             return util.rectIntersects(
                 entity.leftTopX() - padding,
@@ -1547,12 +1547,10 @@ Character.prototype = {
                 target.Height
             );
         }
+        const len_x = entity.X - target.X;
+        const len_y = entity.Y - target.Y;
 
-        var len_x = entity.X - target.X;
-        var len_y = entity.Y - target.Y;
-
-        var r = padding + Math.max(entity.Radius, Math.min(entity.Width, entity.Height) / 2) + 1;
-
+        const r = padding + Math.max(entity.Radius, Math.min(entity.Width, entity.Height) / 2) + 2;
         return util.distanceLessThan(len_x, len_y, r);
     },
     drawHovered: function(nameOnly) {

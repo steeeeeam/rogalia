@@ -76,6 +76,7 @@ function Panel(name, title, elements, hooks) {
     }
 
     this.entity = null;
+    this.visibilityCheck = true;
 }
 
 Panel.save = function() {
@@ -257,8 +258,12 @@ Panel.prototype = {
     fixHeight: function(h) {
         this.contents.style.minHeight = (h || this.height) + "px";
     },
+    setVisibilityCheck(value) {
+        this.visibilityCheck = value;
+        return this;
+    },
     updateVisibility: function() {
-        if (!this.visible || !this.entity)
+        if (!this.visible || !this.entity || !this.visibilityCheck)
             return;
 
         if (!game.player.canUse(this.entity)) {

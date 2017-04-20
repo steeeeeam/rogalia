@@ -1733,7 +1733,7 @@ T.dict = {
     "Small indulgence": "小さな免罪符",
     "Average indulgence": "免罪符",
     "Big indulgence": "大きな免罪符",
-    "First finish teleportaion quests from Plato": "プラトンのテレポーテーションクエストを終えてください。",
+    "First finish teleportation quests from Plato": "プラトンのテレポーテーションクエストを終えてください。",
     "You can return home only when you have Synod Protection": "教会の布教エリアにいる限り、家に帰還することができます。",
     "Attack": "攻撃",
     "Change faction?": "派閥を変更しますか？",
