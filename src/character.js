@@ -95,6 +95,9 @@ Character.prototype = {
     },
     set X(x) {},
     set Y(y) {},
+    get correction() {
+        return new Point(this).sub(this._remote).length();
+    },
     positionSyncRequired: function(x, y) {
         return (Math.abs(this.x - x) > CELL_SIZE) || (Math.abs(this.y - y) > CELL_SIZE);
     },
@@ -1530,8 +1533,7 @@ Character.prototype = {
     },
     isNear: function(entity) {
         const target = this.mount || this;
-        const correction = new Point(target).sub(target._remote).length();
-        const padding = target.Radius * 2 + correction;
+        const padding = target.Radius * 2 + target.correction;
 
         if (entity.belongsTo(game.player)) {
             return true;
@@ -1741,7 +1743,7 @@ Character.prototype = {
     },
     canUse: function(entity) {
         if (entity instanceof Character) {
-            return this.distanceTo(entity) < 2 * CELL_SIZE;
+            return this.distanceTo(entity) < 2*CELL_SIZE + this.correction;
         }
 
         switch (entity.Group) {
