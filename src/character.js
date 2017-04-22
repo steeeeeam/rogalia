@@ -1,4 +1,4 @@
-/* global util, CELL_SIZE, game, Point, Info, dom, T, Panel, Talks, BBox, loader, config, Avatar, Effect, TS, TT, Customization, ImageFilter, FONT_SIZE, astar, ContainerSlot, Quest */
+/* global util, CELL_SIZE, game, Point, Info, dom, T, Panel, Talks, BBox, loader, config, Avatar, Effect, TS, TT, Customization, ImageFilter, FONT_SIZE, astar, ContainerSlot, Quest, Sprite */
 
 "use strict";
 function Character(id) {
@@ -52,6 +52,7 @@ function Character(id) {
 
     this.Settings = {
         Pathfinding: true,
+        ObstacleaAvoidance: true,
     };
 
     this.ballon = null;
@@ -932,30 +933,30 @@ Character.prototype = {
             var arena = ("Arena" in this.Effects) && ("Arena" in game.player.Effects);
             if (arena && this.Citizenship.Faction != game.player.Citizenship.Faction) {
                 //full red rect
-                game.ctx.fillStyle = '#000';
+                game.ctx.fillStyle = "#000";
                 var pad = 2;
                 game.ctx.fillRect(p.x - w/2 - pad, y - pad, w + 2*pad, dy + 2*pad); //wtf
             }
 
-            game.ctx.fillStyle = '#333';
+            game.ctx.fillStyle = "#333";
             game.ctx.fillRect(p.x - w/2-1, y-1, w+2, dy+2); //wtf
 
             //full red rect
-            game.ctx.fillStyle = '#883527';
+            game.ctx.fillStyle = "#883527";
             game.ctx.fillRect(p.x - w/2, y, w, dy); //wtf
 
             //green hp
-            game.ctx.fillStyle = '#2ea237';
+            game.ctx.fillStyle = "#2ea237";
             game.ctx.fillRect(p.x - w/2, y, w * this.Hp.Current / this.Hp.Max, dy); //wtf
 
             if (this.Domestical && game.controller.modifier.shift) {
-                game.ctx.fillStyle = '#333';
+                game.ctx.fillStyle = "#333";
                 game.ctx.fillRect(p.x - w/2-1, y + dy-1, w+2, dy+2); //wtf
 
-                game.ctx.fillStyle = '#883527';
+                game.ctx.fillStyle = "#883527";
                 game.ctx.fillRect(p.x - w/2, y + dy, w, dy); //wtf
 
-                game.ctx.fillStyle = '#fea237';
+                game.ctx.fillStyle = "#fea237";
                 game.ctx.fillRect(p.x - w/2, y + dy, w * this.Fullness.Current / this.Fullness.Max, dy); //wtf
             }
 
@@ -1105,7 +1106,7 @@ Character.prototype = {
             ? "rgba(255, 255, 255, 0.3)"
             : "rgba(255, 0, 0, 0.3)";
 
-        const attackRadius = 1.5 * CELL_SIZE;
+        let attackRadius = 1.5 * CELL_SIZE;
         if (this.target) {
             const attackVector = new Point(game.controller.world.point).sub(new Point(game.player));
             const attackAngle = Math.atan2(-attackVector.y, attackVector.x);
@@ -1115,7 +1116,7 @@ Character.prototype = {
             if (diff > Math.PI) {
                 diff = 2*Math.PI - diff;
             }
-            if (diff < Math.PI/4 && this.distanceTo(this.target) < attackRadius) {
+            if (diff < Math.PI/4 && this.distanceTo(this.target) < attackRadius + this.target.Radius) {
                 game.ctx.fillStyle = "rgba(0, 255, 0, 0.3)";
             }
         }
@@ -1674,6 +1675,9 @@ Character.prototype = {
                 return;
             }
 
+            Character.npcActions.Talk.call(self);
+            // TODO: remove dead code if users will like the new behaviour
+            return;
             var actions = ["Talk"];
 
             if (quests.length > 0)

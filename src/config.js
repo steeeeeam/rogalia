@@ -13,6 +13,7 @@ var config = {
         hideHelmet: function() { return game.player.Style.HideHelmet; },
         rotateWasd: false,
         autoTarget: true,
+        obstacleAvoidance: function() { return game.player.Settings.ObstacleAvoidance; },
     },
     ui: {
         language: function(current) {
