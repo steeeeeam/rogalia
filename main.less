@@ -2556,12 +2556,18 @@ big {
         padding: 1px;
         margin-left: -2px;
 
-        &.avatar-non-player .avatar-image {
-            // transform-origin: bottom center;
-            // transform: scale(0.8);
-            img, canvas {
-                width: 60px;
-                margin-right: 2px;
+        &.avatar-non-player {
+            .avatar-main-icon {
+                left: -11px;
+            }
+
+            .avatar-image {
+                // transform-origin: bottom center;
+                // transform: scale(0.8);
+                img, canvas {
+                    width: 60px;
+                    margin-right: 2px;
+                }
             }
         }
 
@@ -2571,6 +2577,15 @@ big {
             justify-content: flex-end;
             border: @bg-transparent-border;
             box-sizing: border-box;
+
+            .avatar-main-icon {
+                position: absolute;
+                left: 0;
+                top: 0;
+                color: gold;
+                font-size: 24px;
+                z-index: 10;
+            }
 
             .avatar-info {
                 position: relative;

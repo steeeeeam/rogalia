@@ -17,7 +17,9 @@ class Avatar {
         const params = (character.isPlayer) ? ["Hp", "Fullness", "Stamina"] : ["Hp"];
         this.bars = params.map(param => new ParamBar(param, character[param]));
         this.name = this.makeName();
+        this.icon = dom.wrap("avatar-main-icon");
         const contents = dom.wrap("avatar-contents", [
+            this.icon,
             this.avatar,
             dom.wrap("avatar-info", [
                 this.name,
@@ -32,6 +34,7 @@ class Avatar {
     }
 
     setIcon(name) {
+        this.icon.textContent = name;
     }
 
     makeName(character = this.character) {

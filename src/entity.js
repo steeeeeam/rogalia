@@ -367,6 +367,7 @@ Entity.prototype = {
         case "steel-pike":
         case "hatstand":
         case "sandbox":
+        case "runebook":
             if (_.some(this.Props.Slots, (id) => id != 0)) {
                 path += "-full";
             }

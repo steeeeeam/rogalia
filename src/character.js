@@ -200,10 +200,6 @@ Character.prototype = {
         if ("AvailableQuests" in data) {
             this.updateActiveQuest();
         }
-        if ("Party" in data) {
-            this.updateParty(data.Party);
-        }
-
         if (data.ChatChannels) {
             game.chat && game.chat.updateChannels(data.ChatChannels);
         }
@@ -225,6 +221,10 @@ Character.prototype = {
 
             if (data.Style) {
                 game.controller.initPlayerAvatar(this);
+            }
+
+            if ("Party" in data) {
+                this.updateParty(data.Party);
             }
 
             if (data.ActiveQuests && game.controller.journal) {
@@ -250,14 +250,20 @@ Character.prototype = {
     updateParty: function(members) {
         var party = game.controller.party;
         dom.clear(party);
-        if (!members)
+        if (!members) {
+            game.controller.avatar.setIcon("");
             return;
+        }
 
         party.avatars = [];
+        const leader = members[0];
+        if (leader == game.player.Name) {
+            game.controller.avatar.setIcon("★");
+        }
         members.forEach(function(name, i) {
             if (name == game.playerName)
                 return;
-            var member = game.characters.get(name);
+            const member = game.characters.get(name);
             if (member) {
                 var avatar = new Avatar(member);
             } else {
@@ -277,7 +283,7 @@ Character.prototype = {
                 Character.partyLoadQueue[name] = true;
             }
             // party leader
-            if (i == 0 && party[0] != game.playerName) {
+            if (name == leader) {
                 avatar.setIcon("★");
             }
             party.appendChild(avatar.element);
