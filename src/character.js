@@ -113,7 +113,7 @@ Character.prototype = {
             return;
         }
 
-        if ((Math.abs(this.x - this._remote.x) < 2) || (Math.abs(this.y - this._remote-y) < 2)) {
+        if ((Math.abs(this.x - this._remote.x) < CELL_SIZE) || (Math.abs(this.y - this._remote-y) < CELL_SIZE)) {
             this.setPos(this._remote.x, this._remote.y);
             this.stop();
         } else {
@@ -1017,7 +1017,7 @@ Character.prototype = {
     animate: function() {
         var animation = "idle";
         var self = (this.mount) ? this.mount : this;
-        var position = (this.IsNpc) ? self.Dir : self.sprite.position;
+        var position = (this.IsNpc && !this.rider) ? self.Dir : self.sprite.position;
         if (self.sprite.angle == 0) {
             position = 0;
         } else if (self.sprite.angle == Math.PI/2 && position > 4) {
@@ -1048,6 +1048,13 @@ Character.prototype = {
         } else {
             switch (this.Action.Name) {
             case "attack":
+                if (self.sprite.angle) {
+                    // see this.sector()
+                    const angle = Math.PI/4;
+                    const alpha = this.AttackAngle + Math.PI;
+                    let sector = ((alpha + angle/2) / angle) << 0;
+                    position = (1 + sector + 8/2) % 8;
+                }
             case "dig":
                 animation = this.Action.Name;
                 break;
@@ -1060,8 +1067,9 @@ Character.prototype = {
             }
         }
 
-        if (this.mount)
+        if (this.mount) {
             animation = "ride";
+        }
 
         this.sprite = this.sprites[animation];
         this.sprite.position = position;

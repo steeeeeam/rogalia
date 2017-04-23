@@ -1583,11 +1583,12 @@ hr {
 }
 .message .body code:not([class]) {
     background: #5d6a71;
-    border-radius: 3px;
-    padding: 1px;
+    border-radius: 2px;
+    padding: 0 1px;
+    border: 1px solid #000;
     font-size: small;
     white-space: nowrap;
-    color: #fff;
+    color: @text-color;
 }
 .lmb, .rmb {
     width: 14px;
@@ -1640,14 +1641,23 @@ hl {
 
 .recipe-link, .marker-link {
     .cursor-pointer;
-    text-decoration: underline;
-    color: #272b2d;
-    background: #966137;
-    padding: 2px 4px;
-    border-radius: 3px;
+    color: orange;
+
+    &:before {
+        color: #ccc;
+        content: "[";
+    }
+    &:after {
+        color: #ccc;
+        content: "]";
+    }
+
+    &:hover {
+        color: lightgreen;
+    }
 }
 .marker-link {
-    color: #ссс;
+    color: magenta;
 }
 
 #users {
