@@ -186,7 +186,12 @@ Character.npcActions = {
     },
     "Talk": function() {
         var info = this.getTalks();
-        var panel = new Panel(
+        const actions = Object.keys(info.actions);
+        const quests = this.getQuests();
+        if (quests.length > 0) {
+            actions.push("Quest");
+        }
+        const panel = new Panel(
             "interaction",
             this.Name,
             [
@@ -197,23 +202,32 @@ Character.npcActions = {
                     ]),
                     dom.wrap("interaction-talk", util.mklist(info.talks).map(html => dom.tag("p", "", {html})))
                 ]),
-                dom.wrap("interaction-actions", Object.keys(info.actions).map((title, i) => {
-                    return dom.wrap(
-                        "interaction-talk-link",
-                        `${i+1}. ${info.actions[title]}`,
-                        {
-                            onclick: () =>  {
-                                panel.close();
-                                Character.npcActions[title].call(this);
-                            }
-                        }
-                    );
+                // TODO: remove obsolete links
+                // dom.wrap("interaction-actions", actions.map((title, i) => {
+                //     return dom.wrap(
+                //         "interaction-talk-link",
+                //         [
+                //             `${i+1}. `,
+                //             (title == "Quest") && dom.wrap("interaction-talk-quest", "(!)"),
+                //             info.actions[title] || T(title),
+                //         ],
+                //         {
+                //             onclick: () =>  {
+                //                 panel.close();
+                //                 Character.npcActions[title].call(this);
+                //             }
+                //         }
+                //     );
+                // })),
+                dom.wrap("interaction-buttons-1", actions.map(title => {
+                    const cls = (title == "Quest") ? "quest-button" : "";
+                    return dom.button(T(title), cls, () => {
+                        panel.close();
+                        Character.npcActions[title].call(this);
+                    });
                 })),
             ]
-        );
-        panel.entity = this;
-        panel.show();
-
+        ).setEntity(this).show();
     },
     "Trade": function() {
         game.controller.vendor.open(this);

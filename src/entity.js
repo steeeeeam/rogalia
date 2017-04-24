@@ -1,4 +1,4 @@
-/* global dom, T, util, game, Panel, config, Point, Container, Character, BBox, TS, Permission, ParamBar, SlotMachine, CELL_SIZE, Sprite, ImageFilter, FONT_SIZE, ContainerSlot */
+/* global dom, T, util, game, Panel, config, Point, Container, Character, BBox, TS, Permission, ParamBar, SlotMachine, CELL_SIZE, Sprite, ImageFilter, FONT_SIZE, ContainerSlot, Sockets */
 
 "use strict";
 function Entity(type, id) {
@@ -59,7 +59,7 @@ Entity.prototype = {
     },
     get name() {
         var name = "";
-        if (this.Type.contains("-corpse") || this.Type == "head") {
+        if (this.Type.contains("-corpse") || this.Type == "head" || this.Type == "rune") {
             name = this.Name;
         } else if (this.Type == "parcel") {
             var match = this.Name.match(/^(.*)-((?:fe)?male)$/);
@@ -217,57 +217,7 @@ Entity.prototype = {
         }
 
         if (this.Sockets) {
-            elements.push(dom.wrap("item-info-sockets slots-wrapper", this.Sockets.map((id, socket) => {
-                const slot = new ContainerSlot({panel, entity: {}, inspect: true});
-                slot.element.classList.add("socket-" + ["yellow", "green", "blue", "red", "black"][socket]);
-                switch (id) {
-                case 0:
-                    slot.lock();
-                    slot.element.onclick = () => {
-                        game.popup.confirm(T("Unlock?"), () => {
-                            game.network.send("socket", {
-                                Action: "unlock",
-                                Id: this.Id,
-                                Socket: socket
-                            });
-                        });
-                    };
-                    break;
-                case -1:
-                    slot.element.check = ({entity}) => entity.is("jewel");
-                    slot.element.use = (entity) => {
-                        game.popup.confirm(T("Encrust?"), () => {
-                            const slot = Container.getEntitySlot(entity);
-                            if (slot) {
-                                slot.unlock();
-                            }
-                            game.network.send("socket", {
-                                Action: "encrust",
-                                Id: this.Id,
-                                Jewel: entity.Id,
-                                Socket: socket
-                            });
-                        });
-                        return true;
-                    };
-                    break;
-                default:
-                    const jewel = Entity.get(id);
-                    if (jewel) {
-                        slot.set(jewel);
-                    }
-                    slot.element.onclick = () => {
-                        game.popup.confirm(T("Purify?"), () => {
-                            game.network.send("socket", {
-                                Action: "purify",
-                                Id: this.Id,
-                                Socket: socket
-                            });
-                        });
-                    };
-                }
-                return slot.element;
-            })));
+            elements.push(new Sockets(this, panel));
         }
 
         elements.push(dom.hr());
@@ -282,7 +232,10 @@ Entity.prototype = {
             elements.push(Permission.make(this.Id, this.Perm));
         }
 
-        var panel = new Panel("item-info", TS(this.Name), elements).setEntity(this).show();
+        var panel = new Panel("item-info", TS(this.Name), elements)
+            .setEntity(this)
+            .setVisibilityCheck(false)
+            .show();
     },
     nonEffective: function() {
         if (!this.EffectiveParam || this.Lvl <= 1) {
@@ -414,6 +367,7 @@ Entity.prototype = {
         case "steel-pike":
         case "hatstand":
         case "sandbox":
+        case "runebook":
             if (_.some(this.Props.Slots, (id) => id != 0)) {
                 path += "-full";
             }
@@ -524,6 +478,35 @@ Entity.prototype = {
         if (this.canBeEquipped()) {
             actions[0]["To equip"] = this.equip;
         }
+
+        switch (this.Group) {
+        case "runebook":
+            actions[1]["teleport"] = () => {
+                new Panel("runebook", "Runebook", makeRunebook(this)).show();
+                function makeRunebook(runebook) {
+                    const party = game.player.Party;
+                    if (!party) {
+                        return T("You must be in the party");
+                    }
+                    const runes = runebook.Props.Slots
+                          .filter(slot => slot != 0)
+                          .map(Entity.get)
+                        .filter(rune => party.includes(rune.Name));
+
+                    if (runes.length == 0) {
+                        return T("No party members with available runes");
+                    }
+
+                    return runes.map(rune => {
+                        return dom.button(rune.Name, "", () => {
+                            rune.actionApplySimple("Activate");
+                        });
+                    });
+                }
+            };
+            break;
+        }
+
 
         this.Actions.forEach(action => {
             actions[1][action] = this.actionApply(action);
@@ -1004,7 +987,7 @@ Entity.prototype = {
         if (this.Group == "gate" || this.Type.indexOf("-arc") != -1) {
             return (this.CanCollide) ? "violet" : "magenta";
         }
-        return ""; //default
+        return "rgba(0, 0, 0, 0.5)";
     },
     drawCenter: function() {
         var p = this.screen();
@@ -1333,7 +1316,9 @@ Entity.prototype = {
             game.controller.cursor.set(this);
             break;
         default:
-            game.controller.creatingCursor(new Entity(this.Spell, this.Id), "cast");
+            const spell = new Entity(this.Spell, this.Id);
+            spell.initSprite();
+            game.controller.creatingCursor(spell, "cast");
         }
     },
     claimControls: function() {

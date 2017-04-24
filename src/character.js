@@ -1,4 +1,4 @@
-/* global util, CELL_SIZE, game, Point, Info, dom, T, Panel, Talks, BBox, loader, config, Avatar, Effect, TS, TT, Customization, ImageFilter, FONT_SIZE, astar, ContainerSlot, Quest */
+/* global util, CELL_SIZE, game, Point, Info, dom, T, Panel, Talks, BBox, loader, config, Avatar, Effect, TS, TT, Customization, ImageFilter, FONT_SIZE, astar, ContainerSlot, Quest, Sprite */
 
 "use strict";
 function Character(id) {
@@ -52,6 +52,7 @@ function Character(id) {
 
     this.Settings = {
         Pathfinding: true,
+        ObstacleaAvoidance: true,
     };
 
     this.ballon = null;
@@ -94,15 +95,29 @@ Character.prototype = {
     },
     set X(x) {},
     set Y(y) {},
+    get correction() {
+        return new Point(this).sub(this._remote).length();
+    },
     positionSyncRequired: function(x, y) {
         return (Math.abs(this.x - x) > CELL_SIZE) || (Math.abs(this.y - y) > CELL_SIZE);
     },
     syncPosition: function(x, y) {
+        this._remote.set(x, y);
         if (this.positionSyncRequired(x, y)) {
             this.setPos(x, y);
-            // this._remote.set(0, 0);
+        }
+    },
+    syncDst(x, y) {
+        if (x != 0 || y != 0) {
+            this.updateDst(x, y);
+            return;
+        }
+
+        if ((Math.abs(this.x - this._remote.x) < CELL_SIZE) || (Math.abs(this.y - this._remote-y) < CELL_SIZE)) {
+            this.setPos(this._remote.x, this._remote.y);
+            this.stop();
         } else {
-            // this._remote.set(x, y).sub(this);
+            this.updateDst(this._remote.x, this._remote.y);
         }
     },
     getZ: function() {
@@ -156,8 +171,8 @@ Character.prototype = {
             this.syncPosition(data.X, data.Y);
         }
 
-        if (data.Dst && (data.Dst.X != 0 || data.Dst.Y != 0)) {
-            this.updateVelocity(data.Dst.X, data.Dst.Y);
+        if (data.Dst) {
+            this.syncDst(data.Dst.X, data.Dst.Y);
         }
 
         if (data.Messages) {
@@ -178,17 +193,13 @@ Character.prototype = {
             this.reloadSprite();
         }
 
-        if (data.Dir !== undefined) {
+        if ("Dir" in data) {
             this.sprite.position = data.Dir;
         }
 
-        if (data.AvailableQuests) {
+        if ("AvailableQuests" in data) {
             this.updateActiveQuest();
         }
-        if (data.Party) {
-            this.updateParty(data.Party);
-        }
-
         if (data.ChatChannels) {
             game.chat && game.chat.updateChannels(data.ChatChannels);
         }
@@ -210,6 +221,10 @@ Character.prototype = {
 
             if (data.Style) {
                 game.controller.initPlayerAvatar(this);
+            }
+
+            if ("Party" in data) {
+                this.updateParty(data.Party);
             }
 
             if (data.ActiveQuests && game.controller.journal) {
@@ -235,14 +250,20 @@ Character.prototype = {
     updateParty: function(members) {
         var party = game.controller.party;
         dom.clear(party);
-        if (!members)
+        if (!members) {
+            game.controller.avatar.setIcon("");
             return;
+        }
 
         party.avatars = [];
+        const leader = members[0];
+        if (leader == game.player.Name) {
+            game.controller.avatar.setIcon("★");
+        }
         members.forEach(function(name, i) {
             if (name == game.playerName)
                 return;
-            var member = game.characters.get(name);
+            const member = game.characters.get(name);
             if (member) {
                 var avatar = new Avatar(member);
             } else {
@@ -262,7 +283,7 @@ Character.prototype = {
                 Character.partyLoadQueue[name] = true;
             }
             // party leader
-            if (i == 0 && party[0] != game.playerName) {
+            if (name == leader) {
                 avatar.setIcon("★");
             }
             party.appendChild(avatar.element);
@@ -583,18 +604,18 @@ Character.prototype = {
             y = bottomBorder;
         }
 
-        if (x == this.Dst.X && y == this.Dst.Y)
+        if (x == this.dst.x && y == this.dst.y)
             return;
 
         game.network.send("set-dst", {x, y});
         game.controller.resetAction();
-        this.dst.x = x;
-        this.dst.y = y;
         this.dst.radius = 9;
         this.dst.time = Date.now();
-        this.updateVelocity(x, y);
+        this.updateDst(x, y);
     },
-    updateVelocity: function(x = this.Dst.X, y = this.Dst.Y) {
+    updateDst: function(x, y) {
+        this.dst.x = x;
+        this.dst.y = y;
         this.velocity.set(x, y).sub(this).normalize();
     },
     getDrawPoint: function() {
@@ -921,30 +942,30 @@ Character.prototype = {
             var arena = ("Arena" in this.Effects) && ("Arena" in game.player.Effects);
             if (arena && this.Citizenship.Faction != game.player.Citizenship.Faction) {
                 //full red rect
-                game.ctx.fillStyle = '#000';
+                game.ctx.fillStyle = "#000";
                 var pad = 2;
                 game.ctx.fillRect(p.x - w/2 - pad, y - pad, w + 2*pad, dy + 2*pad); //wtf
             }
 
-            game.ctx.fillStyle = '#333';
+            game.ctx.fillStyle = "#333";
             game.ctx.fillRect(p.x - w/2-1, y-1, w+2, dy+2); //wtf
 
             //full red rect
-            game.ctx.fillStyle = '#883527';
+            game.ctx.fillStyle = "#883527";
             game.ctx.fillRect(p.x - w/2, y, w, dy); //wtf
 
             //green hp
-            game.ctx.fillStyle = '#2ea237';
+            game.ctx.fillStyle = "#2ea237";
             game.ctx.fillRect(p.x - w/2, y, w * this.Hp.Current / this.Hp.Max, dy); //wtf
 
             if (this.Domestical && game.controller.modifier.shift) {
-                game.ctx.fillStyle = '#333';
+                game.ctx.fillStyle = "#333";
                 game.ctx.fillRect(p.x - w/2-1, y + dy-1, w+2, dy+2); //wtf
 
-                game.ctx.fillStyle = '#883527';
+                game.ctx.fillStyle = "#883527";
                 game.ctx.fillRect(p.x - w/2, y + dy, w, dy); //wtf
 
-                game.ctx.fillStyle = '#fea237';
+                game.ctx.fillStyle = "#fea237";
                 game.ctx.fillRect(p.x - w/2, y + dy, w * this.Fullness.Current / this.Fullness.Max, dy); //wtf
             }
 
@@ -996,8 +1017,7 @@ Character.prototype = {
     animate: function() {
         var animation = "idle";
         var self = (this.mount) ? this.mount : this;
-        var position = self.sprite.position;
-
+        var position = (this.IsNpc && !this.rider) ? self.Dir : self.sprite.position;
         if (self.sprite.angle == 0) {
             position = 0;
         } else if (self.sprite.angle == Math.PI/2 && position > 4) {
@@ -1028,6 +1048,13 @@ Character.prototype = {
         } else {
             switch (this.Action.Name) {
             case "attack":
+                if (self.sprite.angle) {
+                    // see this.sector()
+                    const angle = Math.PI/4;
+                    const alpha = this.AttackAngle + Math.PI;
+                    let sector = ((alpha + angle/2) / angle) << 0;
+                    position = (1 + sector + 8/2) % 8;
+                }
             case "dig":
                 animation = this.Action.Name;
                 break;
@@ -1040,8 +1067,9 @@ Character.prototype = {
             }
         }
 
-        if (this.mount)
+        if (this.mount) {
             animation = "ride";
+        }
 
         this.sprite = this.sprites[animation];
         this.sprite.position = position;
@@ -1087,9 +1115,15 @@ Character.prototype = {
         }
     },
     drawAttackRadius: function(angle = this.AttackAngle) {
-        game.ctx.strokeStyle = game.ctx.fillStyle = (this.isPlayer) ?
-            "rgba(255, 255, 255, 0.4)"
-            : "rgba(255, 0, 0, 0.2)";
+        game.ctx.strokeStyle = (this.isPlayer)
+            ? "rgba(0, 255, 0, 0.4)"
+            : "rgba(255, 0, 0, 0.4)";
+
+        game.ctx.fillStyle = (this.isPlayer)
+            ? "rgba(255, 255, 255, 0.3)"
+            : "rgba(255, 0, 0, 0.3)";
+
+        let attackRadius = 1.5 * CELL_SIZE;
         if (this.target) {
             const attackVector = new Point(game.controller.world.point).sub(new Point(game.player));
             const attackAngle = Math.atan2(-attackVector.y, attackVector.x);
@@ -1099,14 +1133,14 @@ Character.prototype = {
             if (diff > Math.PI) {
                 diff = 2*Math.PI - diff;
             }
-            if (diff < Math.PI/4 && this.distanceTo(this.target) < 2*CELL_SIZE) {
-                game.ctx.strokeStyle = game.ctx.fillStyle = "rgba(0, 255, 0, 0.4)";
+            if (diff < Math.PI/4 && this.distanceTo(this.target) < attackRadius + this.target.Radius) {
+                game.ctx.fillStyle = "rgba(0, 255, 0, 0.3)";
             }
         }
         const start = -angle - Math.PI/4;
         const end = -angle + Math.PI/4;
-        game.iso.fillSector(this.X, this.Y, 2*CELL_SIZE, start, end);
-        game.iso.strokeSector(this.X, this.Y, 2*CELL_SIZE, start, end);
+        game.iso.fillSector(this.X, this.Y, attackRadius, start, end);
+        game.iso.strokeSector(this.X, this.Y, attackRadius, start, end);
     },
     toggleActionSound: function() {
         if (this.action.name)
@@ -1403,7 +1437,7 @@ Character.prototype = {
         }
 
         var p = new Point(this);
-        var dst = new Point(this.Dst.X, this.Dst.Y);
+        var dst = new Point(this.dst.x, this.dst.y);
         var distToDst = p.distanceTo(dst);
         if (distToDst < delta) {
             return dst;
@@ -1419,23 +1453,15 @@ Character.prototype = {
         if (this.mount)
             return;
 
-        if (this.X == this.Dst.X && this.Y == this.Dst.Y) {
+        if (this.X == this.dst.x && this.Y == this.dst.y) {
             return;
         }
 
         let p = this.findMovePosition(k);
-        if (p.x == this.Dst.X && p.y == this.Dst.Y) {
+        if (p.x == this.dst.x && p.y == this.dst.y) {
             this.setPos(p.x, p.y);
             this.stop();
         } else {
-            // const lerp = this._remote.clone();
-            // if (lerp.length() < 0.1) {
-            //     this._remote.set(0, 0);
-            // } else {
-            //     lerp.mul(0.05);
-            //     this._remote.sub(lerp);
-            // }
-            // p.sub(lerp);
             this.setPos(p.x, p.y);
         }
 
@@ -1521,11 +1547,11 @@ Character.prototype = {
     },
     isNear: function(entity) {
         const target = this.mount || this;
-        var padding = target.Radius * 2;
+        const padding = target.Radius * 2 + target.correction;
 
-
-        if (entity.belongsTo(game.player))
+        if (entity.belongsTo(game.player)) {
             return true;
+        }
         if (entity.Width) {
             return util.rectIntersects(
                 entity.leftTopX() - padding,
@@ -1538,12 +1564,10 @@ Character.prototype = {
                 target.Height
             );
         }
+        const len_x = entity.X - target.X;
+        const len_y = entity.Y - target.Y;
 
-        var len_x = entity.X - target.X;
-        var len_y = entity.Y - target.Y;
-
-        var r = padding + Math.max(entity.Radius, Math.min(entity.Width, entity.Height) / 2) + 1;
-
+        const r = padding + Math.max(entity.Radius, Math.min(entity.Width, entity.Height) / 2) + 2;
         return util.distanceLessThan(len_x, len_y, r);
     },
     drawHovered: function(nameOnly) {
@@ -1667,6 +1691,9 @@ Character.prototype = {
                 return;
             }
 
+            Character.npcActions.Talk.call(self);
+            // TODO: remove dead code if users will like the new behaviour
+            return;
             var actions = ["Talk"];
 
             if (quests.length > 0)
@@ -1730,7 +1757,7 @@ Character.prototype = {
     },
     canUse: function(entity) {
         if (entity instanceof Character) {
-            return this.distanceTo(entity) < 2 * CELL_SIZE;
+            return this.distanceTo(entity) < 2*CELL_SIZE + this.correction;
         }
 
         switch (entity.Group) {

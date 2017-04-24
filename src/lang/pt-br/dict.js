@@ -1741,7 +1741,7 @@ T.dict = {
     "Small indulgence": "Pequena indulgência",
     "Average indulgence": "Média indulgência",
     "Big indulgence": "Grande indulgência",
-    "First finish teleportaion quests from Plato": "Primeiro, termine a missão do Plato",
+    "First finish teleportation quests from Plato": "Primeiro, termine a missão do Plato",
     "You can return home only when you have Synod Protection": "Você pode voltar pra casa quando estiver com a Proteção do Clérigo.",
     "Attack": "Atacar",
     "Shredder": "Triturador",

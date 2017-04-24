@@ -86,6 +86,10 @@ function Settings() {
             setPlayerStyle();
             game.player.reloadSprite();
         },
+        "settings.character.obstacleAvoidance": function() {
+            game.player.Settings.ObstacleAvoidance = !game.player.Settings.ObstacleAvoidance;
+            setPlayerSettings();
+        },
     };
 }
 

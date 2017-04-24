@@ -11,7 +11,7 @@
 }
 
 .font-default() {
-    font:  13px/18px Dejavu Sans, Sans;
+    font:  13px/18px Meiryo, Dejavu Sans, Sans;
 }
 
 .allow-user-select() {
@@ -1583,11 +1583,12 @@ hr {
 }
 .message .body code:not([class]) {
     background: #5d6a71;
-    border-radius: 3px;
-    padding: 1px;
+    border-radius: 2px;
+    padding: 0 1px;
+    border: 1px solid #000;
     font-size: small;
     white-space: nowrap;
-    color: #fff;
+    color: @text-color;
 }
 .lmb, .rmb {
     width: 14px;
@@ -1640,14 +1641,23 @@ hl {
 
 .recipe-link, .marker-link {
     .cursor-pointer;
-    text-decoration: underline;
-    color: #272b2d;
-    background: #966137;
-    padding: 2px 4px;
-    border-radius: 3px;
+    color: orange;
+
+    &:before {
+        color: #ccc;
+        content: "[";
+    }
+    &:after {
+        color: #ccc;
+        content: "]";
+    }
+
+    &:hover {
+        color: lightgreen;
+    }
 }
 .marker-link {
-    color: #ссс;
+    color: magenta;
 }
 
 #users {
@@ -2556,12 +2566,18 @@ big {
         padding: 1px;
         margin-left: -2px;
 
-        &.avatar-non-player .avatar-image {
-            // transform-origin: bottom center;
-            // transform: scale(0.8);
-            img, canvas {
-                width: 60px;
-                margin-right: 2px;
+        &.avatar-non-player {
+            .avatar-main-icon {
+                left: -11px;
+            }
+
+            .avatar-image {
+                // transform-origin: bottom center;
+                // transform: scale(0.8);
+                img, canvas {
+                    width: 60px;
+                    margin-right: 2px;
+                }
             }
         }
 
@@ -2571,6 +2587,15 @@ big {
             justify-content: flex-end;
             border: @bg-transparent-border;
             box-sizing: border-box;
+
+            .avatar-main-icon {
+                position: absolute;
+                left: 0;
+                top: 0;
+                color: gold;
+                font-size: 24px;
+                z-index: 10;
+            }
 
             .avatar-info {
                 position: relative;
@@ -3709,6 +3734,7 @@ input[type=number], .lot-quantity > input, .price > input {
             p {
                 margin: 0 0 10px 0;
             }
+
         }
 
         .interaction-npc-avatar {
@@ -3729,6 +3755,13 @@ input[type=number], .lot-quantity > input, .price > input {
         &:hover {
             color: lightgreen;
         }
+
+        .interaction-talk-quest {
+            display: inline;
+            color: yellow;
+            margin-right: 3px;
+        }
+
     }
 }
 
@@ -3928,7 +3961,7 @@ input[type=number], .lot-quantity > input, .price > input {
 
     .products {
 	height: 436px;
-	font: 12px/22px Dejavu Sans, Sans-serif;
+	font: 12px/22px Meiryo, Dejavu Sans, Sans-serif;
     }
 
     .product-tag {

@@ -61,6 +61,7 @@
     "./src/entity.js",
     "./src/entities.js",
     "./src/info.js",
+    "./src/sockets.js",
     "./src/character.js",
     "./src/characters.js",
     "./src/character-sprites.js",
