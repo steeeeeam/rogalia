@@ -755,7 +755,7 @@ Character.prototype = {
         }
     },
     drawAura: function() {
-        if (config.ui.showAttackRadius && this.sprite.name == "attack")
+        if (config.ui.showAttackRadius && this.Action.Name == "attack")
             this.drawAttackRadius();
 
         if (this.isPlayer && game.controller.modifier.shift && game.controller.modifier.ctrl) {

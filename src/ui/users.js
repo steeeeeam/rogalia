@@ -147,24 +147,29 @@ class Battleground {
         this.inQueue = false;
         this.enqueueButton = dom.button(T("Find battle"), "", () => this.enqueue());
         this.cancelButton = dom.button(T("Cancel"), "", () => this.cancel());
-        this.contents = dom.wrap("battleground", this.enqueueButton);
+        this.modes = ["1x1", "2x2"].map(mode => dom.input(mode, true, "radio", "battleground-mode", true));
+        this.modes[0].checked = true;
+        this.contents = dom.wrap("battleground", [
+            dom.wrap("battleground-modes", this.modes.map(mode => mode.label)),
+            this.enqueueButton,
+        ]);
     }
 
     cancel() {
-        game.network.send("battleground", {Action: "cancel"}, () => {
-            this.reset();
-
-        });
+        game.network.send("battleground", {Action: "cancel"}, () => this.reset());
     }
 
     enqueue() {
-        game.network.send("battleground", {Action: "enqueue"}, () => {
-            dom.setContents(this.contents, this.cancelButton);
+        const mode = this.modes.find(mode => mode.checked).label.textContent;
+        game.network.send("battleground", {Action: "enqueue", Mode: mode}, () => {
+            this.modes.forEach(mode => mode.disabled = true);
+            dom.replace(this.enqueueButton, this.cancelButton);
         });
     }
 
     reset() {
-        dom.setContents(this.contents, this.enqueueButton);
+        this.modes.forEach(mode => mode.disabled = false);
+        dom.replace(this.cancelButton, this.enqueueButton);
     }
 
     confirm() {
