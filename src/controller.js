@@ -13,6 +13,22 @@ function Controller(game) {
     this.xpBar = new ParamBar("XP");
     this.effects = new Effects();
 
+    this.fight = null;
+    this.skills = null;
+    this.stats = null;
+    this.craft = null;
+    this.chat = null;
+    this.minimap = null;
+    this.journal = null;
+    this.system = null;
+    this.help = null;
+    this.auction = null;
+    this.vendor = null;
+    this.mail = null;
+    this.shop = null;
+    this.trade = null;
+    this.users = null;
+
     this.LMB = 0;
     this.MMB = 1;
     this.RMB = 2;

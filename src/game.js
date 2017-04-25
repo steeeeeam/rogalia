@@ -355,7 +355,8 @@ class Game {
         this.clearCredentials();
         // force save here, becuase nwjs onClose handler is broken
         this.save();
-        require("nw.gui").App.closeAllWindows();
+        const gui = require("nw.gui");
+        gui.App.quit();
     }
 
     update(currentTime) {

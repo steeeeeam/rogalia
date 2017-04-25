@@ -570,6 +570,7 @@ Entity.prototype = {
         p.x -= w/2;
         p.y -= h/2;
         p.align(align);
+
         return {
             x: p.x,
             y: p.y,
@@ -987,7 +988,7 @@ Entity.prototype = {
         if (this.Group == "gate" || this.Type.indexOf("-arc") != -1) {
             return (this.CanCollide) ? "violet" : "magenta";
         }
-        return "rgba(0, 0, 0, 0.5)";
+        return "rgba(255, 255, 255, 0.5)";
     },
     drawCenter: function() {
         var p = this.screen();

@@ -34,7 +34,7 @@ Entity.usable = function(entity) {
     return _.includes(["label"], entity.Group);
 };
 
-Entity.norelocate = ["blank", "claim", "exit", "entrance", "plant"];
+Entity.norelocate = ["blank", "claim", "exit", "entrance", "plant", "portal"];
 Entity.canRelocate = function(entity) {
     return entity.MoveType == Entity.MT_STATIC &&
         entity.Creator &&
@@ -197,7 +197,9 @@ Entity.getPreview = function(kind, cls = "item-preview") {
         "twig": "birch-tree-twig" ,
         "stick": "birch-tree-stick" ,
     }[kind];
-    const tmpl = (def) ? Entity.templates[def] : _.find(Entity.templates, (tmpl) => tmpl.is(kind));
+    const tmpl = (def)
+          ? Entity.templates[def]
+          : Entity.templates[kind] || _.find(Entity.templates, (tmpl) => tmpl.is(kind));
     const preview = tmpl.icon();
     preview.classList.add(cls);
     return preview;
