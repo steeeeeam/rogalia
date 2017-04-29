@@ -85,12 +85,12 @@ function Users() {
 
     this.battleground = new Battleground();
 
-    this.tabs = dom.tabs([
+    this.tabs = dom.tabs(_.compact([
         {
             title: T("PVP"),
             contents: this.battleground.contents,
         },
-        {
+        game.player.IsAdmin && {
             title: T("Online players"),
             update: makeTabUpdate("player-list", "OnlinePlayers", "")
         },
@@ -102,7 +102,7 @@ function Users() {
             title: T("Blacklist"),
             update: makeTabUpdate("blacklist-list", "Blacklist", "Blacklist is empty")
         }
-    ]);
+    ]));
 
     this.panel = new Panel(
         "users",

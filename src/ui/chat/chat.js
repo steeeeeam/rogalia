@@ -1,4 +1,4 @@
-/* global dom, Panel, game, TT, config, util, TS, T, ChatRing, Settings, Character, playerStorage */
+/* global dom, Panel, game, TT, config, util, TS, T, ChatRing, Settings, Character, playerStorage, CELL_SIZE */
 
 "use strict";
 function Chat() {
@@ -169,16 +169,15 @@ function Chat() {
 
     function onmousedown(e) {
         if (e.target.classList.contains("recipe-link")) {
-            game.controller.craft.search(e.target.dataset.recipe, true);
+            game.controller.craft.searchOrHelp(e.target.dataset.recipe);
             return true;
         }
 
         if (e.target.classList.contains("marker-link")) {
-            var marker = e.target.dataset.marker.split(" ");
-            var x = marker.shift();
-            var y = marker.shift();
-            var title = marker.join(" ");
-            game.controller.minimap.addMarker(x, y, title);
+            var [x, y, z, ...title] = e.target.dataset.marker.split(" ");
+            game.controller.minimap.addMarker(x, y, z, title.join(" "));
+            game.controller.minimap.selectLevel(z);
+            game.controller.minimap.focusOn(x * CELL_SIZE, y * CELL_SIZE);
             game.controller.minimap.panel.show();
             return true;
         }
@@ -347,18 +346,33 @@ function Chat() {
                     e.target.blur();
                     break;
                 }
-                new Panel("add", arg, dom.scrollable(
-                        "#admin-add",
+                new Panel("admin-add", arg, dom.scrollable(
+                        "",
                         _.filter(
                             Entity.templates,
                             (entity, type) => entity.Type.contains(arg) || entity.title.contains(arg)
                         ).map(entity =>  {
-                            return dom.button(
-                                entity.title + " / " + entity.Type,
-                                "add-entity-button", () =>  {
-                                    game.controller.newCreatingCursor(entity.Type);
-                                }
-                            );
+                            const preview = new Entity(entity.Type);
+                            const tmpl = Entity.templates[entity.Type];
+                            let icon = preview.icon();
+                            return dom.wrap("add-entity-preview", [
+                                dom.button(
+                                    entity.title + (
+                                        preview.Sprite.Variants ? ` (${preview.Sprite.Variants})` : ""
+                                    ),
+                                    "add-entity-button", () =>  {
+                                        game.controller.creatingCursor(preview);
+                                    }
+                                ),
+                                dom.wrap("", icon, {
+                                    onclick: () => {
+                                        console.log(preview.Variant, preview.Sprite.Variants);
+                                        preview.Variant = (preview.Variant % preview.Sprite.Variants) + 1;
+                                        preview.initSprite();
+                                        icon = dom.replace(icon, preview.icon());
+                                    }
+                                }),
+                            ]);
                         })
                 )).setTemporary(true).show();
                 break;
@@ -724,7 +738,7 @@ function Chat() {
 
     function markerParser(data) {
         var link = dom.link("", "", "marker-link");
-        var title = data.split(" ").slice(2).join(" ") || T("Marker");
+        var title = data.split(" ").slice(3).join(" ") || T("Marker");
         link.textContent = title;
         link.dataset.marker = data;
         return link;

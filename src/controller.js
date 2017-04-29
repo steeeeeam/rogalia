@@ -825,8 +825,9 @@ function Controller(game) {
     this.creatingCursor = function(entity, command = "entity-add", callback, cancel) {
         this.world.cursor = entity;
 
-        if (this.lastAction.type != entity.Type)
+        if (this.lastAction.type != entity.Type) {
             this.lastAction.rotation = 0;
+        }
 
         for (let i = 0; i < this.lastAction.rotation; i++) {
             this.world.cursor.rotate();
@@ -974,7 +975,7 @@ function Controller(game) {
                             }
                             return this.world.hovered.defaultAction(true);
                         } else if (this.modifier.alt && game.player.IsAdmin) {
-                            game.network.send("teleport", {X: this.world.x, Y: this.world.y});
+                            game.network.send("teleport", {X: this.world.x, Y: this.world.y, Z: game.player.Z});
                         } else if(!this.world.cursor) {
                             game.player.onclick(this.world.x, this.world.y);
                         }
@@ -1295,9 +1296,9 @@ function Controller(game) {
     };
 
     this.syncMinimap = function(data) {
-        if (!this.minimap)
-            return;
-        this.minimap.sync(data);
+        if (this.minimap) {
+            this.minimap.sync(data);
+        }
     };
 
     this.updateVisibility = function() {

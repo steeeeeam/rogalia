@@ -3,82 +3,189 @@
 "use strict";
 function Minimap() {
     var self = this;
-    var width = {
-        default: 300,
-        original: 0,
-        current: 0,
-    };
-    function scale() {
-        return width.current / width.original;
-    };
+    const defaultWidth = 300;
+    this.width = defaultWidth;
 
     this.mapImage = new Image();
-    this.mapImage.onload = function() {
-        width.original = self.mapImage.width;
-        width.current = width.default;
-        self.mapImage.width = width.default;
+    this.mapImage.id = "minimap-image";
+    this.mapImage.width = defaultWidth;
+    this.mapImage.onload = () => {
+        this.mapImage.width = this.width;
         loadMarkers();
+        this.rescale();
     };
 
-    this.mapImage.src = game.proto() + "//" + game.network.addr + "/map";
+    const scale = () => {
+        return this.mapImage.width / this.mapImage.naturalWidth;
+    };
 
     this.points = {};
     this.markers = {};
     this.characters = [];
 
-    var wrapper = dom.wrap("wrapper", this.mapImage);
+    const zoomPositionX = dom.wrap("zoom-position-x");
+    const zoomPositionY = dom.wrap("zoom-position-y");
 
-    var lvl = 0;
-    var zoom = dom.button(T("Zoom"), "", function() {
-        switch (lvl++) {
+    const wrapper = dom.wrap("wrapper", this.mapImage);
+
+    function updateZoomPosition() {
+        zoomPositionX.style.left = wrapper.scrollLeft / (wrapper.scrollWidth - wrapper.clientWidth) *
+            (wrapper.clientWidth - zoomPositionX.clientWidth) + "px";
+        zoomPositionY.style.top = wrapper.scrollTop / (wrapper.scrollHeight - wrapper.clientHeight) *
+            (wrapper.clientHeight - zoomPositionY.clientHeight)+ "px";
+
+    }
+
+    this.focusOn = (x, y) => {
+        wrapper.scrollLeft = x / game.map.full.width * this.mapImage.naturalWidth - defaultWidth;
+        wrapper.scrollTop = y / game.map.full.height * this.mapImage.naturalHeight - defaultWidth;
+        updateZoomPosition();
+    };
+
+    const centerPlayer = () => {
+        self.focusOn(game.player.X, game.player.Y);
+    };
+
+    let zoomLvl = 0;
+    const zoom = dom.button(T("Zoom"), "", () => {
+        switch (zoomLvl++) {
         case 0:
-            width.current *= 2;
+            this.width = this.mapImage.width *= 2;
             break;
         case 1:
-            wrapper.classList.add("zoom");
-            width.current = width.original;
+            wrapper.parentNode.classList.add("zoom");
+            this.width = this.mapImage.width = this.mapImage.naturalWidth;
+            centerPlayer();
             break;
         case 2:
-            width.current = width.default;
-            wrapper.classList.remove("zoom");
-            lvl = 0;
+            this.width = this.mapImage.width = defaultWidth;
+            wrapper.parentNode.classList.remove("zoom");
+            zoomLvl = 0;
             break;
         }
-        self.rescale();
-        self.mapImage.width = width.current;
+        this.rescale();
     });
+
+    const lvlUp = dom.button("↥", "", () => {
+        if (this.lvl > 0) {
+            this.selectLevel(this.lvl - 1);
+        }
+    });
+
+    const lvlDown = dom.button("↧", "", () => {
+        if (this.lvl < 3) {
+            this.selectLevel(this.lvl + 1);
+        }
+    });
+
+    const myLvl = dom.button("↺", "", () => {
+        this.selectLevel(game.player.Z);
+        centerPlayer();
+    });
+
+    const coord = dom.wrap("map-coord", this.lvl);
 
     function pointFromEvent(e) {
         var rect = e.target.getBoundingClientRect();
         return new Point(e.pageX - rect.left, e.pageY - rect.top).div(scale()).round();
     }
 
-    this.mapImage.onclick = function(e) {
+    const drag = {
+        x: 0,
+        y: 0,
+        active: false,
+    };
+    this.mapImage.onmousedown = (event) => {
+        drag.x = event.pageX;
+        drag.y = event.pageY;
+        drag.active = true;
+    };
+
+    window.addEventListener("mouseup", (event) => {
+        drag.active = false;
+    });
+
+    window.addEventListener("mousemove", (event) => {
+        if (drag.active) {
+            wrapper.scrollLeft -= event.movementX;
+            wrapper.scrollTop -= event.movementY;
+            updateZoomPosition();
+        }
+    });
+
+    this.mapImage.onclick = (e) => {
         if (game.controller.modifier.alt && game.player.IsAdmin) {
-            game.network.send("teleport", pointFromEvent(e).mul(CELL_SIZE).json());
+            const p = pointFromEvent(e).mul(CELL_SIZE);
+            game.network.send("teleport", {X: p.x, Y: p.y, Z: this.lvl});
             return;
         }
         var p = pointFromEvent(e);
-        var point = this.addMarker(p.x, p.y);
-        if (game.controller.modifier.shift)
+        var point = this.addMarker(p.x, p.y, this.lvl);
+        if (game.controller.modifier.shift) {
             sendPoint(point);
-    }.bind(this);
+        }
+    };
+
+    this.selectLevel = function(level, force = false) {
+        if (this.lvl != level) {
+            this.lvl = level;
+            const lvl = (this.lvl > 0 && this.lvl <= 3) ? "/" + this.lvl : "";
+            this.mapImage.src = game.proto() + "//" + game.network.addr + "/map" + lvl;
+            coord.textContent = this.lvl;
+        }
+    };
+
+    this.update = function() {
+        if (!this.panel || !this.panel.visible) {
+            return;
+        }
+
+        for (var name in this.characters) {
+            var character = this.characters[name];
+            if (character) {
+                this.syncObject(name, character);
+            }
+        }
+        this.syncObject("$corpse", game.player.Corpse);
+        this.syncObject("$respawn", game.player.Respawn);
+        game.player.Claims && game.player.Claims.forEach(c => this.syncObject("$claim", c));
+    };
+
+    this.lvl = undefined;
 
     this.panel = new Panel(
         "map",
         "Map",
-        [wrapper, zoom]
+        [
+            dom.wrap("map-container", [
+                wrapper,
+                zoomPositionX,
+                zoomPositionY,
+            ]),
+            zoom,
+            lvlUp,
+            lvlDown,
+            myLvl,
+            coord
+        ],
+        {
+            show: () => {
+                if (this.lvl === undefined) {
+                    this.selectLevel(game.player.Z);
+                }
+                this.update();
+            }
+        }
     );
 
     this.save = function() {
         saveMarkers();
     };
 
-    this.sync = function(data) {
-        data = data || {};
+    this.sync = function(data = {}) {
         this.characters = data;
         var pl = game.player;
-        this.characters[pl.Name] = {X: pl.X, Y: pl.Y};
+        this.characters[pl.Name] = {X: pl.X, Y: pl.Y, Z: pl.Z};
         for (var name in this.points) {
             if (name in data && data[name] == null) {
                 delete this.characters[name];
@@ -86,19 +193,17 @@ function Minimap() {
             }
         }
 
-        if (this.panel.visible)
+        if (this.panel.visible) {
             this.update();
+        }
     };
-
-    function addMarker(point) {
-        self.markers[point.name] = point;
-    }
 
     function saveMarkers() {
         var markers = _.map(self.markers, function(point) {
             return {
                 x: point.x,
                 y: point.y,
+                z: point.z,
                 title: point.title,
             };
         });
@@ -108,7 +213,7 @@ function Minimap() {
     function loadMarkers() {
         const markers = gameStorage.getItem("map.markers") || [];
         _.forEach(markers, function(point) {
-            self.addMarker(point.x, point.y, point.title);
+            self.addMarker(point.x, point.y, point.z, point.title);
         });
     }
 
@@ -123,9 +228,16 @@ function Minimap() {
         wrapper.appendChild(point);
     };
 
-    function updatePoint(point, x, y) {
+    function updatePoint(point, x, y, z) {
         point.x = x;
         point.y = y;
+        point.z = z;
+        if (z === null || z == self.lvl) {
+            dom.show(point);
+        } else {
+            dom.hide(point);
+            return;
+        }
         point.style.left = scale() * x + "px";
         point.style.top = scale() * y + "px";
         if (point.id == "player-point") {
@@ -137,8 +249,7 @@ function Minimap() {
                 diff += 360;
             deg = ((point.deg || 0) + diff);
             point.deg = deg;
-            point.style.WebkitTransform = "rotate(" + deg + "deg)";
-
+            point.style.transform = "rotate(" + deg + "deg)";
         }
     };
 
@@ -149,30 +260,15 @@ function Minimap() {
     };
 
     function sendPoint(point) {
-        var title = (point.title == point.name) ? "" : " " + point.title;
-        game.chat.link("${marker:" + point.x + " " + point.y + title +"}");
+        const title = (point.title == point.name) ? "" : " " + point.title;
+        game.chat.link("${marker:" + point.x + " " + point.y + " " + point.z + title +"}");
     }
 
     this.rescale = function() {
         for (var name in this.points) {
             var point = this.points[name];
-            updatePoint(point, point.x, point.y);
+            updatePoint(point, point.x, point.y, point.z);
         }
-    };
-
-    this.update = function() {
-        if (!this.panel.visible)
-            return;
-
-        for (var name in this.characters) {
-            var character = this.characters[name];
-            if (!character)
-                continue;
-            this.syncObject(name, character);
-        }
-        this.syncObject("$corpse", game.player.Corpse);
-        this.syncObject("$respawn", game.player.Respawn);
-        game.player.Claims && game.player.Claims.forEach(c => this.syncObject("$claim", c));
     };
 
     this.syncObject = function(name, object) {
@@ -212,19 +308,24 @@ function Minimap() {
 
             addPoint(name, point);
         }
-        updatePoint(point, x, y);
+        updatePoint(point, x, y, object.Z);
     };
 
-    this.addMarker = function(x, y, title) {
-        var name = x + " " + y;
-        if (name in this.points)
+    this.addMarker = function(x, y, z = null, title = "") {
+        let name = x + " " + y;
+        if (z !== null) {
+            name += " " + z;
+        }
+        if (name in this.points) {
             return this.points[name];
-        var point = makePoint(title || name);
+        }
+        const point = makePoint(title || name);
         point.classList.add("marker-point");
         point.name = name;
         addPoint(name, point);
-        updatePoint(point, x, y);
-        addMarker(point);
+        updatePoint(point, x, y, z);
+
+        this.markers[point.name] = point;
 
         point.onmousedown = function(e) {
             switch (e.button) {
@@ -245,6 +346,4 @@ function Minimap() {
         };
         return point;
     };
-
-    this.panel.hooks.show = this.update.bind(this);
 }

@@ -33,9 +33,19 @@
         "gulp-sourcemaps": "^2.2.0",
         "gulp-uglify": "^2.0.0",
         "less": "^2.7.1",
-        "nw-builder": "^3.1.2"
+        "nw-builder": "*"
     },
-    "dependencies": {},
+    "dependencies": {
+        "babel-core": "^6.24.1",
+        "babel-preset-es2015": "^6.24.1",
+        "gulp-concat": "^2.6.1",
+        "gulp-html-replace": "^1.6.2",
+        "gulp-less": "^3.3.0",
+        "gulp-sourcemaps": "^2.6.0",
+        "gulp-uglify": "^2.1.2",
+        "less": "^2.7.2",
+        "nw-builder": "^3.2.0"
+    },
     "chromium-args": "--in-process-gpu",
     "window": {
         "title": "Rogalia",
