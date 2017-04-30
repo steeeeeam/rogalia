@@ -12,6 +12,10 @@ function Controller(game) {
     this.avatar = null;
     this.xpBar = new ParamBar("XP");
     this.effects = new Effects();
+    this.quickBars = {
+        ctrl: null,
+        alt: null,
+    };
 
     this.fight = null;
     this.skills = null;
@@ -589,11 +593,18 @@ function Controller(game) {
         });
         [0, 1, 2, 3, 4, 5, 6, 7, 8, 9].forEach(function(key) {
             this.hotkeys[String(key).charCodeAt(0)] = {
+                allowedModifiers: ["ctrl", "alt"],
                 callback: function() {
                     if (game.menu.visible)
                         game.menu.activate(key);
-                    else if (key > 0 && key <= 5)
-                        this.fight.hotkey(key);
+                    else if (key > 0 && key <= 5) {
+                        if (this.modifier.ctrl)
+                            this.quickBars.ctrl.hotkey(key);
+                        else if (this.modifier.alt)
+                            this.quickBars.alt.hotkey(key);
+                        else
+                            this.fight.hotkey(key);
+                    }
                 }
             };
         }.bind(this));
@@ -672,7 +683,16 @@ function Controller(game) {
             this.fpsStats.end();
     };
 
+
     this.initInterface = function() {
+        ["ctrl", "alt"].forEach(modifier => {
+            const quickBar = new QuickBar(modifier);
+            this.quickBars[modifier] = quickBar;
+            document.getElementById(`hotbars-${modifier}`).onclick = () => {
+                quickBar.panel.toggle();
+            };
+        });
+
         game.map.minimapContainer.style.display = "block";
         game.timeElement.style.display = "block";
 
@@ -971,6 +991,7 @@ function Controller(game) {
                                 return false;
                             }
                             if (game.player.IsAdmin && game.debug.entity.logOnClick) {
+                                window.debugEntity = this.world.hovered;
                                 console.log(this.world.hovered);
                             }
                             return this.world.hovered.defaultAction(true);
@@ -1437,6 +1458,12 @@ function Controller(game) {
             });
             containers.forEach(check);
         }
+    };
+
+    this.save = function() {
+        this.craft && this.craft.save();
+        this.minimap && this.minimap.save();
+        _.forEach(this.quickBars, (bar) => bar.save());
     };
 
     this.ping = 0;

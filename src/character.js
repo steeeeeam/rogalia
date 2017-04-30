@@ -1118,13 +1118,17 @@ Character.prototype = {
         }
     },
     drawAttackRadius: function(angle = this.AttackAngle) {
-        game.ctx.strokeStyle = (this.isPlayer)
-            ? "rgba(0, 255, 0, 0.4)"
-            : "rgba(255, 0, 0, 0.4)";
+        if (this.isPlayer) {
+            game.ctx.strokeStyle = "rgba(0, 255, 0, 0.4)";
+            game.ctx.fillStyle = "rgba(255, 255, 255, 0.3)";
+        } else if (game.player.Party && game.player.Party.includes(this.Name)) {
+            game.ctx.strokeStyle = "rgba(50, 50, 255, 0.4)";
+            game.ctx.fillStyle = "rgba(50, 50, 255, 0.3)";
+        } else {
+            game.ctx.strokeStyle = "rgba(255, 0, 0, 0.4)";
+            game.ctx.fillStyle = "rgba(255, 0, 0, 0.3)";
+        }
 
-        game.ctx.fillStyle = (this.isPlayer)
-            ? "rgba(255, 255, 255, 0.3)"
-            : "rgba(255, 0, 0, 0.3)";
 
         let attackRadius = 1.5 * CELL_SIZE;
         if (this.target) {

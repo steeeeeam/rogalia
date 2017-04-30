@@ -654,8 +654,10 @@ Entity.prototype = {
     },
     queueAction(action, list) {
         if (list.length > 0) {
-            game.network.send(action, {Id: _.head(list).Id}, () => {
-                this.queueAction(action, _.tail(list));
+            game.network.send(action, {Id: _.head(list).Id}, ({Ok}) => {
+                if (Ok == 2) {
+                    this.queueAction(action, _.tail(list));
+                }
             });
         }
     },
@@ -881,7 +883,7 @@ Entity.prototype = {
             var text = "(" + (this.X) + " " + (this.Y) + ")";
             text += " id:" + this.Id;
             game.ctx.fillStyle = "#e2e9ec";
-            game.drawStrokedText(text, p.x, p.y);
+            game.drawStrokedText(text, this.X, this.Y);
         }
     },
     drawSprite: function() {
@@ -1307,11 +1309,11 @@ Entity.prototype = {
 
         this.initSprite();
     },
-    cast: function() {
+    cast: function(callback = undefined) {
         switch (this.Type) {
         case "scroll-of-town-portal":
         case "hunter-scroll":
-            game.network.send("cast", {Id: this.Id});
+            game.network.send("cast", {Id: this.Id}, callback);
             break;
         case "embracing-web-scroll":
             game.controller.cursor.set(this);
@@ -1319,7 +1321,7 @@ Entity.prototype = {
         default:
             const spell = new Entity(this.Spell, this.Id);
             spell.initSprite();
-            game.controller.creatingCursor(spell, "cast");
+            game.controller.creatingCursor(spell, "cast", callback);
         }
     },
     claimControls: function() {

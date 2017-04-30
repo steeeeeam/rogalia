@@ -283,13 +283,13 @@ function Chat() {
                 e.target.blur();
             }
             break;
-        case 9: // tab
-            var value = this.autocomplete(message);
-            if (value)
-                e.target.value = value;
+        // case 9: // tab
+        //     var value = this.autocomplete(message);
+        //     if (value)
+        //         e.target.value = value;
 
-            e.preventDefault();
-            return true;
+        //     e.preventDefault();
+        //     return true;
         default:
             return true;
         }
@@ -366,7 +366,6 @@ function Chat() {
                                 ),
                                 dom.wrap("", icon, {
                                     onclick: () => {
-                                        console.log(preview.Variant, preview.Sprite.Variants);
                                         preview.Variant = (preview.Variant % preview.Sprite.Variants) + 1;
                                         preview.initSprite();
                                         icon = dom.replace(icon, preview.icon());
