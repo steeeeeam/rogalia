@@ -1759,18 +1759,60 @@ hl {
     }
 }
 
-
 #map {
     max-width: none;
 
-    .wrapper {
-        position: relative;
+    #minimap-image {
+        display: block;
     }
 
-    .wrapper.zoom {
-        width: 512px;
-        height: 512px;
-        overflow: auto;
+    .wrapper {
+        position: relative;
+        .cursor-pointer;
+    }
+
+    .map-coord {
+        position: absolute;
+        right: 4px;
+        bottom: 4px;
+    }
+
+    .map-container {
+        position: relative;
+        overflow: hidden;
+
+        .zoom-position-x, .zoom-position-y {
+            position: absolute;
+            z-index: 2;
+            background: rgba(255, 255, 255, 0.8);
+            display: none;
+        }
+
+        .zoom-position-x {
+            height: 2px;
+            left: 0;
+            top: 0;
+            width: 100px;
+        }
+
+        .zoom-position-y {
+            width: 2px;
+            left: 0;
+            top: 0;
+            height: 100px;
+        }
+    }
+
+    .zoom {
+        .wrapper {
+            width: 600px;
+            height: 600px;
+            overflow: hidden;
+        }
+
+        .zoom-position-x, .zoom-position-y {
+            display: block;
+        }
     }
 
     .point {
@@ -3799,9 +3841,28 @@ input[type=number], .lot-quantity > input, .price > input {
     margin-right: 3px;
 }
 
-.add-entity-button {
-    display: block;
+#admin-add {
+    width: 250px;
+
+    .scrollable {
+        height: 300px;
+    }
+
+    .add-entity-button {
+        width: 75%;
+    }
+
+    .add-entity-preview {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+
+        canvas {
+            max-height: 32px;
+        }
+    }
 }
+
 
 
 #combos {
@@ -4398,10 +4459,6 @@ input[type=number], .lot-quantity > input, .price > input {
         outline: 1px solid lightgreen;
     }
 
-}
-
-#admin-add {
-    height: 300px;
 }
 
 #play-rogalik {

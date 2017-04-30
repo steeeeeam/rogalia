@@ -206,9 +206,12 @@ Character.prototype = {
 
         if (this.isPlayer) {
             game.controller.updateMail(this.NewMail);
-
             if (data.Exp) {
                 game.controller.xpBar.update(game.player.Exp);
+            }
+
+            if ("Z" in data && game.controller.minimap) {
+                game.controller.minimap.selectLevel(data.Z);
             }
 
             if (data.Fullness) {
@@ -1526,18 +1529,18 @@ Character.prototype = {
         });
     },
     liftStart: function() {
-        var self = this;
-        var list = game.findItemsNear(this.X, this.Y).filter(function(e) {
-            return e.MoveType == Entity.MT_LIFTABLE;
-        }).sort(function(a, b) {
-            return a.distanceTo(self) - b.distanceTo(self);
-        });
-        if (list.length > 0)
+        const list = game.findItemsNear(this.X, this.Y)
+              .filter(e => e.MoveType == Entity.MT_LIFTABLE)
+              .sort((a, b) => a.distanceTo(self) - b.distanceTo(self));
+
+        if (list.length > 0) {
             list[0].lift();
+        }
     },
     liftStop: function() {
         if (this.burden) {
             game.controller.creatingCursor(this.burden, "lift-stop");
+            game.controller.lastAction.set(null);
         }
     },
     stop: function() {

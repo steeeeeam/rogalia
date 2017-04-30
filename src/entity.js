@@ -491,13 +491,13 @@ Entity.prototype = {
                     const runes = runebook.Props.Slots
                           .filter(slot => slot != 0)
                           .map(Entity.get)
-                        .filter(rune => party.includes(rune.Name));
+                          .filter(rune => rune.Name != game.player.Name && party.includes(rune.Name));
 
                     if (runes.length == 0) {
                         return T("No party members with available runes");
                     }
 
-                    return runes.map(rune => {
+                    return _.uniqBy(runes, (rune) => rune.Name).map(rune => {
                         return dom.button(rune.Name, "", () => {
                             rune.actionApplySimple("Activate");
                         });
