@@ -1,9 +1,9 @@
-/* global Panel */
+/* global Panel, game, dom, T, Vendor, TS */
 
 "use strict";
 
 function Exchange(npc) {
-    game.network.send("get-exchange-info", {Id: npc.Id}, function callback(data) {
+    game.network.send("get-exchange-info", {Id: npc.Id}, function callback({StockExchange: stock}) {
         var table = dom.table(
             [
                 T("Name"),
@@ -11,8 +11,8 @@ function Exchange(npc) {
                 T("Sell rate"),
                 T("Sell ingots")
             ],
-            Object.keys(data.Rates).map(function(assignation) {
-                var rate = data.Rates[assignation];
+            Object.keys(stock.Rates).map(function(assignation) {
+                var rate = stock.Rates[assignation];
                 {
                     var name = dom.tag("td", "", {
                         text :  TS(assignation),
@@ -68,6 +68,10 @@ function Exchange(npc) {
         );
         table.id = "exchange-rates-table";
 
-        new Panel("exchange", "Exchange", table).show();
+        new Panel("exchange", "Exchange", [
+            table,
+            dom.hr(),
+            `Ruble: ${stock.Rub.toFixed(2)}`,
+        ]).show();
     });
 }

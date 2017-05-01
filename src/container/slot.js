@@ -106,6 +106,9 @@ ContainerSlot.prototype = {
             this.placeholder.src = src;
         }
     },
+    setSup: function(text) {
+        this.sup.textContent = text;
+    },
     setSub: function(text) {
         if (this.sub == null) {
             this.sub = dom.tag("sub");

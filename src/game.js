@@ -310,9 +310,8 @@ class Game {
             return;
         Panel.save();
         Container.save();
-        this.controller.craft && this.controller.craft.save();
+        this.controller.save();
         this.chat && this.chat.save();
-        this.controller.minimap && this.controller.minimap.save();
     };
 
     addEventListeners() {
