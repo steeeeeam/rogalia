@@ -1463,7 +1463,7 @@ function Controller(game) {
     this.save = function() {
         this.craft && this.craft.save();
         this.minimap && this.minimap.save();
-        _.forEach(this.quickBars, (bar) => bar.save());
+        _.forEach(this.quickBars, (bar) => bar && bar.save());
     };
 
     this.ping = 0;
