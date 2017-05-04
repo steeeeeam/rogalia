@@ -7,7 +7,7 @@ Rogalia MMO game client available in the browser and on Steam.
 ```
 npm install
 npm run load-metadata
-npm run server
+npm run start
 ```
 
 Then navigate to `localhost:8080`
