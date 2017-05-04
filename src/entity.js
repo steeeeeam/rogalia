@@ -654,10 +654,8 @@ Entity.prototype = {
     },
     queueAction(action, list) {
         if (list.length > 0) {
-            game.network.send(action, {Id: _.head(list).Id}, ({Ok}) => {
-                if (Ok == 2) {
-                    this.queueAction(action, _.tail(list));
-                }
+            game.network.send(action, {Id: _.head(list).Id}, () => {
+                this.queueAction(action, _.tail(list));
             });
         }
     },
