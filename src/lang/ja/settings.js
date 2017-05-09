@@ -103,7 +103,7 @@ Settings.descriptions = {
             "物体を自動的に隠す",
             "建築物や木などの物体を自動的に隠します。",
         ],
-        semiTransparetWalls: [
+        semiTransparentWalls: [
             "壁を半透明にする",
             "壁を半透明にします。",
         ],
