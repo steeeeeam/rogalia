@@ -288,7 +288,6 @@ T.dict = {
     "fire": "炎",
     "Fight": "戦闘",
     "Space": "スペース",
-    "Punch": "パンチ",
     "Kick": "キック",
     "Head": "頭",
     "Body": "体",
@@ -541,7 +540,6 @@ T.dict = {
     "Lift": "持ち上げる",
     "Lifting": "持ち上げている",
     "Rotate": "回転",
-    "O": "O",
     "Iron pickaxe": "鉄のつるはし",
     "Titanium pickaxe": "チタン製のつるはし",
     "Birch tree stub": "白樺の木の切り株",
@@ -1927,5 +1925,5 @@ T.dict = {
     "Part": "パーツ",
     "Dice": "サイコロ",
     "Daily": "デイリー",
-    "To build": "建設する"
+    "To build": "建設する",
 };
