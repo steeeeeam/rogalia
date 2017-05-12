@@ -1926,8 +1926,13 @@ T.dict = {
     "Dice": "サイコロ",
     "Daily": "デイリー",
 <<<<<<< HEAD
+<<<<<<< HEAD
     "To build": "建設する"
 =======
     "To build": "建設する",
 >>>>>>> refs/remotes/TatriX/master
 };
+=======
+    "To build": "建設する",
+};
+>>>>>>> refs/remotes/origin/master
