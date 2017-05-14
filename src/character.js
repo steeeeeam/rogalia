@@ -37,7 +37,6 @@ function Character(id) {
     this.target = null;
 
     this.Radius = CELL_SIZE / 4;
-    this.isMoving = false;
     this.Speed = {Current: 0};
     this.Equip = [];
 
@@ -908,10 +907,9 @@ Character.prototype = {
         var y = p.y - this.nameOffset();
         var dy = FONT_SIZE * 0.5;
 
-        if (this.isInteractive())
-            drawHp = false;
-        else
-            drawHp = drawHp || ((!this.IsNpc || game.config.ui.npc) && game.config.ui.hp);
+        drawHp = (this.isInteractive())
+            ? false
+            : drawHp || ((!this.IsNpc || game.config.ui.npc) && game.config.ui.hp);
 
         drawName = drawName || ((!this.IsNpc || game.config.ui.npc) && game.config.ui.name);
 

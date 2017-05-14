@@ -59,16 +59,25 @@ Entity.prototype = {
     },
     get name() {
         var name = "";
-        if (this.Type.contains("-corpse") || this.Type == "head" || this.Type == "rune") {
-            name = this.Name;
-        } else if (this.Type == "parcel") {
+        switch (this.Type) {
+        case "male-corpse":
+        case "female-corpse":
+            return `${TS("Corpse")}: ${this.Name}`;
+        case "male-head":
+        case "female-head":
+            return `${TS("Head")}: ${this.Name}`;
+        case "rune":
+            name = `${TS("Rune")}: ${this.Name}`;
+            break;
+        case "parcel":
+            break;
             var match = this.Name.match(/^(.*)-((?:fe)?male)$/);
             if (match) {
                 name = TS(match[1]) + " (" + T(match[2]) + ")";
             } else {
                 name = TS(this.Name);
             }
-        } else {
+        default:
             name = TS(this.Name);
         }
 
@@ -586,10 +595,9 @@ Entity.prototype = {
     defaultActionSuccess: function(data) {
     },
     defaultAction: function() {
-        var self = this;
-        function use() {
-            game.network.send("entity-use", {id: self.Id}, (data) => self.defaultActionSuccess(data));
-        }
+        const use = () => {
+            game.network.send("entity-use", {Id: this.Id}, (data) => this.defaultActionSuccess(data));
+        };
         switch (this.Type) {
         case "instance-exit":
             game.popup.confirm(
