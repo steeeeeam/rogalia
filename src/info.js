@@ -47,15 +47,33 @@ function Info(message, character) {
         game.sound.playSound("lvl-up");
         break;
     case "cast-gain":
-        this.target.playAnimation({
-            up: {
-                name: "web",
-                width: 96,
-                height: 96,
-                dy: -this.target.sprite.height/2,
-                speed: 20,
-            },
-        });
+        if (this.data.Spell == "minor-heal") {
+            this.character.playAnimation({
+                up: {
+                    name: "heal",
+                    width: 96,
+                    height: 128,
+                    dy: -28
+                },
+                down: {
+                    name: "heal",
+                    width: 96,
+                    height: 128,
+                    dy: -28
+                }
+            });
+            game.sound.playSound("heal");
+        } else {
+            this.target.playAnimation({
+                up: {
+                    name: "web",
+                    width: 96,
+                    height: 96,
+                    dy: -this.target.sprite.height/2,
+                    speed: 20,
+                },
+            });
+        }
         break;
     case "attack":
         var armored = this.target.armored();
@@ -85,25 +103,24 @@ function Info(message, character) {
     case "exp-gain":
         this.value = this.data;
         break;
+    case "magic-heal":
+        this.character.playAnimation({
+            up: {
+                name: "heal",
+                width: 96,
+                height: 128,
+                dy: -28
+            },
+            down: {
+                name: "heal",
+                width: 96,
+                height: 128,
+                dy: -28
+            }
+        });
+        game.sound.playSound("heal");
     case "heal":
         this.value = this.data;
-        if (this.value > this.character.Hp.Max/10) {
-            this.character.playAnimation({
-                up: {
-                    name: "heal",
-                    width: 96,
-                    height: 128,
-                    dy: -28
-                },
-                down: {
-                    name: "heal",
-                    width: 96,
-                    height: 128,
-                    dy: -28
-                }
-            });
-            game.sound.playSound("heal");
-        }
         break;
     case "craft-success":
     case "item-gain":
@@ -200,6 +217,7 @@ Info.prototype = {
 
         switch(this.type) {
         case "heal":
+        case "magic-heal":
             this.drawValue(
                 "+" + this.value + "hp",
                 {

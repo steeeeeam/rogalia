@@ -66,7 +66,7 @@ Entity.prototype = {
         case "male-head":
         case "female-head":
             return `${TS("Head")}: ${this.Name}`;
-        case "rune":
+        case "rune-of-teleportation":
             name = `${TS("Rune")}: ${this.Name}`;
             break;
         case "parcel":
@@ -1315,14 +1315,15 @@ Entity.prototype = {
 
         this.initSprite();
     },
-    cast: function(callback = undefined) {
+    cast: function(callback = () => {}) {
         switch (this.Type) {
         case "scroll-of-town-portal":
         case "hunter-scroll":
             game.network.send("cast", {Id: this.Id}, callback);
             break;
         case "embracing-web-scroll":
-            game.controller.cursor.set(this);
+        case "minor-healing-scroll":
+            game.controller.cursor.setSimpleCallback(this, callback);
             break;
         default:
             const spell = new Entity(this.Spell, this.Id);

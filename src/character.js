@@ -1569,11 +1569,11 @@ Character.prototype = {
                 target.Height
             );
         }
-        const len_x = entity.X - target.X;
-        const len_y = entity.Y - target.Y;
-
-        const r = padding + Math.max(entity.Radius, Math.min(entity.Width, entity.Height) / 2) + 2;
-        return util.distanceLessThan(len_x, len_y, r);
+        return util.distanceLessThan(
+            entity.X - target.X,
+            entity.Y - target.Y,
+            padding + Math.max(entity.Radius, Math.min(entity.Width, entity.Height) / 2) + 2
+        );
     },
     drawHovered: function(nameOnly) {
         if (this.Invisible)
@@ -1745,7 +1745,7 @@ Character.prototype = {
             return true;
         return false;
     },
-    use: function(entity) {
+    use: function(entity, callback) {
         switch (entity.Group) {
         case "shit":
         case "snowball":
@@ -1755,7 +1755,7 @@ Character.prototype = {
             game.network.send("fuck", {Id: this.Id});
             return true;
         case "spell-scroll":
-            game.network.send("cast", {Id: entity.Id, Target: this.Id});
+            game.network.send("cast", {Id: entity.Id, Target: this.Id}, callback);
             return true;
         }
         return false;

@@ -119,17 +119,29 @@ function Controller(game) {
             this.entity = null;
             dom.clear(this.element);
         },
-        set: function(entity, x, y, cleanup = () => {}) {
-            var icon = entity.icon();
-            dom.clear(this.element);
-            this.element.appendChild(icon);
+        setEntity(entity, x = controller.world.x, y = controller.world.y) {
+            dom.setContents(this.element, entity.icon());
             this.element.style.display = "block";
-            this.element.style.left = x + "px";
-            this.element.style.top = y + "px";
             this.element.style.marginLeft = -entity.getDrawDx() + "px";
             this.element.style.marginTop = -entity.getDrawDy() + "px";
-
+            this.element.style.left = x + "px";
+            this.element.style.top = y + "px";
             this.entity = entity;
+        },
+        setSimpleCallback(entity, callback) {
+            this.setEntity(entity);
+            controller.callback[game.controller.LMB] = () => {
+                const hovered = controller.world.hovered;
+                if (hovered && hovered.canUse && hovered.canUse(entity)) {
+                    this.clear();
+                    hovered.use(entity, callback);
+                    return true;
+                }
+                return false;
+            };
+        },
+        set: function(entity, x, y, cleanup = () => {}) {
+            this.setEntity(entity, x, y);
 
             controller.callback[controller.RMB] = function(e) {
                 cleanup();
