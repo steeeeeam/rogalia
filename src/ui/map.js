@@ -88,6 +88,7 @@ function WorldMap() {
             pixels[j+3] = 0xff;
         };
         this.minimapCanvas.ctx.putImageData(new ImageData(pixels, width, height), 0, 0);
+        game.pixi && game.pixi.load(game.pixi.gl);
     };
 
     this.reset = function() {

@@ -107,8 +107,8 @@ class Pixi {
                     : 0;
 
                 var sprite = new PIXI.Sprite(textures[variant]);
-                sprite.x = p.x - game.camera.x;
-                sprite.y = p.y - game.camera.y;
+                sprite.x = p.x - cam.x;
+                sprite.y = p.y - cam.y;
 
                 this.stage.addChild(sprite);
             }
@@ -120,5 +120,9 @@ class Pixi {
         // this.stage.scale.set(0.5, 0.5);
         // this.stage.position.set(300, 300);
         this.renderer.render(this.stage);
+    }
+
+    resize(width, height) {
+        this.renderer.resize(width, height);
     }
 }

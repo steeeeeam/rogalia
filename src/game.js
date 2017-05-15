@@ -69,8 +69,10 @@ class Game {
         this.iso = new IsoDrawer(this.ctx);
 
         if (config.graphics.fastRender) {
-            this.pixi = new Pixi();
-            const canvas = this.pixi.renderer.view;
+            // this.pixi = new Pixi();
+            this.pixi = new WebglRenderer();
+            const {canvas} = this.pixi;
+            // const canvas = this.pixi.renderer.view;
             canvas.classList.add("map-canvas");
             canvas.classList.add("bg-canvas");
             this.canvasContainer.appendChild(canvas);

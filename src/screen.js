@@ -29,6 +29,6 @@ class Screen {
         game.world.style.height = this.height + "px";
         game.setFontSize();
 
-        game.pixi && game.pixi.renderer.resize(this.width, this.height);
+        game.pixi && game.pixi.resize(this.width, this.height);
     }
 }
