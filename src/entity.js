@@ -1318,6 +1318,7 @@ Entity.prototype = {
     cast: function(callback = () => {}) {
         switch (this.Type) {
         case "scroll-of-town-portal":
+        case "scroll-of-wind-walk":
         case "hunter-scroll":
             game.network.send("cast", {Id: this.Id}, callback);
             break;

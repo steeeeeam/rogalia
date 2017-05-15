@@ -1106,6 +1106,7 @@ T.dict = {
     "Block": "Блок",
     "Tripwire": "Растяжка",
     "Scroll of town portal": "Свиток городского портала",
+    "Scroll of wind walk": "Свиток воздушной походки",
     "Cast": "Колдовать",
     "Shawarma": "Шавермяу",
     "Kitty meat": "Кошатина",
@@ -1932,4 +1933,8 @@ T.dict = {
     "White banner": "Белое знамя",
     "Red banner": "Красное знамя",
     "Hatstand": "Вешалка",
+    "Rune": "Руна",
+    "Rune of teleportation": "Руна телепортации",
+    "Rune of immortality": "Руна бессмертия",
+    "Runebook": "Книга рун",
 };
