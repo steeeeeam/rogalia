@@ -64,7 +64,7 @@ class WebglRenderer {
         );
 
         this.textureInfos = [
-            await this.loadImageAndCreateTextureInfo("assets/map/grass1.png"),
+            await this.loadImageAndCreateTextureInfo("assets/map/map.png"),
         ];
 
         const tex = gl.createTexture();
@@ -73,7 +73,8 @@ class WebglRenderer {
         // let's assume all images are not a power of 2
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
         gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, game.map.minimapCanvas);
 
     }
@@ -181,8 +182,9 @@ class WebglRenderer {
 
         // this matrix will translate our quad to dstX, dstY
         // matrix = m4.translate(matrix, dstX, dstY, 0);
-        const size = 1.5*game.map.width;
-        const p = new Point(game.player.Location).toScreen();
+        // const size = 1.5*game.map.width;
+        const size = 2898;
+        const p = new Point(game.map.location).toScreen();
         matrix = m4.translate(
             matrix,
             p.x - game.camera.x,
@@ -196,7 +198,6 @@ class WebglRenderer {
         //matrix = m4.scale(matrix, gl.canvas.width, gl.canvas.height, 1);
         matrix = m4.scale(matrix, size, size, 1);
 
-        const textureInfo = this.textureInfos[0];
         // Set the matrix.
         // let matrix = m4.identity();
         matrix = m4.scale(matrix, 1, 0.5, 1);
@@ -223,7 +224,7 @@ class WebglRenderer {
 
         // Set each texture unit to use a particular texture.
         gl.activeTexture(gl.TEXTURE0);
-        gl.bindTexture(gl.TEXTURE_2D, textureInfo.texture);
+        gl.bindTexture(gl.TEXTURE_2D, this.textureInfos[0].texture);
         gl.activeTexture(gl.TEXTURE1);
         gl.bindTexture(gl.TEXTURE_2D, this.minimapTex);
 

@@ -1,24 +1,32 @@
 precision mediump float;
 
 varying vec2 v_texcoord;
+varying vec2 v_position;
 
 uniform sampler2D u_texture;
 uniform sampler2D u_minimap;
 
+uniform mat4 u_matrix;
+
 void main() {
-    // vec2 p = vec2(mod(v_texcoord.x, 64.0)/64.0, mod(v_texcoord.y, 64.0)/64.0);
     vec4 biom = texture2D(u_minimap, v_texcoord);
-    vec2 p = v_texcoord;
-    gl_FragColor = biom;
-    // if (biom.x > 0.0) {
-    //     // p.x += 0.5;
-    //     gl_FragColor = biom;
-    // } else {
-    //     gl_FragColor = texture2D(u_texture, p);
-    // }
-    // if (v_texcoord.x > 0.1 && v_texcoord.y > 0.1) {
-    //     gl_FragColor = vec4(0.9, 0.4, 0.1, 1);
-    // } else {
-    //     gl_FragColor = vec4(0.1, 0.4, 0.8, 1);
-    // }
+    float k = 4100.0; // 2898 size rotate 45
+    vec2 p = vec2(v_position.x * k, v_position.y * k);
+    p.x = mod(p.x, 64.0)/129.0;
+    p.y = mod(p.y, 64.0)/129.0;
+    if (abs(biom.r - 0.25) < 0.01) {
+        gl_FragColor = texture2D(u_texture, p);
+    } else if (abs(biom.r - 0.87) < 0.01) {
+        p.y += 0.5;
+        gl_FragColor = texture2D(u_texture, p);
+    } else if (abs(biom.r - 0.83) < 0.01) {
+        p.x += 0.5;
+        gl_FragColor = texture2D(u_texture, p);
+    } else if (abs(biom.r - 0.14) < 0.01) {
+        p.x += 0.5;
+        p.y += 0.5;
+        gl_FragColor = texture2D(u_texture, p);
+    } else {
+        gl_FragColor = biom;
+    }
 }
