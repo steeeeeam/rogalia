@@ -1,4 +1,4 @@
-/* global game, Point, CELL_SIZE, config, loader, PIXI, dom */
+/* global game, Point, CELL_SIZE, config, loader, dom */
 
 "use strict";
 function WorldMap() {
@@ -58,7 +58,7 @@ function WorldMap() {
             this.location.set(loc.X, loc.Y);
             this.data = Data;
             this.ready = true;
-            game.pixi.updateMap(true);
+            game.webgl.updateMap(true);
         } else {
             worker.postMessage({
                 bioms: this.bioms,
@@ -88,7 +88,7 @@ function WorldMap() {
             pixels[j+3] = 0xff;
         };
         this.minimapCanvas.ctx.putImageData(new ImageData(pixels, width, height), 0, 0);
-        game.pixi && game.pixi.load(game.pixi.gl);
+        game.webgl && game.webgl.sync(this.minimapCanvas);
     };
 
     this.reset = function() {
@@ -277,80 +277,6 @@ function WorldMap() {
         }
     };
 
-    this.fastDraw = function() {
-        var scr = game.screen;
-        var cam = game.camera;
-
-        var leftTop = cam
-            .clone()
-            .toWorld()
-            .div(CELL_SIZE)
-            .floor();
-        var rightTop = cam
-            .clone()
-            .add(new Point(scr.width, 0))
-            .toWorld()
-            .div(CELL_SIZE)
-            .floor();
-        var leftBottom = cam
-            .clone()
-            .add(new Point(0, scr.height))
-            .toWorld()
-            .div(CELL_SIZE)
-            .ceil();
-        var rightBottom = cam
-            .clone()
-            .add(new Point(scr.width, scr.height))
-            .toWorld()
-            .div(CELL_SIZE)
-            .ceil();
-
-        for (var x = leftTop.x; x < rightBottom.x; x++) {
-            for (var y = rightTop.y; y < leftBottom.y; y++) {
-                var p = new Point(x * CELL_SIZE, y * CELL_SIZE).toScreen();
-
-                if (p.x + CELL_SIZE < cam.x)
-                    continue;
-                if (p.y + CELL_SIZE < cam.y)
-                    continue;
-                if (p.x - CELL_SIZE > cam.x + scr.width)
-                    continue;
-                if (p.y > cam.y + scr.height)
-                    continue;
-
-                p.x -= CELL_SIZE;
-
-                var w = x - this.location.x / CELL_SIZE;
-                var h = y - this.location.y / CELL_SIZE;
-                if (w < 0 || h < 0 || w >= this.cells_x || h >= this.cells_y) {
-                    continue;
-                }
-                var color = this.data[h*this.cells_x + w];
-                var index = this.colorMap[color];
-                var tile = this.tiles[index];
-
-                var offset = (tile.height > CELL_SIZE) ? 15 : 0;
-
-                var variant = (tile.width > 2*CELL_SIZE) ?
-                    Math.floor(tile.width/(4*CELL_SIZE)*(1+Math.sin(x*y)))
-                    : 0;
-                game.ctx.drawImage(
-                    tile,
-                    variant * 2*CELL_SIZE,
-                    offset * CELL_SIZE,
-                    CELL_SIZE * 2,
-                    CELL_SIZE,
-                    p.x,
-                    p.y,
-                    CELL_SIZE * 2,
-                    CELL_SIZE
-
-                );
-
-            }
-        }
-    };
-
     this.layerDraw = function() {
         // const started = Date.now();
         var layers = this.makeLayers();
@@ -410,8 +336,7 @@ function WorldMap() {
 
     this.draw = function() {
         if (config.graphics.fastRender) {
-            game.pixi && game.pixi.drawMap();
-            // this.fastDraw();
+            game.webgl.drawMap();
         } else {
             this.layerDraw();
         }
@@ -519,25 +444,31 @@ function WorldMap() {
         return list;
     };
 
-    this.initBioms = function(bioms) {
-        this.bioms = this._sort(bioms);
+    this.loadTiles = function(bioms = this.bioms) {
+        if (this.tiles.length != 0) {
+            return;
+        }
         this.tiles = this.bioms.map(function(biom) {
             var path = "map/" + biom.Name + ".png";
             var tile = loader.loadImage(path);
             tile.id = biom.id;
             return tile;
         });
+    };
+
+    this.initBioms = function(bioms) {
+        this.bioms = this._sort(bioms);
+        if (!config.fastRender) {
+            this.loadTiles();
+        }
 
         this.colorMap = this.bioms.reduce(function(map, biom, index) {
             map[biom.Color] = index;
             return map;
         }, {});
 
-        this.darkness = loader.loadImage("map/darkness.png");
-        this.simpleDarkness = loader.loadImage("map/simple-darkness.png");
-        if (game.pixi) {
-            game.loader.ready(() => game.pixi.initTiles(this.tiles));
-        }
+        // this.darkness = loader.loadImage("map/darkness.png");
+        // this.simpleDarkness = loader.loadImage("map/simple-darkness.png");
     };
 
     this.initSize = function({Width, Height}) {

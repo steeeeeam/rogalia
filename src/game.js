@@ -1,4 +1,4 @@
-/* global Settings, config, DragManager, Screen, debug, Sound, Loader, Menu, WorldMap, Controller, Network, HashTable, BinarySearchTree, Quests, Point, IsoDrawer, Popup, T, Panel, Jukebox, util, Stage, FONT_SIZE, CELL_SIZE, sprintf, Professions, dom, Container, _, Quadtree, Pixi, gameStorage, ga */
+/* global Settings, config, DragManager, Screen, debug, Sound, Loader, Menu, WorldMap, Controller, Network, HashTable, BinarySearchTree, Quests, Point, IsoDrawer, Popup, T, Panel, Jukebox, util, Stage, FONT_SIZE, CELL_SIZE, sprintf, Professions, dom, Container, _, Quadtree, gameStorage, ga, WebglRenderer */
 
 "use strict";
 
@@ -69,10 +69,8 @@ class Game {
         this.iso = new IsoDrawer(this.ctx);
 
         if (config.graphics.fastRender) {
-            // this.pixi = new Pixi();
-            this.pixi = new WebglRenderer();
-            const {canvas} = this.pixi;
-            // const canvas = this.pixi.renderer.view;
+            this.webgl = new WebglRenderer();
+            const {canvas} = this.webgl;
             canvas.classList.add("map-canvas");
             canvas.classList.add("bg-canvas");
             this.canvasContainer.appendChild(canvas);
@@ -497,7 +495,6 @@ class Game {
     toggleFullscreen() {
         this.fullscreen = !this.fullscreen;
         this.screen.update();
-        game.pixi && game.pixi.updateMap();
         gameStorage.setItem("fullscreen", this.fullscreen);
     }
 

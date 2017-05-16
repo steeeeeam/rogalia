@@ -1,17 +1,21 @@
-/* global fetch, m4, game, CELL_SIZE, Point */
+/* global fetch, m4, game, CELL_SIZE, Point, Image */
 
 "use strict";
 
 class WebglRenderer {
     constructor() {
+        this.loaded = false;
         const canvas = document.createElement("canvas");
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
         this.canvas = canvas;
         this.gl = canvas.getContext("webgl");
+        this._loaded = false;
     }
 
-    async load(gl) {
+    async load(canvas) {
+        const {gl} = this;
+
         const vs = await this.loadShader("draw-image.vs");
         const fs = await this.loadShader("draw-image.fs");
 
@@ -22,17 +26,14 @@ class WebglRenderer {
         this.program = program;
 
         this.positionLocation = gl.getAttribLocation(program, "a_position");
-        this.texcoordLocation = gl.getAttribLocation(program, "a_texcoord");
-
         this.matrixLocation = gl.getUniformLocation(program, "u_matrix");
-        // this.textureMatrixLocation = gl.getUniformLocation(program, "u_textureMatrix");
         this.textureLocation = gl.getUniformLocation(program, "u_texture");
         this.minimapLocation = gl.getUniformLocation(program, "u_minimap");
+        this.locationLocation = gl.getUniformLocation(program, "u_location");
 
         this.positionBuffer = gl.createBuffer();
         gl.bindBuffer(gl.ARRAY_BUFFER, this.positionBuffer);
 
-        // Put a unit quad in the buffer
         gl.bufferData(
             gl.ARRAY_BUFFER,
             new Float32Array([
@@ -46,59 +47,49 @@ class WebglRenderer {
             gl.STATIC_DRAW
         );
 
-        this.texcoordBuffer = gl.createBuffer();
-        gl.bindBuffer(gl.ARRAY_BUFFER, this.texcoordBuffer);
-
-        // Put texcoords in the buffer
-        gl.bufferData(
-            gl.ARRAY_BUFFER,
-            new Float32Array([
-                0, 0,
-                0, 1,
-                1, 0,
-                1, 0,
-                0, 1,
-                1, 1,
-            ]),
-            gl.STATIC_DRAW
-        );
-
-        this.textureInfos = [
-            await this.loadImageAndCreateTextureInfo("assets/map/map.png"),
-        ];
+        this.mapTexture = await this.loadImageAndCreateTexture("assets/map/map.png");
 
         const tex = gl.createTexture();
-        this.minimapTex = tex;
+        this.minimapTexture = tex;
         gl.bindTexture(gl.TEXTURE_2D, tex);
-        // let's assume all images are not a power of 2
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+        // gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+        // gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
         gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, game.map.minimapCanvas);
+    }
+
+    async sync(canvas) {
+        const {gl} = this;
+        if (this._loaded) {
+            this.updateMinimap(canvas);
+        } else {
+            this._loaded = true;
+            this.load(canvas);
+        }
 
     }
 
-    async loadImageAndCreateTextureInfo(url) {
+    updateMinimap(canvas) {
+        const {gl} = this;
+        gl.bindTexture(gl.TEXTURE_2D, this.minimapTexture);
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, canvas);
+    }
+
+    async loadImageAndCreateTexture(url) {
         const {gl} = this;
         return new Promise((resolve, reject) => {
             const tex = gl.createTexture();
             gl.bindTexture(gl.TEXTURE_2D, tex);
-            // let's assume all images are not a power of 2
-            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+            // gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+            // gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
             gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
 
             const img = new Image();
-            img.onload = function() {
-                const textureInfo = {
-                    width: img.width,
-                    height: img.height,
-                    texture: tex,
-                };
+            img.onload = () => {
                 gl.bindTexture(gl.TEXTURE_2D, tex);
                 gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, img);
-                resolve(textureInfo);
+                resolve(tex);
             };
             img.onerror = reject;
             img.src = url;
@@ -125,11 +116,11 @@ class WebglRenderer {
 
 
     createProgram(gl, vertexShader, fragmentShader) {
-        var program = gl.createProgram();
+        const program = gl.createProgram();
         gl.attachShader(program, vertexShader);
         gl.attachShader(program, fragmentShader);
         gl.linkProgram(program);
-        var success = gl.getProgramParameter(program, gl.LINK_STATUS);
+        const success = gl.getProgramParameter(program, gl.LINK_STATUS);
         if (success) {
             return program;
         }
@@ -139,26 +130,12 @@ class WebglRenderer {
         return null;
     }
 
-    initTiles(tiles) {
-        // tiles.forEach((tile) => {
-        //     var offset = (tile.height > CELL_SIZE) ? 15 : 0;
-        //     this.tiles[tile.alt] = _.range(tile.width / (2*CELL_SIZE)).map(function(x) {
-        //         return [
-        //             x * 2*CELL_SIZE,
-        //             offset * CELL_SIZE,
-        //             2*CELL_SIZE,
-        //             CELL_SIZE
-        //         ];
-        //     });
-        // });
-    }
-
     updateMap() {
     }
 
     drawMap() {
         const {gl} = this;
-        if (!this.textureInfos) {
+        if (!this.mapTexture) {
             return;
         }
         gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
@@ -166,86 +143,42 @@ class WebglRenderer {
         gl.clear(gl.COLOR_BUFFER_BIT);
         gl.useProgram(this.program);
 
-        // Tell WebGL to use our shader program pair
-        gl.useProgram(this.program);
-
-        // Setup the attributes to pull data from our buffers
         gl.bindBuffer(gl.ARRAY_BUFFER, this.positionBuffer);
         gl.enableVertexAttribArray(this.positionLocation);
         gl.vertexAttribPointer(this.positionLocation, 2, gl.FLOAT, false, 0, 0);
-        gl.bindBuffer(gl.ARRAY_BUFFER, this.texcoordBuffer);
-        gl.enableVertexAttribArray(this.texcoordLocation);
-        gl.vertexAttribPointer(this.texcoordLocation, 2, gl.FLOAT, false, 0, 0);
 
-        // this matirx will convert from pixels to clip space
         var matrix = m4.orthographic(0, gl.canvas.width, gl.canvas.height, 0, -1, 1);
-
-        // this matrix will translate our quad to dstX, dstY
-        // matrix = m4.translate(matrix, dstX, dstY, 0);
-        // const size = 1.5*game.map.width;
-        const size = 2898;
-        const p = new Point(game.map.location).toScreen();
+        const size = 2896.309375740099; //new Point(64*64).rotate(Math.PI/4);
+        const loc = game.map.location;
+        const p = loc.clone().toScreen();
         matrix = m4.translate(
             matrix,
             p.x - game.camera.x,
             p.y - game.camera.y,
             0
         );
-
-        // this matrix will scale our 1 unit quad
-        // from 1 unit to texWidth, texHeight units
-        // matrix = m4.scale(matrix, dstWidth, dstHeight, 1);
-        //matrix = m4.scale(matrix, gl.canvas.width, gl.canvas.height, 1);
-        matrix = m4.scale(matrix, size, size, 1);
-
-        // Set the matrix.
-        // let matrix = m4.identity();
-        matrix = m4.scale(matrix, 1, 0.5, 1);
+        matrix = m4.scale(matrix, size, size/2, 1);
         matrix = m4.zRotate(matrix, Math.PI/4);
-        // matrix = m4.translate(matrix, -0.5, -0.5, 0);
         gl.uniformMatrix4fv(this.matrixLocation, false, matrix);
 
-        // Because texture coordinates go from 0 to 1
-        // and because our texture coordinates are already a unit quad
-        // we can select an area of the texture by scaling the unit quad
-        // down
         const texWidth = 128;
         const texHeight = 128;
         var texMatrix = m4.translation(0 / texWidth, 0 / texHeight, 0);
         texMatrix = m4.scale(texMatrix, size / texWidth, size / texHeight, 1);
-        // var texMatrix = m4.translation(0, 0, 0);
-
-        // Set the texture matrix.
         gl.uniformMatrix4fv(this.textureMatrixLocation, false, texMatrix);
 
-        // Tell the shader to get the texture from texture unit 0
+        gl.uniform2fv(this.locationLocation, [loc.x, loc.y]);
+
+
         gl.uniform1i(this.textureLocation, 0);
         gl.uniform1i(this.minimapLocation, 1);
 
-        // Set each texture unit to use a particular texture.
         gl.activeTexture(gl.TEXTURE0);
-        gl.bindTexture(gl.TEXTURE_2D, this.textureInfos[0].texture);
+        gl.bindTexture(gl.TEXTURE_2D, this.mapTexture);
         gl.activeTexture(gl.TEXTURE1);
-        gl.bindTexture(gl.TEXTURE_2D, this.minimapTex);
+        gl.bindTexture(gl.TEXTURE_2D, this.minimapTexture);
 
-        // draw the quad (2 triangles, 6 vertices)
         gl.drawArrays(gl.TRIANGLES, 0, 6);
-    }
-
-    drawImage(
-        tex,
-        texWidth,
-        texHeight,
-        srcX = 0,
-        srcY = 0,
-        srcWidth = texWidth,
-        srcHeight = texHeight,
-        dstX = srcX,
-        dstY = srcY,
-        dstWidth = srcWidth,
-        dstHeight = srcHeight
-    ) {
-
     }
 
     resize(width, height) {

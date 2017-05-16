@@ -65,12 +65,12 @@ function Character(id) {
 
     this.animation = {up: null, down: null};
 
-    this.sprites = {};
-    Character.animations.forEach(function(animation) {
-        var s = new Sprite();
-        s.name = animation;
-        this.sprites[animation] = s;
-    }.bind(this));
+    this.sprites = Character.animations.reduce((sprites, animation) => {
+        const sprite = new Sprite();
+        sprite.name = animation;
+        sprites[animation] = sprite;
+        return sprites;
+    }, {});
     this.sprite = this.sprites.idle;
 
     this._parts = "{}"; // defaults for npcs
@@ -310,34 +310,41 @@ Character.prototype = {
 
         this.sync(data, true);
         this.loadSprite();
+        if (this.isPlayer) {
+            this.initSprite(this.sprites.run);
+            this.buildSprite(this.sprites.run);
+        }
     },
-    initSprite: function() {
-        this.sprite.speed = 14000;
-        this.sprite.offset = this.Radius;
-        this.sprite.angle = Math.PI/4;
+    initSprite: function(sprite = this.sprite) {
+        sprite.speed = 14000;
+        sprite.offset = this.Radius;
+        sprite.angle = Math.PI/4;
 
         var spriteInfo = Character.spritesInfo[this.Type];
         if (spriteInfo) {
             for (var key in spriteInfo) {
-                this.sprite[key] = spriteInfo[key];
+                sprite[key] = spriteInfo[key];
             }
         } else {
-            this.sprite.offset = 2*this.Radius;
-            this.sprite.speed = 7000;
+            sprite.offset = 2*this.Radius;
+            sprite.speed = 7000;
         }
     },
     loadSprite: function() {
-        var sprite = this.sprite;
-        if (sprite.loading)
+        const sprite = this.sprite;
+        if (sprite.loading) {
             return;
+        }
 
         this.initSprite();
 
         if (this.IsNpc) {
             this.loadNpcSprite();
-            return;
+        } else {
+            this.buildSprite(sprite);
         }
-
+    },
+    buildSprite(sprite) {
         // emulate loading, because we will load sprite ourselves
         sprite.loading = true;
 
