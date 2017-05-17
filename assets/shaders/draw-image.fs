@@ -42,50 +42,63 @@ void main() {
 
     if (red == 32) {
         // deep water
+        p.x += tex_map_variant(v_position, 8.0);
     } else if (red == 36) {
         // shallow-water
         p.y += tex_map_offset(1.0);
+        p.x += tex_map_variant(v_position, 8.0);
     } else if (red == 221) {
         // sand
         p.y += tex_map_offset(2.0);
+        p.x += tex_map_variant(v_position, 8.0);
     } else if (red == 211) {
         // soil
         p.y += tex_map_offset(3.0);
-        p.x += tex_map_variant(v_position, 1.0);
+        p.x += tex_map_variant(v_position, 8.0);
     } else if (red == 65) {
         // grass
         p.y += tex_map_offset(4.0);
-        p.x += tex_map_variant(v_position, 2.0);
+        p.x += tex_map_variant(v_position, 8.0);
     } else if (red == 13) {
         // leaf forest
         p.y += tex_map_offset(5.0);
+        p.x += tex_map_variant(v_position, 8.0);
     } else if (red == 23) {
         // pine forest
         p.y += tex_map_offset(6.0);
+        p.x += tex_map_variant(v_position, 8.0);
     } else if (red == 226) {
         // rock
         p.y += tex_map_offset(7.0);
+        p.x += tex_map_variant(v_position, 8.0);
     } else if (red == 210) {
         // plowed soil
         p.y += tex_map_offset(8.0);
+        p.x += tex_map_variant(v_position, 8.0);
     } else if (red == 28 && blue == 0) {
         // white stone floor
         p.y += tex_map_offset(9.0);
+        p.x += tex_map_variant(v_position, 4.0);
     } else if (red == 28 && blue == 1) {
         // painter floor
         p.y += tex_map_offset(10.0);
+        p.x += tex_map_variant(v_position, 4.0);
     } else if (red == 28 && blue == 2) {
         // wooden floor
         p.y += tex_map_offset(11.0);
+        p.x += tex_map_variant(v_position, 4.0);
     } else if (red == 28 && blue == 3) {
         // imperial floor
         p.y += tex_map_offset(12.0);
+        p.x += tex_map_variant(v_position, 4.0);
     } else if (red == 28 && blue == 4) {
         // brick floor
         p.y += tex_map_offset(13.0);
+        p.x += tex_map_variant(v_position, 4.0);
     } else if (red == 28 && blue == 5) {
         // parquet floor
         p.y += tex_map_offset(14.0);
+        p.x += tex_map_variant(v_position, 4.0);
     } else if (red == 28 && blue == 6) {
         // pavement floor
         p.y += tex_map_offset(15.0);
@@ -93,21 +106,27 @@ void main() {
     } else if (red == 28 && blue == 7) {
         // tile floor
         p.y += tex_map_offset(16.0);
+        p.x += tex_map_variant(v_position, 4.0);
     } else if (red == 28 && blue == 37) {
         // stone tiles
         p.y += tex_map_offset(17.0);
+        p.x += tex_map_variant(v_position, 4.0);
     } else if (red == 119) {
         // light stone tiles
         p.y += tex_map_offset(18.0);
+        p.x += tex_map_variant(v_position, 4.0);
     } else if (red == 192) {
         // red stone tiles
         p.y += tex_map_offset(19.0);
+        p.x += tex_map_variant(v_position, 4.0);
     } else if (red == 17) {
         // ground
         p.y += tex_map_offset(20.0);
+        p.x += tex_map_variant(v_position, 8.0);
     } else if (red == 0 && blue == 0) {
         // solid ground
         p.y += tex_map_offset(21.0);
+        p.x += tex_map_variant(v_position, 8.0);
     } else if (red == 0 && blue == 1) {
         // space
         p.y += tex_map_offset(22.0);
