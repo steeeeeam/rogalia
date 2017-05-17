@@ -81,8 +81,8 @@ class WebglRenderer {
         return new Promise((resolve, reject) => {
             const tex = gl.createTexture();
             gl.bindTexture(gl.TEXTURE_2D, tex);
-            // gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-            // gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
             gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
 
             const img = new Image();
@@ -167,7 +167,7 @@ class WebglRenderer {
         texMatrix = m4.scale(texMatrix, size / texWidth, size / texHeight, 1);
         gl.uniformMatrix4fv(this.textureMatrixLocation, false, texMatrix);
 
-        gl.uniform2fv(this.locationLocation, [loc.x, loc.y]);
+        gl.uniform2fv(this.locationLocation, [loc.x/CELL_SIZE, loc.y/CELL_SIZE]);
 
 
         gl.uniform1i(this.textureLocation, 0);

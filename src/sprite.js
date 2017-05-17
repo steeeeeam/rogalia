@@ -1,7 +1,7 @@
 /* global loader, game */
 
 "use strict";
-function Sprite(path = null, width = 0, height = 0, speed = 100) {
+function Sprite(path = null, width = 0, height = 0, speed = 0) {
     this.name = "";
     this.image = null;
     this.outline = null;
@@ -13,7 +13,7 @@ function Sprite(path = null, width = 0, height = 0, speed = 100) {
 
     this.dy = 0; //used for animations
 
-    this.speed = speed;
+    this.speed = speed || 100;
     this.frame = 0;
 
     this.position = 0;

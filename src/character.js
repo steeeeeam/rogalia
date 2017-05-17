@@ -1540,7 +1540,7 @@ Character.prototype = {
     liftStart: function() {
         const list = game.findItemsNear(this.X, this.Y)
               .filter(e => e.MoveType == Entity.MT_LIFTABLE)
-              .sort((a, b) => a.distanceTo(self) - b.distanceTo(self));
+              .sort((a, b) => a.distanceTo(this) - b.distanceTo(this));
 
         if (list.length > 0) {
             list[0].lift();
