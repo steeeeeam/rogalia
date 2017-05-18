@@ -49,11 +49,12 @@ Quest.prototype = {
     },
     makeRewardList(items) {
         return dom.wrap("quest-items-container", [
+            this.makeSlots(Object.keys(items)),
             dom.wrap("quest-item-list", _.map(items, (item, kind) => {
                 const required = (item instanceof Object) ? item.Count : item;
-                return dom.wrap("quest-item", `${required}x ${TS(kind)}`);
+                const text = (required > 1) ? `${required}x ${TS(kind)}` : TS(kind);
+                return dom.wrap("quest-item", text);
             })),
-            this.makeSlots(Object.keys(items)),
         ]);
     },
     makeSlots(kinds) {
@@ -147,11 +148,16 @@ Quest.prototype = {
             }
 
             function build() {
-                const done = (progress.Build) ? " quest-ok" : "";
-                return goal.Build && dom.wrap("quest-build" + done, [
-                    progress.Build && dom.wrap("quest-ok-mark", "✔"),
+                const built = progress.Built || [];
+                return goal.Build && dom.wrap("quest-build", [
                     T("To build") + ": ",
-                    game.controller.craft.makeLink(goal.Build),
+                    dom.wrap("", goal.Build.map((build, i) => {
+                        const done = (built[i]) ? " quest-ok" : "";
+                        return dom.wrap("quest-build-item" + done, [
+                            built[i] && dom.wrap("quest-ok-mark", "✔"), ,
+                            game.controller.craft.makeLink(build),
+                        ]);
+                    }))
                 ]);
             }
 

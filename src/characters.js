@@ -172,17 +172,22 @@ Character.npcActions = {
     "Quest": function() {
         var quests = this.getQuests();
         //TODO: remove quest button from dialog, instead of this stupid warning
-        if (quests.length == 0) {
+        switch (quests.length) {
+        case 0:
             game.controller.showWarning(T("No more quests"));
-            return;
+            break;
+        case 1:
+            new Quest(quests[0], this).showPanel();
+            break;
+        default:
+            game.menu.show(quests.reduce((talks, q) => {
+                const quest = new Quest(q, this);
+                const name = quest.getName() + " (" + quest.getStatusMarker() + ")";
+                talks[name] = () => quest.showPanel();
+                return talks;
+            }));
+
         }
-        var talks = {};
-        quests.forEach(q => {
-            var quest = new Quest(q, this);
-            var name = quest.getName() + " (" + quest.getStatusMarker() + ")";
-            talks[name] = () => quest.showPanel();
-        });
-        game.menu.show(talks);
     },
     "Talk": function() {
         var info = this.getTalks();

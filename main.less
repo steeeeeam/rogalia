@@ -3319,6 +3319,10 @@ input[type=number], .lot-quantity > input, .price > input {
 .quest-container {
     width: 300px;
 
+    .slots-wrapper {
+        overflow: visible;
+    }
+
     .quest-desc-container {
         background: #262b2c;
         padding: 7px;
@@ -3372,6 +3376,11 @@ input[type=number], .lot-quantity > input, .price > input {
                 color: @button-color;
                 text-transform: lowercase;
             }
+
+            .slot {
+                animation: blink-brightness 1s;
+                animation-iteration-count: infinite;
+            }
         }
 
         .quest-ok {
@@ -3385,7 +3394,6 @@ input[type=number], .lot-quantity > input, .price > input {
                 color: lightgreen;
             }
         }
-
 
         .quest-items-container {
             display: flex;
@@ -3430,7 +3438,7 @@ input[type=number], .lot-quantity > input, .price > input {
             display: flex;
         }
 
-        .quest-xp, .quest-gold {
+        .quest-xp, .quest-gold, .quest-items-container {
             margin-top: 3px;
             display: flex;
             align-items: center;
