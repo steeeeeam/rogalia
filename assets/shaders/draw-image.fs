@@ -10,7 +10,7 @@ const float tile_size = 64.0;
 const float map_size = 4096.0; // 64 * 64
 
 const float map_tex_width = 512.0;
-const float map_tex_height = 1536.0 + 0.0;
+const float map_tex_height = 1536.0;
 
 float tex_map_coord(float coord, float size) {
     float fix = size / tile_size;
@@ -29,7 +29,8 @@ float tex_map_variant(vec2 position, float variants) {
     vec2 p = floor(position*map_size / tile_size) + u_location;
     float total_variants_num = (map_tex_width / tile_size);
     float rand = (1.0 + sin(p.x * p.y)) / 2.0; // [0 .. 1]
-    return floor(rand * (variants)) / total_variants_num;
+    // min() is a hack for mac/win
+    return min(variants - 1.0, floor(rand * variants)) / total_variants_num;
 }
 
 void main() {

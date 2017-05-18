@@ -133,7 +133,7 @@ Character.prototype = {
     leftTopY: Entity.prototype.leftTopY,
     compare: function(entity) {
         if (this.Effects.Sitting && this.Effects.Sitting.SeatId == entity.Id) {
-            return (entity.Orientation == "n" || entity.Orientation == "w")
+            return (!entity.Orientation || entity.Orientation == "n" || entity.Orientation == "w")
                 ? +1
                 : -1;
         }
