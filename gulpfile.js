@@ -24,10 +24,9 @@ gulp.task("js", function() {
         .pipe(sourcemaps.init())
         .pipe(babel({
             presets: ["es2015"],
-            plugins: ["transform-async-to-generator"],
         }))
         .pipe(concat("bundle.js"))
-        .pipe(uglify())
+        // .pipe(uglify())
         .on("error", gutil.log)
         .pipe(sourcemaps.write("."))
         .pipe(gulp.dest("."));
@@ -59,4 +58,40 @@ gulp.task("bump", function() {
         }))
         .pipe(rename("bundle.html"))
         .pipe(gulp.dest("."));
+});
+
+gulp.task("nwbuild", function() {
+    var NwBuilder = require("nw-builder");
+    var nw = new NwBuilder({
+        files: [
+            "./package.json",
+            "./sources.json",
+            "./index.html",
+            "./main.less",
+            "./metadata.json",
+            "./color-picker.css",
+            "./dev-loader.js",
+            "./favicon.ico",
+            "./assets/**",
+            "./books/**",
+            "./news/**",
+            "./shop/**",
+            "./src/**",
+            "./lib/**",
+        ],
+        appName: "rogalia",
+        buildDir: "./build",
+        flavor: "normal",
+        // flavor: "sdk",
+        cacheDir: "./build/cache/",
+        // platforms: ["win32", "linux64", "linux32", "osx64"],
+        platforms: ["win32", "osx64"],
+        version: "0.22.3",
+    });
+
+    nw.build().then(function () {
+        console.log("all done!");
+    }).catch(function (error) {
+        console.error(error);
+    });
 });
