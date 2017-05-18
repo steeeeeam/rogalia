@@ -27,6 +27,7 @@ function Journal() {
 
 Journal.prototype = {
     select(id) {
+        this.deselect();
         const {item, quest} = this.quests[id];
         this.selected.id = id;
         this.selected.quest = quest;

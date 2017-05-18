@@ -875,7 +875,7 @@ T.dict = {
     "Mutton": "Баранина",
     "Baked chicken wing": "Запеченная куриное крыло",
     "Wooden bow": "Деревянный лук",
-    "Scout bow": "Лук разведчика"
+    "Scout bow": "Лук разведчика",
     "Waypoint": "Точка телепортации",
     "Titanium plate": "Титановая пластина",
     "Fir tree stick": "Палка Ели",

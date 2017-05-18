@@ -44,7 +44,7 @@ Quest.prototype = {
         panel.entity = this.npc;
         panel.show();
     },
-    update(){
+    update() {
         this.goal = dom.replace(this.goal, this.makeGoal());
     },
     makeRewardList(items) {
