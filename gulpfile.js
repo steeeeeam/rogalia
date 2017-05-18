@@ -24,6 +24,7 @@ gulp.task("js", function() {
         .pipe(sourcemaps.init())
         .pipe(babel({
             presets: ["es2015"],
+            plugins: ["transform-async-to-generator"],
         }))
         .pipe(concat("bundle.js"))
         .pipe(uglify())
