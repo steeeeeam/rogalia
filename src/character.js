@@ -37,7 +37,6 @@ function Character(id) {
     this.target = null;
 
     this.Radius = CELL_SIZE / 4;
-    this.isMoving = false;
     this.Speed = {Current: 0};
     this.Equip = [];
 
@@ -66,12 +65,12 @@ function Character(id) {
 
     this.animation = {up: null, down: null};
 
-    this.sprites = {};
-    Character.animations.forEach(function(animation) {
-        var s = new Sprite();
-        s.name = animation;
-        this.sprites[animation] = s;
-    }.bind(this));
+    this.sprites = Character.animations.reduce((sprites, animation) => {
+        const sprite = new Sprite();
+        sprite.name = animation;
+        sprites[animation] = sprite;
+        return sprites;
+    }, {});
     this.sprite = this.sprites.idle;
 
     this._parts = "{}"; // defaults for npcs
@@ -311,34 +310,41 @@ Character.prototype = {
 
         this.sync(data, true);
         this.loadSprite();
+        if (this.isPlayer) {
+            this.initSprite(this.sprites.run);
+            this.buildSprite(this.sprites.run);
+        }
     },
-    initSprite: function() {
-        this.sprite.speed = 14000;
-        this.sprite.offset = this.Radius;
-        this.sprite.angle = Math.PI/4;
+    initSprite: function(sprite = this.sprite) {
+        sprite.speed = 14000;
+        sprite.offset = this.Radius;
+        sprite.angle = Math.PI/4;
 
         var spriteInfo = Character.spritesInfo[this.Type];
         if (spriteInfo) {
             for (var key in spriteInfo) {
-                this.sprite[key] = spriteInfo[key];
+                sprite[key] = spriteInfo[key];
             }
         } else {
-            this.sprite.offset = 2*this.Radius;
-            this.sprite.speed = 7000;
+            sprite.offset = 2*this.Radius;
+            sprite.speed = 7000;
         }
     },
     loadSprite: function() {
-        var sprite = this.sprite;
-        if (sprite.loading)
+        const sprite = this.sprite;
+        if (sprite.loading) {
             return;
+        }
 
         this.initSprite();
 
         if (this.IsNpc) {
             this.loadNpcSprite();
-            return;
+        } else {
+            this.buildSprite(sprite);
         }
-
+    },
+    buildSprite(sprite) {
         // emulate loading, because we will load sprite ourselves
         sprite.loading = true;
 
@@ -908,10 +914,9 @@ Character.prototype = {
         var y = p.y - this.nameOffset();
         var dy = FONT_SIZE * 0.5;
 
-        if (this.isInteractive())
-            drawHp = false;
-        else
-            drawHp = drawHp || ((!this.IsNpc || game.config.ui.npc) && game.config.ui.hp);
+        drawHp = (this.isInteractive())
+            ? false
+            : drawHp || ((!this.IsNpc || game.config.ui.npc) && game.config.ui.hp);
 
         drawName = drawName || ((!this.IsNpc || game.config.ui.npc) && game.config.ui.name);
 
@@ -1535,7 +1540,7 @@ Character.prototype = {
     liftStart: function() {
         const list = game.findItemsNear(this.X, this.Y)
               .filter(e => e.MoveType == Entity.MT_LIFTABLE)
-              .sort((a, b) => a.distanceTo(self) - b.distanceTo(self));
+              .sort((a, b) => a.distanceTo(this) - b.distanceTo(this));
 
         if (list.length > 0) {
             list[0].lift();
@@ -1571,11 +1576,11 @@ Character.prototype = {
                 target.Height
             );
         }
-        const len_x = entity.X - target.X;
-        const len_y = entity.Y - target.Y;
-
-        const r = padding + Math.max(entity.Radius, Math.min(entity.Width, entity.Height) / 2) + 2;
-        return util.distanceLessThan(len_x, len_y, r);
+        return util.distanceLessThan(
+            entity.X - target.X,
+            entity.Y - target.Y,
+            padding + Math.max(entity.Radius, Math.min(entity.Width, entity.Height) / 2) + 2
+        );
     },
     drawHovered: function(nameOnly) {
         if (this.Invisible)
@@ -1747,7 +1752,7 @@ Character.prototype = {
             return true;
         return false;
     },
-    use: function(entity) {
+    use: function(entity, callback) {
         switch (entity.Group) {
         case "shit":
         case "snowball":
@@ -1757,7 +1762,7 @@ Character.prototype = {
             game.network.send("fuck", {Id: this.Id});
             return true;
         case "spell-scroll":
-            game.network.send("cast", {Id: entity.Id, Target: this.Id});
+            game.network.send("cast", {Id: entity.Id, Target: this.Id}, callback);
             return true;
         }
         return false;

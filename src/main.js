@@ -8,13 +8,15 @@ function main() {
     const args = parseArgs();
     const lang = defaultLang(args);
 
-    if (args["skewer"]) {
-        util.loadScript("http://localhost:8888/skewer");
-    }
-
     T.init(lang, function() {
         new Game(lang, args);
     });
+
+    if (document.location.host == "localhost") {
+        window.addEventListener("patch", ({detail}) => {
+            console.log(`Patched ${detail.url.replace(/.*localhost\/src\//, "")}`);
+        });
+    };
 
     function defaultLang(args) {
 

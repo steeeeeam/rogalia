@@ -4,7 +4,13 @@ class QuickBar {
     constructor(modifier) {
         this.modifier = modifier;
         this.slots = _.range(5).map(i => {
-            const slot = new ContainerSlot({panel: this.panel, entity: {}}, i);
+            const slot = new ContainerSlot({
+                panel: this.panel,
+                entity: {},
+                dwim() {
+                    slot.clear();
+                },
+            }, i);
             slot.element.check = () => true;
             slot.element.use = (entity) => {
                 this.setSlot(slot, entity, i+1);

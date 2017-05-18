@@ -382,20 +382,23 @@ function Chat() {
                 local = false;
                 break;
             case "terra":
-                new Panel(
-                    "terra-bar",
-                    "Terraforming",
-                    dom.wrap("slots-wrapper", game.map.bioms.map((biom, i) => dom.wrap(
-                        "slot",
-                        game.map.tiles[i],
-                        {
-                            title: biom.Name,
-                            onclick: function() {
-                                game.controller.terraCursor(game.map.tiles[i]);
+                game.map.loadTiles();
+                game.loader.ready(() => {
+                    new Panel(
+                        "terra-bar",
+                        "Terraforming",
+                        dom.wrap("slots-wrapper", game.map.bioms.map((biom, i) => dom.wrap(
+                            "slot",
+                            game.map.tiles[i],
+                            {
+                                title: biom.Name,
+                                onclick: function() {
+                                    game.controller.terraCursor(game.map.tiles[i]);
+                                }
                             }
-                        }
-                    )))
-                ).show();
+                        )))
+                    ).show();
+                });
                 break;
             case "to" :
                 self.send(message);

@@ -1,4 +1,4 @@
-/* global Settings, config, DragManager, Screen, debug, Sound, Loader, Menu, WorldMap, Controller, Network, HashTable, BinarySearchTree, Quests, Point, IsoDrawer, Popup, T, Panel, Jukebox, util, Stage, FONT_SIZE, CELL_SIZE, sprintf, Professions, dom, Container, _, Quadtree, Pixi, gameStorage, ga */
+/* global Settings, config, DragManager, Screen, debug, Sound, Loader, Menu, WorldMap, Controller, Network, HashTable, BinarySearchTree, Quests, Point, IsoDrawer, Popup, T, Panel, Jukebox, util, Stage, FONT_SIZE, CELL_SIZE, sprintf, Professions, dom, Container, _, Quadtree, gameStorage, ga, WebglRenderer */
 
 "use strict";
 
@@ -46,6 +46,8 @@ class Game {
         this.player = null;
         this.playerName = "";
 
+        this.steamSession = null;
+
         this.map = new WorldMap();
 
         this.controller = new Controller(this);
@@ -67,8 +69,8 @@ class Game {
         this.iso = new IsoDrawer(this.ctx);
 
         if (config.graphics.fastRender) {
-            this.pixi = new Pixi();
-            const canvas = this.pixi.renderer.view;
+            this.webgl = new WebglRenderer();
+            const {canvas} = this.webgl;
             canvas.classList.add("map-canvas");
             canvas.classList.add("bg-canvas");
             this.canvasContainer.appendChild(canvas);
@@ -327,6 +329,7 @@ class Game {
                 // hack to fix nw.js bug
                 // see https://github.com/nwjs/nw.js/issues/2087
                 if (window) {
+                    this.cancelSteamSession();
                     this.save();
                 }
                 win.close(true);
@@ -353,9 +356,17 @@ class Game {
     quit() {
         this.clearCredentials();
         // force save here, becuase nwjs onClose handler is broken
+        this.cancelSteamSession();
         this.save();
         const gui = require("nw.gui");
         gui.App.quit();
+    }
+
+    cancelSteamSession() {
+        if (this.steamSession) {
+            require("./lib/greenworks").cancelAuthTicket(this.steamSession.handle);
+        }
+
     }
 
     update(currentTime) {
@@ -447,11 +458,6 @@ class Game {
     }
 
     removeEntityById(id) {
-        if (this.containers[id]) {
-            this.containers[id].panel.hide();
-            delete this.containers[id];
-        }
-
         const entity = Entity.get(id);
         if (entity) {
             entity.onremove();
@@ -489,7 +495,6 @@ class Game {
     toggleFullscreen() {
         this.fullscreen = !this.fullscreen;
         this.screen.update();
-        game.pixi && game.pixi.updateMap();
         gameStorage.setItem("fullscreen", this.fullscreen);
     }
 
@@ -499,7 +504,9 @@ class Game {
     }
 
     sendError(msg) {
-        game.network.send("error", {msg: msg});
+        if (this.network && this.network.socket) {
+            this.network.send("error", {msg: msg});
+        }
     }
 
     sendErrorf() {

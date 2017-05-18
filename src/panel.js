@@ -263,8 +263,9 @@ Panel.prototype = {
         return this;
     },
     updateVisibility: function() {
-        if (!this.visible || !this.entity || !this.visibilityCheck)
+        if (!this.visible || !this.entity || !this.visibilityCheck) {
             return;
+        }
 
         if (!game.player.canUse(this.entity)) {
             this.close();

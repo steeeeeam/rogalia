@@ -229,7 +229,10 @@ function mainStage(data) {
 
     this.debug = function() {
         game.ctx.fillStyle = "rgba(255, 255, 255, 0.3)";
-        game.ctx.fillRect(game.camera.x, game.camera.y, game.screen.width, game.screen.height);
+        // game.ctx.fillRect(game.camera.x, game.camera.y, game.screen.width, game.screen.height);
+        const p = new Point(game.player);
+        const sight = 1920;
+        game.iso.fillRect(p.x - sight/2, p.y - sight/2, sight, sight);
     };
 }
 

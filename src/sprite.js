@@ -1,14 +1,14 @@
 /* global loader, game */
 
 "use strict";
-function Sprite(path, width, height, speed) {
+function Sprite(path = null, width = 0, height = 0, speed = 0) {
     this.name = "";
     this.image = null;
     this.outline = null;
     this.imageData = null;
 
-    this.width = width || 0;
-    this.height = height || 0;
+    this.width = width;
+    this.height = height;
     this.framesNum = 0;
 
     this.dy = 0; //used for animations
@@ -28,8 +28,9 @@ function Sprite(path, width, height, speed) {
     this._onload = null;
     this._path = null;
 
-    if (path)
+    if (path) {
         this.load(path);
+    }
 }
 
 Sprite.prototype = {

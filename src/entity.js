@@ -59,16 +59,25 @@ Entity.prototype = {
     },
     get name() {
         var name = "";
-        if (this.Type.contains("-corpse") || this.Type == "head" || this.Type == "rune") {
-            name = this.Name;
-        } else if (this.Type == "parcel") {
+        switch (this.Type) {
+        case "male-corpse":
+        case "female-corpse":
+            return `${TS("Corpse")}: ${this.Name}`;
+        case "male-head":
+        case "female-head":
+            return `${TS("Head")}: ${this.Name}`;
+        case "rune-of-teleportation":
+            name = `${TS("Rune")}: ${this.Name}`;
+            break;
+        case "parcel":
+            break;
             var match = this.Name.match(/^(.*)-((?:fe)?male)$/);
             if (match) {
                 name = TS(match[1]) + " (" + T(match[2]) + ")";
             } else {
                 name = TS(this.Name);
             }
-        } else {
+        default:
             name = TS(this.Name);
         }
 
@@ -586,10 +595,9 @@ Entity.prototype = {
     defaultActionSuccess: function(data) {
     },
     defaultAction: function() {
-        var self = this;
-        function use() {
-            game.network.send("entity-use", {id: self.Id}, (data) => self.defaultActionSuccess(data));
-        }
+        const use = () => {
+            game.network.send("entity-use", {Id: this.Id}, (data) => this.defaultActionSuccess(data));
+        };
         switch (this.Type) {
         case "instance-exit":
             game.popup.confirm(
@@ -1307,14 +1315,16 @@ Entity.prototype = {
 
         this.initSprite();
     },
-    cast: function(callback = undefined) {
+    cast: function(callback = () => {}) {
         switch (this.Type) {
         case "scroll-of-town-portal":
+        case "scroll-of-wind-walk":
         case "hunter-scroll":
             game.network.send("cast", {Id: this.Id}, callback);
             break;
         case "embracing-web-scroll":
-            game.controller.cursor.set(this);
+        case "minor-healing-scroll":
+            game.controller.cursor.setSimpleCallback(this, callback);
             break;
         default:
             const spell = new Entity(this.Spell, this.Id);

@@ -251,12 +251,15 @@ function loginStage() {
     function steamLogin() {
         var greenworks = require("./lib/greenworks");
         if (!greenworks.initAPI()) {
-            alert("Error on initializing Steam API.");
+            game.popup.alert("Error on initializing Steam API.", () => {
+                game.exit();
+            });
             return;
         }
         console.log("Steam API has been initalized.");
         greenworks.getAuthSessionTicket(
             function onSuccess(session) {
+                game.steamSession = session;
                 var formData = new FormData();
                 formData.append("ticket", session.ticket.toString("hex"));
                 var req = new XMLHttpRequest();

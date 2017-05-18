@@ -720,11 +720,14 @@ hr {
 .main-stage #interface {
     display: block;
 }
-.exit-stage .panel {
-    display: none!important;
-}
-.exit-stage #world {
-    background-image: url("assets/bg/exit.png");
+.exit-stage {
+    .panel:not(#popup) {
+        display: none!important;
+    }
+
+    #world {
+        background-image: url("assets/bg/exit.png");
+    }
 }
 
 #controls-bar {
@@ -3799,6 +3802,7 @@ input[type=number], .lot-quantity > input, .price > input {
             background: @bg-color;
             color: @quest-header-color;
             margin-left: 5px;
+            align-items: center;
         }
     }
 
