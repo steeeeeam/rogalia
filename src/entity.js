@@ -70,13 +70,13 @@ Entity.prototype = {
             name = `${TS("Rune")}: ${this.Name}`;
             break;
         case "parcel":
-            break;
             var match = this.Name.match(/^(.*)-((?:fe)?male)$/);
             if (match) {
                 name = TS(match[1]) + " (" + T(match[2]) + ")";
             } else {
                 name = TS(this.Name);
             }
+            break;
         default:
             name = TS(this.Name);
         }
