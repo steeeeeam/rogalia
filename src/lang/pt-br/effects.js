@@ -1,57 +1,10 @@
-/* global Effects */
+/* global Effects, T */
 
 Effects.descriptions = {
-    "Overeat": {
-        "class": "Ruim",
-        "effect": "Velocidade de movimento do personagem diminui em 45.",
-        "desc": "Status obtido quando a fome do personagem estiver em 100 ou mais.",
-        "note": "Alimentar-se sob o efeito deste status diminui suas vitaminas abaixo de 0. O jeito mais rápido de eliminar este efeito é defecando em um toalete ou em uma latrina, mas isto causa perda de 50% de seu pontos de vida (HP) restantes. Beber água também ajuda a eliminar este efeito mais rapidamente.",
-    },
-    "Starving": {
-        "class": "Ruim",
-        "effect": "Drena seus pontos de vida (HP) vagarosamente.",
-        "desc": "Status obtido quando a fome do personagem chegar a 0.",
-        "note": "Você pode morrer de fome.",
-    },
-    "Thirsty": {
-        "class": "Ruim",
-        "effect": "A velocidade de movimento diminui em 45 e os pontos de vida (HP) diminuem vagarosamente. Você não pode cavar, minerar ou levantar itens.",
-        "desc": "Status obtido quando a energia do personagem chega a 0.",
-        "note": "",
-    },
-    "Lifting": {
-        "class": "",
-        "effect": "Velocidade de movimento diminui para 45.",
-        "desc": "Status obtido quando o personagem levantando ou movendo itens.",
-        "note": "",
-    },
-    "Fire": {
-        "class": "Ruim",
-        "effect": "O personagem sofre dano constate (30 de dano a cada 5 segundos).",
-        "desc": "Status obtido quando atacado por armas ou criaturas do elemento: Fogo.",
-    },
-    "Bleed": {
-        "class": "Ruim",
-        "effect": "O personagem sofre dano constate.",
-        "desc": "Status obtido quando atacado por criaturas.",
-    },
-    "Sitting": {
-        "class": "Bom",
-        "effect": "Perda de energia é reduzida. Sentar próximo a uma mesa enquanto come diminui a quantidade de energia ganha dos alimentos.",
-        "desc": "Status obtido quando o personagem senta em uma cadeira, trono ou toco.",
-        "note": "",
-    },
-    "MushroomTrip": {
-        "class": "",
-        "effect": "Aumenta a velocidade para 135, causa alucinações e perde 3 pontos de vida a cada instante.",
-        "desc": "Status obtido quando o personagem consome cogumelo cru.",
-        "note": "Dano aumento de acordo com a quantidade de cogumelos consumida.",
-    },
-    "Sex": {
-        "class": "Bom",
-        "effect": "Diminui a saciedade em 10 pontos e aumenta a energia em 25 pontos.",
-        "desc": "Obtido com a NPC Margo.",
-        "note": "A ação dura 1,5 minutos.",
+    "ActivatedCarbon": {
+        "class": "good",
+        "effect": "Zera todas as vitaminas e remove os efeitos negativos de defecar.",
+        "desc": "Status obtido quando consumir carvão ativado.",
     },
     "Arena": {
         "class": "",
@@ -59,62 +12,55 @@ Effects.descriptions = {
         "desc": "Status obtido quando o personagem entra na arena.",
         "note": "",
     },
-    "Riding": {
-        "class": "Bom",
-        "effect": "A velocidade do personagem aumenta bastante. A penalidade por levantar itens não se aplica.",
-        "desc": "Status obtido enquante estiver cavalgando em um cavalo.",
-        "note": "",
+    "Bleed": {
+        "class": "bad",
+        "effect": "O personagem sofre dano constate causado por sangramento.",
+        "desc": "Status obtido quando atacado por criaturas.",
     },
-    "Slowed": {
-        "class": "Ruim",
-        "effect": "Velocidade de movimento do personagem diminui em 45 pontos.",
-        "desc": "Status obtido quando for atingido por criatura que possue a magia de reduzir velocidade.",
-        "note": "Não é acumulável.",
-    },
-    "High": {
-        "class": "Bom",
-        "effect": "Diminui a quantidade de energia obtida dos alimentos. Redução: Cigarro: 5%, Charuto: 10% e Baseado: 15%. Quanto maior for a qualidade, maior é a porcentagem.",
-        "desc": "Status obtido quando fumar cigarros, charutos e baseados.",
-        "note": "Acumulável com o status: Sentar. Regenera 12% de pontos de vida por 12 instantes.",
-    },
-    "Weakness": {
-        "class": "Ruim",
-        "effect": "Velocidade de movimento cai para 45 pontos. Personagem causa praticamente 0 de dano sob o efeito deste status.",
-        "desc": "Status obtido quando o personagem renasce após a morte.",
-        "note": "Pode ser removido ao consumir Poção de Força.",
-    },
-    "ActivatedCarbon": {
-        "class": "Bom",
-        "effect": "Zera todas as vitaminas e remove os efeitos negativos de defecar.",
-        "desc": "Status obtido quando consumir carvão ativado.",
+    "De": {
+        "class": "fight",
+        "effect": T.help.combos.de.effect,
+        "desc": T.help.combos.de.desc,
     },
     "Drunk": {
-        "class": "Bom",
-        "effect": "Recupera alguns pontos de vida. Às vezes te faz falar o que pensa.",
-        "desc": "Status obtido quando álcool é consumido.",
+        "class": "good",
+        "effect": "Recupera 13% de vida e diminui 7% de dano",
+        "desc": "Efeito obtido quando álcool é consumido. Às vezes faz dizer o que pensa.",
         "note": "Se você beber demais, nem mesmo carvão ativado vai te salvar da ressaca.",
+    },
+    "Fire": {
+        "class": "bad",
+        "effect": "O personagem sofre dano constate (30 de dano a cada 5 segundos).",
+        "desc": "Status obtido quando atacado por armas ou criaturas com efeito de fogo.",
     },
     "Hangover": {
         "class": "",
         "effect": " +9 de força, -9 de destreza.",
-        "desc": "Status obtido quando o personagem consome álcool (cerveja, vinho, etc.).",
+        "desc": "Status obtido quando o personagem consome álcool (cerveja ou vinho).",
         "note": "Não é acumulável.",
     },
-    "Vomit": {
-        "class": "Ruim",
-        "effect": "Você está doente e perde uma porcentagem de vida(HP).",
+    "High": {
+        "class": "good",
+        "effect": "Diminui a quantidade de energia obtida dos alimentos. Cigarro de qualidade 1: 7%, Charuto de qualidade 1: 12% e Baseado de qualidade 1: 15%. Quanto maior for a qualidade, maior é a porcentagem.",
+        "desc": "Status obtido quando fumar cigarros, charutos e baseados.",
+        "note": "Acumulável ao sentar em uma cadeira proxima a uma mesa. Regenera 1% de pontos de vida a cada instante.",
     },
-    "Plague": {
-        "class": "Ruim",
-        "effect": "Drena sua vida até a morte.",
-        "desc": "Pode ser infectado enquanto fica próximo a uma pilha de lixo, de outro paciente ou sexo homossexual.",
-        "note": "Pode ser curada com Poção anti-praga.",
+    "Inspiration": {
+        "class": "fight",
+        "effect": "Aumenta a chance de acerto crítico em conjunto de [де] aumenta a absorção de dano",
+        "desc": "АоE buff"
     },
-    "SynodProtection": {
-        "class": "Bom",
-        "effect": "Você recebe 80% menos dano no PVP.",
-        "desc": "Não funciona debaixo da terra, se você contratacar ou se tiver karma negativo.",
-        "note": "Permite que você retorne ao seu ponto de retorno.",
+    "Lifting": {
+        "class": "",
+        "effect": "Velocidade de movimento diminui para 45.",
+        "desc": "Status obtido quando o personagem levantando ou movendo itens pesados.",
+        "note": "",
+    },
+    "MushroomTrip": {
+        "class": "",
+        "effect": "Aumenta 35 de velocidade de movimento, causa alucinações e perda de 10% pontos de vida (HP) a cada instante.",
+        "desc": "Status obtido quando o personagem consome cogumelo cru.",
+        "note": "Dano aumento de acordo com a quantidade de cogumelos consumida.",
     },
     "NewbieProtection": {
         "class": "",
@@ -122,29 +68,83 @@ Effects.descriptions = {
         "desc": "Level 1 a 9 - mantém o equipamento e a bolsa.\nLevel 10 a 24 - mantém a bolsa, mas perde seu conteúdo.\nDo level 25 em diante - perde todo equipamento e inventário.",
         "note": "Em qualquer level, você perderá as vitaminas e os pontos de aprendizado.",
     },
-    "Prospecting": {
-        "class": "Bom",
-        "effect": "Permite que veja depósito de minérios próximos",
-        "desc": "Status obtido ao usar o prospector",
-    },
-    "De": {
-        "class": "Luta",
-        "effect": T.help.combos.de.effect,
-        "desc": T.help.combos.de.desc,
-    },
-    "Su": {
-        "class": "Luta",
-        "effect": T.help.combos.su.effect,
-        "desc": T.help.combos.su.desc,
-    },
     "Nya": {
-        "class": "Luta",
+        "class": "fight",
         "effect": T.help.combos.nya.effect,
         "desc": T.help.combos.nya.desc,
     },
-    "Inspiration": {
-        "class": "Luta",
-        "effect": "Aumenta a chance de acerto crítico; em conjunto de [де] aumento de dano absorvido",
-        "desc": "АоE buff"
+    "Overeat": {
+        "class": "bad",
+        "effect": "Reduz 45 de velocidade de movimento.",
+        "desc": "Status obtido quando a energia do personagem estiver em 100 ou mais.",
+        "note": "Alimentar-se sob o efeito deste status diminui suas vitaminas abaixo de 0. O jeito mais rápido de eliminar este efeito é defecando em um toalete ou em uma latrina, porém isto causará perda de 50% do seu pontos de vida (HP) restantes. Beber água também ajuda a eliminar este efeito mais rapidamente.",
+    },
+    "Plague": {
+        "class": "bad",
+        "effect": "Drena sua vida até a morte.",
+        "desc": "Pode ser infectado enquanto fica próximo a uma pilha de lixo, de outro infectado ou sexo homossexual.",
+        "note": "Pode ser curada com Poção anti-praga.",
+    },
+    "Prospecting": {
+        "class": "good",
+        "effect": "Permite que veja depósito de minérios próximos",
+        "desc": "Status obtido ao usar um Garimpeiro",
+    },
+    "Riding": {
+        "class": "good",
+        "effect": "A velocidade do personagem aumenta consideravelmente. A penalidade por levantar itens não se aplica.",
+        "desc": "Status obtido enquante estiver cavalgando em um cavalo.",
+        "note": "",
+    },
+    "Sex": {
+        "class": "good",
+        "effect": "Diminui a energia em 20 pontos e recupera 50 de sede.",
+        "desc": "Obtido com a NPC Margo.",
+        "note": "A ação dura 1,5 minutos.",
+    },
+    "Sitting": {
+        "class": "good",
+        "effect": "Perda de energia é reduzida. Sentar próximo a uma mesa enquanto come diminui a quantidade de energia obtida dos alimentos.",
+        "desc": "Status obtido quando o personagem senta em uma cadeira, trono ou toco.",
+        "note": "",
+    },
+    "Slowed": {
+        "class": "bad",
+        "effect": "Velocidade de movimento do personagem é reduzida.",
+        "desc": "",
+        "note": "Não é acumulável.",
+    },
+    "Starving": {
+        "class": "bad",
+        "effect": "Diminui seus pontos de vida (HP) vagarosamente.",
+        "desc": "Status obtido quando a fome do personagem chegar a 0.",
+        "note": "Você pode morrer de fome.",
+    },
+    "Su": {
+        "class": "fight",
+        "effect": T.help.combos.su.effect,
+        "desc": T.help.combos.su.desc,
+    },
+    "SynodProtection": {
+        "class": "good",
+        "effect": "Você recebe 80% menos dano no PVP.",
+        "desc": "Não funciona debaixo da terra, se você contratacar ou se tiver karma negativo.",
+        "note": "Permite que você retorne ao seu ponto de retorno ou para a cidade.",
+    },
+    "Thirsty": {
+        "class": "bad",
+        "effect": "A velocidade de movimento diminui em 45 e os pontos de vida (HP) diminuem vagarosamente. Você não pode cavar, minerar ou levantar itens.",
+        "desc": "Status obtido quando a energia do personagem chega a 0.",
+        "note": "",
+    },
+    "Vomit": {
+        "class": "bad",
+        "effect": "Você está doente e perde uma porcentagem de vida(HP).",
+    },
+    "Weakness": {
+        "class": "bad",
+        "effect": "Velocidade de movimento diminui 45 pontos. Personagem causa quase 0 de dano sob o efeito deste status.",
+        "desc": "Status obtido quando o personagem renasce após a morte.",
+        "note": "Pode ser removido ao consumir Poção de Força.",
     },
 };

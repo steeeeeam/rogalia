@@ -4,328 +4,382 @@ Talks.npcs = {
     "charles": {
         "default": {
             "male": [
-                "Olá, amigo!",
-				"Eu sou Charles, secretário do chanceller imperial. E também sou o embaixador oficial dos clérigos nestas terras.",
-        "Você pode descansar e vender suas coisas aqui.",
-		"Pessoas são diferentes aqui, eu sou quem mantém a ordem.",
+                "Olá meu amigo!",
+                "Me chamo Charles, secretário da chancelaria do Imperador local. Além disso sou o embaixador oficial dos clérigos nestas terras.",
+                "Você pode descansar e vender suas coisas aqui.",
+                "Aqui se econtram muitas pessoas diferentes e por conta disso sou responsável por representar as autoridades cabiveis.",
                 "Então, vamos conversar:"
             ],
             "female": [
-                "Bom dia, Senhorita!",
-                "Eu sou Charles, secretário do chanceller imperial. E também sou o embaixador oficial dos clérigos nestas terras.",
-		"Você pode descansar e vender suas coisas aqui.",
-		"Pessoas são diferentes aqui, eu sou quem mantém a ordem.",
+                "Olá mocinha!",
+                "Me chamo Charles, secretário da chancelaria do Imperial local. Além disso sou o embaixador oficial dos clérigos nestas terras.",
+                "Você pode descansar e vender suas coisas aqui.",
+                "Aqui se econtram muitas pessoas diferentes e por conta disso sou responsável por representar as autoridades cabiveis.",
                 "Então, vamos conversar:"
             ]
         },
         "empire": {
             "male": [
-                "É bom velo novamente, amigo!",
-                "É bom vê-lo sendo leal ao Imperador mesmo em épocas como esta. Não perca sua fé e não caia na conversa dos confederados... Mantenha-se firme, amigo! Deus seja minha testemunha de como lhe ajudarei. Sou Charles, seu servo.",
+                "É bom vê-lo novamente!",
+                "Vejo que tem sido leal ao Imperador mesmo em épocas como esta. Não perca sua fé e não caia na conversa dos confederados... Mantenha-se firme, amigo! Deus seja minha testemunha de como lhe ajudarei. Sou Charles, seu servo.",
             ],
             "female": [
-                "Nice to meet you, lady!",
-                "I'm so glad you did not turn away from Imperial laws. I hoped you'll stay with us, the town lacks sincere, open-minded girls who isn't fascinated with that confederates promises. I, the local Imperial chancery headmaster, am your servant and loyal knight. Ask me and I'll help you."
+                "É bom vê-la novamente!",
+                "Estou feliz que você não tenha se afastado das leis imperiais. Eu esperava que você ficasse conosco, a cidade carece de garotas sinceras e de menta aberta que não estão fascinadas com as promessas dos confederados. Eu o diretor local da chancelaria Imperial, sou seu leal servo. Pergunte-me e eu ajudarei."
             ]
         },
         "confederation": {
             "male": [
-                "Hey dude.",
-                "So how's that going? I mean, your confeds service? I hope they feed you well at least. But sorry for my rudeness. We're all equal here, so I mustn't prefer those who keep loyal to our lord. Even if I'm the CEO of Emperor chancery, I have to keep an eye on this town. So I'll help you with all my kindness.",
+                "Ei amigo.",
+                "Então, como é que vai? Eu espero que pelo menos eles tenham te alimentaram bem. Mas desculpa a minha grosseria. Somos todos iguais aqui, então eu não devo preferir aqueles que se mantêm fiéis ao nosso senhor. Mesmo se eu sendo o CEO da Chancelaria do Imperador, eu tenho que manter um olho sobre esta cidade. Então, eu vou ajudar você com toda a minha bondade.",
             ],
             "female": [
-                "Young lady!",
-                "What problem brought you up to me? I feel sorrow for you joined that deadbeats, but don't worry, our relationship won't change. You sure had some reasons to do that, and I won't judge. We're all equal here but... I hoped you'll choose a more... gentle way. Anyway, Charles is your servant.",
+                "Jovem senhorita!",
+                "O que à traz até mim? Sinto muito por você ter de se juntar a esses vagabundos, mas não se preocupe, a nossa relação não vai mudar. Você com certeza tinha alguns motivos para fazer isso, e eu não posso julgar. Somos todos iguais aqui, mas... eu esperava que você fosse escolher uma mais... forma suave. De qualquer maneira, Charles é seu servo.",
             ]
         },
         "actions": {
-            "Set citizenship": "I want to set my fraction.",
-            "Get claim": "I want to claim a lands.",
+            "Set citizenship": "Quero entrar para uma facção.",
+            "Get claim": "Quero reivindicar minhas terras.",
+            // "Get village claim": "Eu gostaria de me estabelecer aqui na cidade (10 de Platina).",
         },
     },
     "diego": {
         "default": {
             "male": [
-		"Hey! Name's Diego, I'm Taiterra ambassador here! But I like good fight better than that political doings. So if you wanna hunt a game I can show you places! Te-hee!"
-	    ],
+                "Ei! O nome é Diego, eu sou embaixador daqui! Embora eu prefira uma boa luta, melhor do que toda essa políticagem. Então, se você quiser caçar eu posso mostrar a você lugares interessates! Ha-ha!"
+            ],
         },
         "actions": {
-            "Show instances": "Show me places to hunt.",
+            "Show instances": "Mostre-me lugares para caçar.",
         }
     },
     "scrooge": {
         "default": {
             "male": [
-                "Welcome!",
-                "We're always glad to see new customers. Come, take a sit. My name is Scrooge and I manage the greatest bank of Rogalia.",
-                "Our bank is so great we can afford local offices at remote towns like this. Don't worry, the quality of our service stays the same.",
-                "I can keep your money. Sad to say, you won't get any interest, but I'll keep them in the firm safe.",
-                "Also, for landlords we could offer a savings fund service. If you have some revenue, all your incomes will automatically be saved on your account. The good profit and no extra bills.",
-                "So, any questions?"
+                "Bem-vindo!",
+                "Estamos sempre felizes em ver novos clientes. Venha, sente-se. Meu nome é Scrooge eu gerêncio o maior banco de Rogalia.",
+                "Nosso banco é tão grande que podemos dar ao luxo de abrir filiais em aldeias remotas como esta. Não se preocupe, a qualidade do nosso serviço será sempre o mesma.",
+                "Eu posso guardar o seu dinheiro. É triste dizer você não está nem ai para isso, mas posso manter seu dinheiro seguro.",
+                "E mais, para os proprietários nós podemos oferecer um fundo de poupança. Se você tiver alguma receita, todos os seus rendimentos serão salvos automaticamente na sua conta. Um bom lucro e sem cobranças adicionais.",
+                "Então, o que deseja?"
             ]
         },
         "actions": {
-            "Bank": "Financial operations.",
-            "Exchange": "Ingots and notes exchange.",
+            "Bank": "Banco.",
+            "Exchange": "Mercado de câmbio.",
         },
     },
     "sabrina": {
         "default": {
             "male": [
-                "Halt! Don't come! We-e-ell... A-ha... Okay... Ah, damn it. Sorry, I'm Sabrina, I'm the local alchemist. Everything for you: from a leaf of goose-grass to a potion which turns a stone alive! Te-hee, just kidding."
+                "Espera! Não se aproxime de nós... Ah... Tudo bem... Ah, dane-se. Desculpa, menu nome é Sabrina, eu sou a alquimista local. Eu tenho tudo: a partir de uma folha de bananeira para poções de banana, que dão vida a uma pedra! Haha, brincadeirinha."
+            ],
+            "female": [
+                "Espera! Não se aproxime de nós... Ah... Tudo bem... Ah, dane-se. Desculpa, menu nome é Sabrina, eu sou a alquimista local. Eu tenho tudo: de uma folha de bananeira para os espíritos da banana, que você irá atrair maridos da forma que desejar! Haha, brincadeirinha."
             ]
         },
         "actions": {
-            "Trade": "I wanna take a look.",
+            "Trade": "Quero ver seus produtos.",
         },
     },
     "larisa": {
         "default": {
             "male": [
-                "Welcome to the Rogalia bargain house! Well, we're just a local branch of Imperial Auction Dome, but hey, we're no worse! I'm Larice, call me if you wanna trade."
+                "Bem vindo à casa de leilões de Rogalia! Claro, nós somos apenas do ramo de leilões do Império Dome, mas hey, o bens aqui são bem váriados! Eu sou Larisa, me diga se você quer participar do leilão."
             ]
         },
         "actions": {
-            "Auction": "I wanna take a look.",
-            "Get vendor license": "I want to get a vendor license."
+            "Auction": "Quero ver os leilões.",
+            "Get vendor license": "Quero uma licença para leiloar."
         },
     },
     "shot": {
         "default": {
             "male": [
-                "Hello, handsome, I'm Shot. Here, take a sit.",
-                "Think, our pub \"The dancing coyote\" is the only place here which deserves any attention, disregard any talks of that brag Charles. We have cold water, warm meals and something very hot in the next room. But a man like you will manage that with no help.",
+                "Ei, bonitão, me chamo Shot, sente-se.",
+                "O nosso pub \"Coiote Dançante\" é o único lugar nesta cidade que merece atenção. Não importa o que o pilantra do Charles disser. Temos comida, água e algo quente na sala ao lado. Mas um homem como você lidar com isso.",
             ],
             "female": [
-                "Hey, friend!",
-                "I'm Shot, and I own \"The dancing coyote\". We have meals and water, and also we have something else, but girls are barely interested in things like that, so I won't even tell. The town is kinda nice, even if only red-necks and deadbeats gathered here. But no hard feelings, I think we'll develop a good friendship!",
+                "Olá, amiga",
+                "Me chamo Shot, aqui no pub \"Coiote Dançante\". Temos comida, água e mais uma coisa na sala ao lado, mas para você talvez não seja interessante. Nossa cidade é muito boa, embora existam alguns caipiras e vagabundos por aqui. Eu acho que seremos boas amigas!",
             ]
         },
         "empire": {
             "male": [
-                "What kind of delicate meal does this noble gentleman want today?",
-                "We've got a potato seeds you can easily grow. Premium water in assortment: from the river, from the lake, and even from the pound. Hey, don't make that face. It's only a local pub, not the magestic restaurant at the middle of the Imperial capital. Or when you enter a pub named \"The dancing coyote\" you expect to see something else? I'm Shot, and I'm your servant.",
+                "Que tipo de refeição este nobre cavalheiro deseja hoje?",
+                "Temos sementes de batata que você pode plantar. Água de primeira classe não do rio, do lago, muito menos da lagoa. Ei, não faça essa cara. É apenas um pub local, não o majestoso restaurante no centro da capital Imperial. O que você esperava de um pub chamado \"Coiote dançante\" você esperava ver algo a mais? Meu nome é Shot, ao seu dispor.",
             ],
             "female": [
-                "Ah! The Imperial lady comes for dinner!",
-                "Well, hope I'll meet your expectations. Got seeds of any taste. What? A casual food? Do you think this seeds won't work any good? I'll have a water to water them, though. Just kidding.\
-					You can drink it here. With our glasses, yeah. Yeah, rules is rules. You may write a complain, yeah. After my words: \"The pub's owner Shot, confederate and proud daughter of confederates, does not show any respect for the righteous Imperial women\"!"
+                "Oh! A Lady Imperial chega para o jantar!",
+                "Bem, espero atender suas expectativas. Tenho sementes de todos os tipos. O que? Uma comida casual? Você acha que estas sementes não valem nada?! E água somente da chuva?! Brincadeira. Para beber água aqui apenas pagando. Regras são regras. Você pode escrever uma reclamação, sim. Depois das minhas palavras: \"O proprietário do pub Shot, da confederação e orgulhosa filha de confederados, não mostra nenhum respeito com as mulheres Imperiais\"."
             ]
         },
         "confederation": {
             "male": [
-                "Hi, honey, name's Shot, take a sit.",
-                "Think, our pub \"The dancing coyote\" is the only place here which deserves any attention, disregard any talks of that brag Charles. We have cold water, warm meals and something very hot in the next room just for you. I've heard you the confederate boys, consider this type of leisure a lot. But I think you'll manage that with no help.",
+                "Ei, bonitão, me chamo Shot, sente-se.",
+                "O nosso pub \"Coiote Dançante\" é o único lugar nesta cidade que merece atenção. Não importa o que o pilantra do Charles disser. Temos comida, água e algo quente na sala ao lado. Mas um homem como você lidar com isso.",
             ],
             "female": [
-                "Hey-hey! Glad to see another daughter of Confederation here!",
-                "\"The dancing coyote\" isn't that bad, right? Come more often, I'm sure we'll make a good friends. By the way, I'm Shot. I could feed you, trade some seeds, and, you know... Well, if you're open-minded enough, you may find something interesting in the next room...",
+                "Olá, amiga",
+                "Me chamo Shot, aqui no pub \"Coiote Dançante\". Temos comida, água e mais uma coisa na sala ao lado, mas para você talvez não seja interessante. Nossa cidade é muito boa, embora existam alguns caipiras e vagabundos por aqui. Eu acho que seremos boas amigas!",
             ]
         },
         "actions": {
-            "Trade": "I want to see what you got.",
-            "Drink water": "I want a drink (5 silver)",
+            "Trade": "Quero ver seus produtos.",
+            "Drink water": "Quero molhar a garganta (5 silver)",
         }
     },
     "margo": {
         "default": {
             "male": [
-                "Hey, sweetheart, don't pass by!",
-		"Come on, let's have fun, you know who I am, don't you? I know the names you call people like me, but I prefer a \"night-fly\", 'cause I look like a butterfly, right? Silky wings, light body, majestic beauty, and I bring a pleasure to people, see, the special sort of pleasure. So, are you here to stare or even that bold boy of you needs some rest?",
+                "Ei, querido, não fuja!",
+                "Venha, vamos nos divertir, você sabe quem eu sou, não é? Eu sei os nomes que as pessoas gostam de me chamar, mas eu prefiro \"Vôo Noturno\", porque eu pareço uma borboleta, certo? Asas de seda, corpo iluminado, beleza majestosa, e eu trago um prazer para as pessoas, veja, o tipo especial de prazer. Então, você está aqui só para olhar?",
             ],
             "female": [
-                "Honey? Wrong door? Hey?",
-		"Come on, don't be shy. I've read everything in your eyes, say no more. I am Margo, and I'm the one you need. Trust me, I can see the tension and reservation; you've come at the right place. We'll fight that. A woman should let herself out, show herself to the world and let her preconceptions away. Come, honey. Sit down. I'm not biting.",
+                "Hey querida porta errada?",
+                "Venha, não se acanhe. Eu li tudo em seus olhos, não diga mais nada. Eu sou Margo, e eu sou o que você precisa. Confie em mim, eu posso ver sua tensão, você veio ao lugar certo. Nós vamos lutar contra isso. Uma mulher deve deixar-se, mostrar-se ao mundo, e deixar seus preconceitos de distância. Venha, querida. Sentar-se. Eu não vou morder.",
             ]
         },
         "empire": {
             "male": [
-                "Sweety, come, don't be shy.",
-		"Well, if you're here, think you know I'm Margo and my service is very special. Take a sit, have a rest... You need some rest, don't you? I know you, the Emperor loyal men, do not like people like me, but throw away your doubts and let yourself a pleasure...",
+                "Querido, venha, não seja tímido.",
+                "Bem, se você está aqui, acho que já sabe que eu sou Margo e meu serviço é muito especial. Sente-se, desanse ... Você precisa descansar, não precisa? Eu sei que você, um Imperial leal, não gostam de pessoas como eu, mas relaxa e goza..."
             ],
             "female": [
-                "Yes? Can I help you?",
-		"Margo, that's me. A prostitute. A whore, if you prefer. Any questions? I see you have questions. Any Imperial would have them in case like this. But.. Oh! I can see the passion in your eyes? Oh my god, it's a passion. Pardon me for my rudeness. This place is kinda unstable, you know. Disregard things Charles says, the Empire and the Confederation will always stay enemies, even if we're on the desert island. But feel no worry, I'm loyal to all my customers. It's better to get rid of your stress with me than with these sweaty red-necks."
+                "Sim? Posso ajuda-la?",
+                "Margo, está sou eu. A prostituta se você preferir. Alguma dúvida? Eu vejo que você está curiosa. Qualquer Imperial iria me desejar. Mas.. Oh! Eu posso ver a paixão em seus olhos? Oh meu Deus, é uma paixão. Perdoe-me pela grosseria. Este luga é instavel as vezes, você sabe. Ignore as coisas que Charles disser, o Império e a Confederação sempre serão inimigos, até mesmo em uma ilha deserta. Mas não se preocupe, Sou leal ao meus clientes. É melhor aliviar seu estresse comigo do que com esses pescoçudos vermelhos."
             ]
         },
         "confederation": {
             "male": [
-                "Sweety, come, don't be shy.",
-		"Wow, such a passion! You look like a manliest man here! I feel a male in you, your walk makes my legs shake! I think you've come for purpose, right? You guys let us night-flies spread all over Empire. So you are ought to know what to do, right? You may call me Margo or whatever you prefer, lay down and rest...",
+                "Querido, venha, não seja tímido.",
+                "Uau, me apaixonei! Eu sinto o homem que há em você, sua postura faz minhas pernas tremerem! Eu acho que você veio por um motivo, certo? Vocês nos deixam as moscas por todo o Império. Então você sabe o que fazer, certo? Pode me chamar de Margo ou do que quiser, deite e desanse...",
             ],
             "female": [
-                "Get in, pumpkin. Margo is always glad to see such a cute girls like you.",
-		"In this Imperial place full of sweaty greasy rustics every girl needs some rest and fun sometimes, needs to release her tension, right? Pros like me give people what they want, and you wanna stay here with me, I guess? Take a sit, let momma Margo take care of you...",
+                "Entre bebê, Margo sempre fica feliz em ver lindas garotas como você.",
+                "Neste luga cheio de brutos, gordos e sujos toda garota precisa descansar e se divertir as vezes, precisa liberar a tenão, certo? Profissionais como eu dão as pessoas o que elas merecem, e você quer ficar comigo, certo? Sente-se, deixe mamãe Margo cuidar de você...",
             ]
         },
         "actions": {
-            "Buy sex": "Use a whore's service (10 gold)",
+            "Buy sex": "Comprar sexo (10 gold)",
         }
     },
     "bruno": {
         "default": {
             "male": [
-                "Welcome to my modest shop, pal.",
-		"I'm Bruno, glad to help you pick a clothes. You're here for clothes, right? I'm the best clothier in the whole Empire here to help you.",
+                "Bem vindo a minha humilde loja.",
+                "Me chamo Bruno, ficarei feliz em ajuda-lo a escolher a roupa certa ou tecido. Sou o melhor alfaiate do Império.",
             ],
             "female": [
-                "Love, don't pass by, take a look!",
-		"My name is Bruno, love, and this is my shop. You can get any clothes here for any taste. Pick something.",
+                "Amor, não me ignore, de uma olhada!",
+                "Meu nome é Bruno, está é minha loja. Você pode comprar roupas ou tecidos de todos os gostos. Escolha algo.",
             ]
         },
         "empire": {
             "male": [
-                "Hey, gentleman!",
-		"I'm Bruno the local tailor. If you feel need in new clothes, I'm here for you. Glad to serve a right Imperial.",
+                "Olá, cavalheiro!",
+                "Sou o Bruno o alfaiate local. Se precisar de roupas, estou aqui para você. Feliz em servir um Imperial.",
             ],
             "female": [
-                "Love, come and see what I've got!",
-		"It's always a pleasure to see a loyal face. I'm Bruno, and if you need best clothes, you'll get them for a modest price."
+                "Amor, venha ver o que eu tenho!",
+                "É sempre bom ver um rosto amigavel. Sou Bruno, e se precisar de roupas melhores, você pode adiquirir por um preço bacana."
             ]
         },
         "confederation": {
             "male": [
-                "Hey, pal!",
-		"I can see you're confeds' servant. Skinny, wearing castoffs... Name's Bruno, come in, I'll bring you best clothes in the whole Rogalia!",
+                "Hey, bonito!",
+                "Mesmo que esteja servindo a Confederação, não podemos deixar você sem roupas... Me chamo Bruno, venha, lhe trarei as melhores roupas de Rogalia!",
             ],
             "female": [
-                "Hey, sweet-ass!",
-		"The fact you're a confede-rat doesn't change that you need good outfit. I'm Bruno, the best tailor of alive ones!",
+                "Hey, gata!",
+                "Mesmo que esteja servindo a Confederação, não podemos deixar você sem roupas... Me chamo Bruno, o melhor alfaiate que já existiu!",
             ]
         },
         "actions": {
-            "Trade": "I wanna see your goods.",
+            "Trade": "Quero ver seus produtos.",
         },
     },
     "ahper": {
         "default": {
             "male": [
-                "There was a times I could break a boulder in a moment... Te-hee. My pardon.",
+                "Havia um tempo em que eu poderia quebrar uma perna em um instante... Opss. Perdoe-me.",
             ]
         },
         "actions": {
-            "Trade": "I wanna see your goods.",
+            "Trade": "Quero ver seus produtos.",
         },
     },
     "cosmas": {
         "default": {
             "male": [
-                "Hi. This is my smithy. You need a gear or an armor, maybe? Sigh... Everyone wants nails or hoops, like everyone.",
+                "Oi. Está é minha forja. você precisa de alguma arma ou armadura? Xiiu... Todos querem meus pregos ou aros.",
             ]
         },
         "actions": {
-            "Trade": "I wanna see your goods.",
+            "Trade": "Quero ver seus produtos.",
         },
     },
     "boris": {
         "default": {
             "male": [
-                "Come in, son, our church always greets new parishioners.",
-		"My name is Boris, I am the abbot of this abbey. Here, in this lands, I bring the light to everyone who needs it. You're here to absolve, I guess?",
+                "Entre, filho, nossa igreja sempre recebe novos membros.",
+                "Meu nome é Boris, sou o abade desta abadia, aqui, nestas terras, eu trago a luz para todos que precisam dela. Você está aqui para absolvição, correto?",
             ],
             "female": [
-                "Come in, daughter, our church always greets new parishioners.",
-		"My name is Boris, I am the abbot of this abbey. Here, in this lands, I bring the light to everyone who needs it. You're here to absolve, I guess?",
+                "Entre, filha, nossa igreja sempre recebe novos membros.",
+                "Meu nome é Boris, sou o abade desta abadia, aqui, nestas terras, eu trago a luz para todos que precisam dela. Você está aqui para absolvição, correto?",
             ]
         },
         "empire": {
             "male": [
-                "Come in, son, our church always greets new parishioners.",
-		"My name is Boris, I am the abbot of this abbey. Here, in this lands, I bring the light to everyone who needs it. You're here to absolve, I guess?",
+                "Entre, filho, nossa igreja sempre recebe novos membros.",
+                "Meu nome é Boris, sou o abade desta abadia, aqui, nestas terras, eu trago a luz para todos que precisam dela. Você está aqui para absolvição, correto?",
             ],
             "female": [
-                "Come in, daughter, our church always greets new parishioners.",
-		"My name is Boris, I am the abbot of this abbey. Here, in this lands, I bring the light to everyone who needs it. You're here to absolve, I guess?",
+                "Entre, filha, nossa igreja sempre recebe novos membros.",
+                "Meu nome é Boris, sou o abade desta abadia, aqui, nestas terras, eu trago a luz para todos que precisam dela. Você está aqui para absolvição, correto?",
             ]
         },
         "confederation": {
             "male": [
-                "Come in, son, our church always greets new parishioners.",
-		"My name is Boris, I am the abbot of this abbey. Here, in this lands, I bring the light to everyone who needs it. You're here to absolve, I guess?",
+                "Entre, filho, nossa igreja sempre recebe novos membros.",
+                "Meu nome é Boris, sou o abade desta abadia, aqui, nestas terras, eu trago a luz para todos que precisam dela. Você está aqui para absolvição, correto?",
             ],
             "female": [
-                "Come in, daughter, our church always greets new parishioners.",
-		"My name is Boris, I am the abbot of this abbey. Here, in this lands, I bring the light to everyone who needs it. You're here to absolve, I guess?",
+                "Entre, filha, nossa igreja sempre recebe novos membros.",
+                "Meu nome é Boris, sou o abade desta abadia, aqui, nestas terras, eu trago a luz para todos que precisam dela. Você está aqui para absolvição, correto?",
             ]
         },
         "actions": {
-            "Trade": "I want to buy an indulgence",
+            "Trade": "Quero comprar minha absolvição",
         }
     },
     "bertran": {
         "default": {
             "male": [
-                "Meeaatttt....",
-                "Don't passss by, magessstic gentleman, come to visssit Bertram. I am the local butcher and I'm good at cutting carcassssses. I can cut your carcasssss, not the carcasss of yourssss, don't be afraid. I don't like to cut living flessshhh anymore. You may buy some meattt to cook.",
+                "Caaaarne...",
+                "Não se esqueça majestoso cavalheiro, venha visitar Bertram. Eu sou o açougueiro local e eu sou bom em corte de carcaças. Posso cortar qualquer carcaça, não sua carcaça, não tenha medo. Eu não gosto mais de cortar carne viva. Você pode comprar carne para cozinhar.",
             ],
             "female": [
-                "Sssuch a tasssty flesssshhh...",
-                "I mean, such a tasty fillet I have here. I do LOVE fillet. Sssuch a pleasssure to cut it... Pardon me, lady. I lost my mind. I'm Bertram the local butcher. You may buy some meat here, I could teach you cooking, or... Nevermind, I know you not enough.",
+                "Que tal uma saborosa carne...",
+                "Quero dizer, que tal um saboroso filé que tenho aqui. Eu AMO o filé. É um prazer para cortá-lo... Perdoe-me, senhorita. Eu viajei. Eu sou Bertram, o açougueiro local. Você pode comprar carne aqui, eu poderia ensiná-la a cozinhar, ou... deixa pra lá, eu sei que você não precisa.",
             ]
         },
         "actions": {
-            "Trade": "I wanna see your goods.",
+            "Trade": "Quero ver os seus bens.",
         }
 
     },
     "vendor": {
         "default": {
             "male": [
-                "Welcome to my modest shop, gentleman.",
+                "Bem-vindo a minha modesta loja, cavalheiro.",
             ],
             "female": [
-                "Welcome to my modest shop, lady.",
+                "Bem-vindo a minha modesta loja, senhorita.",
             ],
         },
         "actions": {
-            "Trade": "I wanna see your goods.",
+            "Trade": "Quero ver os seus bens.",
         },
     },
     "ded-moroz": {
         "default": {
             "male": [
-                "Happy new year!",
-                "Hurry up and decorate your house!",
+              "Oi, eu sou Papai Noel, já houviu falar?",
+              "Caso alguém pergunte: alguém estranho que não ve ninguém que não acredita em magica... Eu estava em casa, na ilha de Inverno, tentando preparar todos os presentes, inclusive o seu. Não esperava te dizer... Bem, vamos continuar.",
+              "Logo será um novo ano! E no Ano Novo todos os sonhos e se tornam um presente. Você, por sinal, é menino ou menina? Você quer um presente? ... Aguarde ANTES DE ANO NOVO!",
+              "Ho-ho-ho! Bem, bem. Posso antecipar seu presente, mas primeiro, eu preciso de uma pequena ajuda.",
+              "A propósito, minha neta, a donzela da neve, também têm alguns recados para você.",
+              "Fale com ela, boa menina mas um pouco estranha. Pobre coitada um armário com seus livros de poemas infantis caiu.",
             ],
         },
     },
     "snegurochka": {
         "default": {
-            "male": [
-                "Hello!",
-                "It's holidays! Let's decorate a Christmas tree and give gifts to each other!"
-            ],
+          "male": [
+              "Quem está falando? Cantando?",  // solicitar descrição
+              "E para quem estão fugindo multidão e gritar disputando",
+              "Cem monstros, duzentos e um mago assassino nu?",
+              "Vamos lá, não seja menino com medo, - Estou satisfeito hoje para todos",
+              "Eu tenho presentes - como você não pode comprar aqui.",
+              "Desde o mágico Val Hala trazido a você por eixos",
+              "E as espadas e paus de diferentes poções ressaca e vermelho,",
+              "Bolo de aniversário",
+              "E as mulheres de borracha.",
+              "Há apenas um problema -",
+              "Eu não posso encontrar um substituto em qualquer lugar.",
+              "E eu preciso de um homem, mas corajoso",
+              "Para entram na épica madeiras",
+              "E voltou ileso",
+              "Sabe-los? Então",
+              "Enviá-los todos aqui",
+              "As pessoas estão morrendo muito rápido",
+              "Nestas terras - aqui e ali.",
+              "Não nos ajudar - trouble",
+              "Não passe sempre.",
+              "Um maravilhoso Ano Novo",
+              "Basta passar sem nós!",
+              "Bem, o que você disse?",
+              "Não ficar em silêncio - e os dentes não bater.",
+              "Eu sou - uma natureza fria.",
+              "Porque eu reduzir a temperatura aqui em torno de mim,",
+          ].join("<br>"),
+          "female": [
+              "O que é isto que está fazendo a terra toda tremer?",
+              "Para a dieta não é seguido e marcas deixadas por aqui!", // solicitar descrição
+              "Vamos lá, não se preocupe querida. Eu não vou matar",
+              "Snow Maiden irá temperar todas as tortas de hoje.",
+              "Chocolates, bolos, grama",
+              "Acabei tudo.",
+              "O suficiente por enquanto",
+              "Esqueça que a vida - não muito", // solicitar descrição
+              "Isso é o que eu sempre falo,",
+              "Ajude-me, em seguida,",
+              "Tia Sneruka facilmente", // solicitar descrição
+              "Você está discursos dotados",  // solicitar descrição
+              "E coisas úteis.",
+              "Não nos ajudar - trouble",
+              "Não passe sempre.",
+              "Um maravilhoso Ano Novo",
+              "Basta passar sem nós!",
+              "Bem, o que você disse?",
+              "Não seja silencioso e os dentes não bater.",
+              "Eu sou - uma natureza fria.",
+              "Porque eu reduzir a temperatura aqui em torno de mim,",
+            ].join("<br>"),
         },
     },
     "ivan": {
         "default": {
             "male": [
-                "Hello! Come closer, don't be shy!",
-                "I'm Ivan the local woodsman. Do you seek for a good saw or an axe or some other tools for lumberjacks? Ask me, let's pick you some stuff!",
+                "Olá! Aproximam-se, não seja tímido!",
+                "Eu sou Ivan, o lenhador local. Você procura por um bom serrote, machado ou outras ferramentas para lenhador? Peça, vamos escolher algumas coisas!",
             ],
         },
     },
     "plato": {
         "default": {
             "male": [
-                "Have a good day, friend.",
-                "I'm Plato, and my job is teaching newbees the bases of survival. Doesn't matter if you're here by will or the Emperor sent you here as a punishment. Listen and pay attention, so you won't come a dinner for the wild beasts.",
+                "Tenha um bom dia, amigo.",
+                "Eu sou Plato, e o meu trabalho é ensinar novatos o básico de sobrevivência. Não importa se você está aqui por vontade ou obrigado pelo Imperador como um castigo. Ouça e preste atenção, para que não sejá o jantar dos animais selvagens.",
             ],
         },
     },
     "athena": {
         "default": {
             "male": [
-                "A-ha! Arena fresh meat!",
-		"My name is Athena, I'm arena fight manager. I don't care if you're man or woman, what age you are, what fraction do you prefer. I just wanna see a thirst for a blood in your eyes! You may contest your strength with people on this arena."
+                "A-ha! Arena de carne fresca!",
+                "Meu nome é Athena, eu sou a gerente da arena de luta. Eu não me importo se você é homem ou mulher, que idade você está, qual é a facção que você prefere. Eu só quero ver á sede de sangue em seus olhos! Você pode contestar a sua força com pessoas na arena."
             ]
         },
     },
     "alfred": {
         "default": {
             "male": [
-                "Welcome to the hotel, stranger.",
-                "I'm Alfred the battler. If you're in need for a warm and cosy bed, you'll find it here. That's not a room for queen, but it'll provide you a good rest.",
+                "Bem-vindo ao hotel, estranho.",
+                "Eu sou Alfred, o mordomo. Se você estiver precisando de um ambiente caloroso e acolhedor, você vai encontrá-lo aqui. Isso não é um espaço para a rainha, mas ele irá fornecer-lhe um bom descanso.",
             ],
         },
     },
@@ -333,7 +387,7 @@ Talks.npcs = {
         "default": {
             "male": [
                 "Boooooooo!",
-                "Ain't afraid too? Damn... I'm Angela the ghost. I tell tales and spooky stories. Sit down, I'll tell you one.",
+                "Não tem medo também? Porra... eu sou fantasma Angela. Eu digo contos e histórias arrepiantes. Sente-se, eu vou contar uma.",
             ],
         },
     },
