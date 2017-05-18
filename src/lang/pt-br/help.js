@@ -32,8 +32,8 @@ T.help = {
     combos: {
         de: "Efeito (+absorver, +chance de bloqueio pelo escudo)",
         su: "Efeito (+dano, +chance de ataque crítico)",
-        nya: "AOE Efeito (+chance de crítico para De, +absorção para Su)",
-        ikkyo: "Combate (Provocação, pvp: 50% atordoamento de 1-5 segundos)",
+        nya: "AOE Efeito (+chance de crítico para Su, +absorção para De)",
+        ikkyo: "Combate (Provocação, pvp: 50% atordoamento de 0.5-1.5 segundos)",
         shihonage: "Combate (bastante dano, velocidade reduzida por 5 segundos)",
         iriminage: "Combate (20% de chance de atordoamento por 2 segundos)",
     },

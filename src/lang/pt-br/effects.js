@@ -119,7 +119,7 @@ Effects.descriptions = {
     "NewbieProtection": {
         "class": "",
         "effect": "Penalidade de morte.",
-        "desc": "Level 1 a 9 - mantém o equipamento e a bolsa.\nLevel 10 a 19 - mantém a bolsa, mas perde seu conteúdo.\nDo level 20 em diante - perde todo equipamento e inventário.",
+        "desc": "Level 1 a 9 - mantém o equipamento e a bolsa.\nLevel 10 a 24 - mantém a bolsa, mas perde seu conteúdo.\nDo level 25 em diante - perde todo equipamento e inventário.",
         "note": "Em qualquer level, você perderá as vitaminas e os pontos de aprendizado.",
     },
     "Prospecting": {

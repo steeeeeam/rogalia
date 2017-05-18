@@ -754,6 +754,7 @@ T.dict = {
     "Birch tree trunk": "Ствол березы",
     "Meteorite hammer": "Метеоритный молот",
     "Crossbow": "Арбалет",
+    "Steel crossbow": "Стальной арбалет",
     "Minor healing potion": "Малое зелье лечения",
     "Healing potion": "Зелье лечения",
     "Greater healing potion": "Большое зелье лечения",
@@ -874,6 +875,7 @@ T.dict = {
     "Mutton": "Баранина",
     "Baked chicken wing": "Запеченная куриное крыло",
     "Wooden bow": "Деревянный лук",
+    "Scout bow": "Лук разведчика"
     "Waypoint": "Точка телепортации",
     "Titanium plate": "Титановая пластина",
     "Fir tree stick": "Палка Ели",

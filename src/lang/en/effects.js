@@ -121,7 +121,7 @@ Effects.descriptions = {
     "NewbieProtection": {
         "class": "",
         "effect": "Death penalty.",
-        "desc": "Lvl 1 to 9 - keep bag and equipment.\nLvl 10 to 19 - keep bag, but lose it's contents.\nFrom lvl 20 - losing all equipment and inventory.",
+        "desc": "Lvl 1 to 9 - keep bag and equipment.\nLvl 10 to 24 - keep bag, but lose it's contents.\nFrom lvl 25 - losing all equipment and inventory.",
         "note": "On any level you lose all vitamins and learning points.",
     },
     "De": {

@@ -44,7 +44,7 @@ T.help = {
         },
         ikkyo: {
             desc: "攻撃",
-            effect: "タウント、PVP：確率50％　1-5秒スタン",
+            effect: "タウント、PVP：確率50％　0.5-1.5秒スタン",
         },
         shihonage: {
             desc: "攻撃",

@@ -20,7 +20,7 @@ T.help = {
                     "Maximum range: targets outside it cannot be shot.",
                     "Effective range: inside this radius you got 100% accuracy.",
                     "Shooting speed: how fast you can launch a missile",
-                    "Ammo type: for example stones, arrows, atoms",
+                    "Ammo type: for example stones, arrows, atoms.",
                     "Ammo speed: how fast missile will reach the target.",
                 ])
             ]),
@@ -32,27 +32,27 @@ T.help = {
     combos: {
         de: {
             desc: "Buff",
-            effect: "+absorb, +shield block chance",
+            effect: "+absorb, +shield block chance.",
         },
         su: {
             desc: "Buff",
-            effect: "+damage, +crit chance",
+            effect: "+damage, +crit chance.",
         },
         nya: {
             desc: "AoE Buff",
-            effect: "+crit chance for [de], +absorb for [su]",
+            effect: "+crit chance for [su], +absorb for [de].",
         },
         ikkyo: {
             desc: "Strike",
-            effect: "taunt, pvp: 50% stun for 1-5 secs",
+            effect: "taunt, pvp: 50% stun for 0.5-1.5 secs.",
         },
         shihonage: {
             desc: "Strike",
-            effect: "a lot of damage, slow for 5 secs",
+            effect: "a lot of damage, slow for 5 secs.",
         },
         iriminage: {
             desc: "Strike",
-            effect: "20% stun for 2 secs",
+            effect: "20% stun for 2 secs, pve too.",
         },
     },
 };
