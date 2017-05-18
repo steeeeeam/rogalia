@@ -1,23 +1,26 @@
-﻿/* global Settings */
+/* global Settings */
 
 Settings.descriptions = {
     character: {
         pathfinding: [
-            "Pathfinding",
-            "Activates pathfinding.",
+            "Encontrar caminho (Pathfinding)",
+            "Ativar pathfinding.",
         ],
-
         hideHelmet: [
-            "Esconder Elmo",
+            "Esconder elmo",
             "Esconde o elmo para você e para os outros.",
         ],
         rotateWasd: [
-            "Girar com WASD",
+            "Movimentar com WASD",
             "Movimentação baseada nos pontos cardeais do mapa",
         ],
         autoTarget: [
             "Auto selecionar alvo",
             "Automaticamente seleciona o alvo mais próximo do cursor.",
+        ],
+        obstacleAvoidance: [
+            "Desvio de obstáculos",
+            "Ajudará a evitar um pouco a colisão com obstáculos.",
         ],
     },
     ui: {
@@ -39,14 +42,14 @@ Settings.descriptions = {
         ],
         minimapObjects: [
             "Itens do minimapa",
-            "Mostra os itens no minimapa.",
+            "Mostra os itens no mini-mapa.",
         ],
         allowSelfSelection: [
-            "Seleção de personagem selection",
-            "Permite selecionar o personagem e interagir com o mouse. Botão direito do mouse aciona.",
+            "Seleção de personagem",
+            "Permite selecionar o personagem e interagir com o botão direito do mouse.",
         ],
         fillClaim: [
-            "Preencher a área de posse",
+            "Preencher área de posse",
             "Mostra toda demarcação das posses.",
         ],
         strokeClaim: [
@@ -62,18 +65,17 @@ Settings.descriptions = {
             "Mostra bolhas de mensagens sobre a cabeça dos personagens.",
         ],
         chatEnterBlur: [
-            "Tirar o foco da janela de chat com Enter",
-            "Quando a mensagem estiver vazia, apertar enter fará com que a janela de chat saia de focus.",
+            "Foco da janela de chat",
+            "Quando a mensagem estiver vazia, apertar enter fará com que a janela de chat saia de foco.",
         ],
         showAttackRadius: [
             "Área de ataque",
             "Mostra a área de ataque do personagem.",
         ],
         comboHelper: [
-            "Combo",
+            "Dicas de combo",
             "Mostra dicas de combos.",
         ],
-
     },
     graphics: {
         snowflakes: [
@@ -85,7 +87,7 @@ Settings.descriptions = {
             "Ativa espaço de movimentação na beira do mapa.",
         ],
         autoHideWalls: [
-            "Esconder paredes automaticamente",
+            "Auto esconder paredes",
             "Automaticamente esconde as paredes quando se está dentro de construções.",
         ],
         autoHighlightDoors: [
@@ -97,11 +99,30 @@ Settings.descriptions = {
             "Se ativada, a tela do jogo mantem-se no meio da tela.",
             "Se desativada, a tela do jogo é mantida à esquerda.",
         ],
+        autoHideObjects: [
+            "Auto Ocultar o objetos",
+            "Ocultar automaticamente um objeto, tais como edifícios e árvores.",
+        ],
+        semiTransparetWalls: [
+            "Parades semi-transparentes",
+            "Deixar as paredes transparentes próximas ao personagem.",
+        ],
+        fastRender: [
+            "Renderização rápida",
+            "Simplifica alguns gráficos e usa placa de vídeo(webgl) para renderizar.",
+            "Díminui a qualidade de imagem porém aumentará o desempenho, util em computadores mais fracos.",
+            "* Ao selecionar o jogo será reiniciado.",
+        ],
+        topologicalSort: [
+            "Ordenação topológica",
+            "Exibir corretamente a ordem das construções, instalações e exibição de materiais.",
+            "* O desempenho pode ser reduzido.",
+        ],
     },
-    sound:  {
+    sound: {
         playSound: [
-            "Som",
-            "Toca os sons do jogo.",
+            "Efeitos sonoros",
+            "Toca os efeitos sonoros do jogo.",
         ],
         playMusic: [
             "Ambiente",
@@ -119,7 +140,6 @@ Settings.descriptions = {
             "Volume da voz",
             "Volume da voz dos NPCs.",
         ],
-
         jukebox: [
             "Jukebox",
             "Toca as músicas da Jukebox.",

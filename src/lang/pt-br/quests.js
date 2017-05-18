@@ -1,23 +1,33 @@
 /* global Quest */
 
+"use strict";
+
+Quest.chains = {
+    "tutorial": "tutorial",
+    "teleportation": "teletransporte",
+};
+
 Quest.quests =  {
     "tutorial-start": {
-        name: "Tutorial",
+        name: "Iniciando",
         desc: [
             "Olá, cidadão.",
-            "Todos que chegam, vem à Academia. Meu trabalho aqui é ensinar o básico de sobrevivência.",
+            "Todos que chegam, vem à minha academia. Meu trabalho aqui é ensinar o básico de sobrevivência.",
         ],
         final: "Ótimo, vamos começar.",
     },
     "craft-1": {
-        name: "Coletando reecursos.",
-        desc: "Você precisa de algumas ferramentas para às terras selvagens e para criar ferramentas, você precisará de materiais. Colete 4 pedras, 2 galhos grandes e 1 galho pequenobranch.",
-        tip: "<rmb>Pegar galho grande</rmb> e <rmb>Pegar galho pequeno</rmb> em uma árvore.<br><lmb></lmb> em uma pedra para pegá-la do chão.",
+        name: "Coletando materiais.",
+        desc: [
+          "Para sobreviver nestas terras selvagens você precisará de ferramentas e para criá-las, precisará de materiais.",
+          "Colete 4 pedras, 2 galhos grandes e 1 galho pequeno.",
+        ],
+        tip: "<rmb>Pegar galho grande</rmb> e <rmb>Pegar galho pequeno</rmb> em uma árvore.<br><lmb></lmb> pegar pedras do chão.",
     },
     "craft-1-2": {
         name: "Fazendo o cabo da faca",
         desc: "Agora, faça graveto a partir do galho grande e ramo do galho pequeno. Usaremos para fazer o cabo.",
-        tip: "<rmb>Qubrar</rmb>  em um galho grande para obter um graveto, fazendo o mesmo em um galho pequeno, obtem-se um ramo.",
+        tip: "<rmb>Quebrar</rmb> em um galho grande para obter um graveto, fazendo o mesmo em um galho pequeno, obtem-se um ramo.",
     },
     "craft-2": {
         name: "Fazendo a lâmina da faca",
@@ -32,6 +42,7 @@ Quest.quests =  {
     "craft-3": {
         name: "Fazendo uma arma",
         desc: "Ótimo, agora vamos fabricar um graveto afiado, sua primeira arma. Em breve, você precisará dela.",
+        dica: "<rmb>Equipar</rmb> sobre a faca."
     },
     "stat-1": {
         name: "Com sede",
@@ -40,7 +51,11 @@ Quest.quests =  {
     },
     "stat-2": {
         name: "Com fome",
-        desc: "É hora de comer algo. Pegue maçãs da macieira. Tenha cuidado, não coma mais do que você aguenta, senão a comida não dará vitaminas e você ficará empanturrado, andará lentamente. Por falar nisso, se você comer demais, use o toalete próximo à mim.",
+        desc: [
+          "É hora de comer algo. Pegue maçãs da macieira.",
+          "Tenha cuidado, não coma mais do que você aguenta, senão a comida não dará vitaminas e você ficará empanturrado, andará lentamente.",
+          "Por falar nisso, se você comer demais, use o toalete próximo à mim.",
+        ]
     },
     "fight": {
         name: "Luta e combos",
@@ -49,26 +64,27 @@ Quest.quests =  {
     },
     "finish": {
         name: "Fim do tutorial",
-        desc: "Bem, terminei meu trabalho.",
-        final: "É hora de ir à cidade."
+        desc: "Bem, eu lhe ensinei o básico de sobrevivência nestas terras.",
+        final: "É hora de ir à cidade, há muitos de vocês que eu ainda tenho que ensinar. Comece conversando com o banqueiro Scrooge"
     },
     "claim-get-license": {
-        name: "License",
-        desc: "Hello newbie. Money run this world, got it? And you better not leave your money on a road. I'm gonna teach you to protect your privacy. You know you can keep cash in my bank, right? But you also have to keep your belongings safe. That's what Claim is for.",
-        tip: "You can get a license from Scrooge (see Bank).",
+        name: "Licença",
+        desc: "Olá novato. Dinheiro movimenta este jogo, entendeu? E é melhor você não andar por ai com dinheiro. Eu vou lhe ensinar como proteger seu patrimonio. Você sabe que pode guardar seu dinheiro em meu banco, certo? Para isso você deve comprar uma licença.",
+        tip: "Você pode pegar uma licença com o Scrooge (opção Banco).",
     },
     "claim-build": {
-        name: "Build",
+        name: "Construção",
         desc: [
-            "It will cost you some, yeah, but safety worth it.",
-            "You can protect any free place with Claim and further extend it.",
-            "Don't rush, choose wisely. Anytime you want to move it or buy another, we'll charge you.",
-            "Place a respawn stone nearby - that's how you won't lose the place and get to it quickly.",
+            "A licença custa dinheiro, mas ela será capaz de proteger você la fora.",
+            "Você pode construir em qualquer lugar não ocupado por outros jogadores e depois espandi-la.",
+            "Não tenha pressa para escolher um lugar, caso precise reposicionar será necessário comprar outro.",
+            "Coloque uma pedra de ressurgimento próximo, está é uma forma de retornar rapidamente.",
         ],
     },
     "claim-extend": {
-        name: "Extend",
-        desc: "Good for ya. You can extend your claim but don't forget that rent enlarges too. Always keep an eye on your bank account and check if there's enough to pay a rent, otherwise you're at risk to lose the claim and turn unprotected.",
+        name: "Estender",
+        desc: "Você pode estender seu domínio mas não se esqueça que o aluguel irá aumentar.",
+        //final: "Parece"
         final: "Seems to be done, yeah? Now you can settle and build on your own. Ofcourse, people still can rob you, but now you can punish the crime. The Law is on your side for now. By the way, go visit the butcher, he seems to have something to say you."
     },
     "tp-return-home": {
@@ -79,7 +95,7 @@ Quest.quests =  {
     "tp-respawn": {
         name: "Teleporte: Ressurgimento",
         desc: "Pontos de ressurgimento da cidade são conectados ao seu próprio ponto.<br> Você pode viajar usando o ponto de ressurgimento, mas sua função primária é te ressuscitar caso morra. Quando construir seu próprio ponto, verá que parece diferente dos outros.",
-        tip: "<lmb></lmb> on the closest respawn."
+        tip: "<lmb></lmb> no próximo respawn."
     },
     "tp-scrolls": {
         name: "Teleporte: Pergaminhos",
@@ -109,7 +125,7 @@ Quest.quests =  {
         name: "Chapéu de Natal",
         desc: "Feliz Natal e Feliz Ano Novo! Este é o seu presente!",
         final: "Aqui está o seu chapéu.",
-        customReward: "Christmas hat",
+        customReward: "Chapéu de Natal",
     },
     "chrismas-presents": {
         name: "Presente de Natal (tarefa diária).",
