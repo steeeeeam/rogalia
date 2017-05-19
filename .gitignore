@@ -4,3 +4,4 @@
 /bundle.*
 /build
 /screenshots
+src/lang/ja/dict.js

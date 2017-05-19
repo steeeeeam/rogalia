@@ -50,13 +50,13 @@ Effects.descriptions = {
     },
     "MushroomTrip": {
         "class": "",
-        "effect": "Increases movement speed to 135, revokes hallucinations, causes 3 health loss in a tick.",
+        "effect": "Increases movement by 35, revokes hallucinations, causes 10% health loss in a tick.",
         "desc": "Gained when character is having raw mushrooms.",
         "note": "Damage growth rateably to eaten mushrooms amount.",
     },
     "Sex": {
         "class": "good",
-        "effect": "Spell causes fullness decrease by 10, stamina increase by 25.",
+        "effect": "Spell causes fullness decrease by 20, stamina increase by 50.",
         "desc": "Buy from Margo.",
         "note": "Spell length is 1.5 minutes.",
     },
@@ -74,15 +74,15 @@ Effects.descriptions = {
     },
     "Slowed": {
         "class": "bad",
-        "effect": "Character movement speed decreases by 45.",
-        "desc": "Gained when character stays in the attack area of monster with slow spell. Character must not be in this monster aggro list.",
+        "effect": "Character movement speed decreases.",
+        "desc": "",
         "note": "Do not stack.",
     },
     "High": {
         "class": "good",
-        "effect": "Decreases fullness growth when having food. Quality 1 cigarette: 5%, quality 1 cigare: 10%, quality 1 joint: 15%. The higher quality gives the higher percentage.",
+        "effect": "Decreases fullness growth when having food. Quality 1 cigarette: 7%, quality 1 cigare: 12%, quality 1 joint: 15%. The higher quality gives the higher percentage.",
         "desc": "Gained when having cigarettes, cigares and joints.",
-        "note": "Stacks with sitting next to table buff. Heals 12% of health in 12 ticks.",
+        "note": "Stacks with sitting next to table buff. Heals 1% of health every tick.",
     },
     "Weakness": {
         "class": "bad",
@@ -97,8 +97,8 @@ Effects.descriptions = {
     },
     "Drunk": {
         "class": "good",
-        "effect": "Heals a few health points, sometimes makes you talk things you think.",
-        "desc": "Gained when having an alcohol.",
+        "effect": "+13% hp; -7% dmg.",
+        "desc": "Gained when having an alcohol, sometimes makes you talk things you think.",
         "note": "If you drink too much, even an activated carbon won't save you from heavy hangover.",
     },
     "Plague": {
