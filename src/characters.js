@@ -185,7 +185,7 @@ Character.npcActions = {
                 const name = quest.getName() + " (" + quest.getStatusMarker() + ")";
                 talks[name] = () => quest.showPanel();
                 return talks;
-            }));
+            }, {}));
 
         }
     },
