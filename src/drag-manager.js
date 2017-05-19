@@ -86,12 +86,6 @@ function DragManager() {
                     height: game.world.offsetHeight - margin,
                 },
                 {
-                    x: game.offset.x + (game.world.offsetWidth - game.world.clientWidth)/2,
-                    y: game.offset.y,
-                    width: game.world.clientWidth - margin,
-                    height: game.world.clientHeight - margin,
-                },
-                {
                     x: 0,
                     y: 0,
                     width: window.innerWidth - margin,
