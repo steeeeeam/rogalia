@@ -626,6 +626,7 @@ Character.prototype = {
         this.dst.x = x;
         this.dst.y = y;
         this.velocity.set(x, y).sub(this).normalize();
+        this.updateUI();
     },
     getDrawPoint: function() {
         var p = this.screen();
@@ -1477,12 +1478,13 @@ Character.prototype = {
             this.setPos(p.x, p.y);
         }
 
-        if (this.isPlayer || this.rider && this.rider.isPlayer) {
+        this.updatePlow();
+    },
+    updateUI() {
+        if (game.controller.ready && (this.isPlayer || this.rider && this.rider.isPlayer)) {
             game.controller.updateVisibility();
             game.controller.minimap.update();
         }
-
-        this.updatePlow();
     },
     willCollide: function(point, gap = 0) {
         let bbox = BBox.centeredAtPoint(point, 2*(this.Radius + gap), 2*(this.Radius + gap));
@@ -1556,12 +1558,13 @@ Character.prototype = {
         this.Dst.X = this.dst.x = this.X;
         this.Dst.Y = this.dst.y = this.Y;
         this.velocity.set(0, 0);
+        this.updateUI();
     },
     isNear: function(entity) {
         const target = this.mount || this;
         const padding = target.Radius * 2 + target.correction;
 
-        if (entity.belongsTo(game.player)) {
+        if (entity.belongsTo(this)) {
             return true;
         }
         if (entity.Width) {
