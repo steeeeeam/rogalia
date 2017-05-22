@@ -801,13 +801,14 @@ Entity.prototype = {
             }
             break;
         case "blank":
-            this.defaultActionSuccess = function() {
+            this.defaultActionSuccess = () => {
                 game.controller.craft.open(this, game.player.burden);
-            }.bind(this);
+            };
             break;
         case "currency":
-            if (this.Amount)
+            if (this.Amount) {
                 this.Name = this.Amount + " " + this.Type;
+            }
             break;
         case "tanning-tub":
             this._canUse = true;

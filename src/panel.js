@@ -26,7 +26,7 @@ function Panel(name, title, elements, hooks) {
 
     this.closeButton = dom.wrap("close", "✕");
     this.closeButton.panel = this;
-    this.closeButton.onclick = this.hide.bind(this);
+    this.closeButton.onclick = () => this.hide();
 
     this.titleBar = dom.wrap("title-bar", [this.title, this.closeButton]);
 

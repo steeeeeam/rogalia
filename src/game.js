@@ -458,7 +458,13 @@ class Game {
     }
 
     removeEntityById(id) {
+        const container = this.containers[id];
+        if (container) {
+            container.panel.close();
+        }
+
         const entity = Entity.get(id);
+
         if (entity) {
             entity.onremove();
             this.sortedEntities.remove(entity);
