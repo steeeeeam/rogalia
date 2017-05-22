@@ -1392,7 +1392,7 @@ T.dict = {
     "Saw": "Serrote",
     "Scimitar": "Cimitarra",
     "Scissors": "Tesouras",
-    "Scout bow": "Arco Scout"
+    "Scout bow": "Arco Scout",
     "Scroll of town portal": "Pergaminho de teleporte para cidade",
     "Scrooge": "Scrooge",
     "search": "procurar",
