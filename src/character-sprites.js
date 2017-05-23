@@ -153,9 +153,14 @@ Character.spritesInfo = {
         speed: 20000,
     },
     "imp": {
-        width: 107,
-        height: 68,
-        speed: 20000,
+        width: 110,
+        height: 110,
+        speed: 7000,
+        animations: {
+            idle: {
+                speed: 20000,
+            }
+        }
     },
     "lesser-daemon": {
         width: 160,

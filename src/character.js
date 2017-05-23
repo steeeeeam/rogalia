@@ -322,8 +322,14 @@ Character.prototype = {
 
         var spriteInfo = Character.spritesInfo[this.Type];
         if (spriteInfo) {
-            for (var key in spriteInfo) {
-                sprite[key] = spriteInfo[key];
+            ["width", "height", "speed", "angle", "offset", "nameOffset"].forEach(key => {
+                if (key in spriteInfo) {
+                    sprite[key] = spriteInfo[key];
+                }
+            });
+            const animation = spriteInfo.animations && spriteInfo.animations[sprite.name];
+            if (animation) {
+                sprite.speed = animation.speed;
             }
         } else {
             sprite.offset = 2*this.Radius;
