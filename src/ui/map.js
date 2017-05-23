@@ -23,7 +23,12 @@ function WorldMap() {
     this.minimapContainer.onclick = () => { game.controller.minimap.panel.toggle(); };
     this.minimap = document.getElementById("minimap");
     this.minimapCanvas = document.getElementById("minimap-canvas");
+    this.minimapCanvas.width = 64;
+    this.minimapCanvas.height = 64;
     this.minimapCanvas.ctx = this.minimapCanvas.getContext("2d");
+     // space's color used to fix non 64-sized maps
+    this.minimapCanvas.ctx.fillStyle = "#000001";
+
     this.location = new Point();
 
     this.tiles = [];
@@ -75,9 +80,6 @@ function WorldMap() {
     };
 
     this.syncMinimap = function(data, width, height) {
-        this.minimapCanvas.width = 2*width;
-        this.minimapCanvas.height = height;
-
         var pixels = new Uint8ClampedArray(data.length*4);
         var color;
         for (var i = 0, j = 0, l = data.length; i < l; i++, j += 4) {
@@ -87,8 +89,21 @@ function WorldMap() {
             pixels[j+2] = (color >> 0) & 0xff;
             pixels[j+3] = 0xff;
         };
+
         this.minimapCanvas.ctx.putImageData(new ImageData(pixels, width, height), 0, 0);
+        this.fixNonSquareMap(width, height);
         game.webgl && game.webgl.sync(this.minimapCanvas);
+    };
+
+    this.fixNonSquareMap = function(width, height) {
+        const dw = (this.minimapCanvas.width - width);
+        if (dw > 0) {
+            this.minimapCanvas.ctx.fillRect(this.minimapCanvas.width - dw, 0, dw, this.minimapCanvas.height);
+        }
+        const dh = (this.minimapCanvas.height - height);
+        if (dh > 0) {
+            this.minimapCanvas.ctx.fillRect(0, this.minimapCanvas.height - dh, this.minimapCanvas.width, dh);
+        }
     };
 
     this.reset = function() {

@@ -34,8 +34,7 @@ float tex_map_variant(vec2 position, float variants) {
 }
 
 void main() {
-    vec2 texcoord = vec2(v_position.x/2.0, v_position.y);
-    vec4 biom = texture2D(u_minimap, texcoord);
+    vec4 biom = texture2D(u_minimap, v_position);
     vec2 p = tex_map_point(v_position);
 
     int red = int(biom.r * 256.0);
