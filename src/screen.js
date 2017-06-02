@@ -29,6 +29,6 @@ class Screen {
         game.world.style.height = this.height + "px";
         game.setFontSize();
 
-        game.webgl && game.webgl.resize(this.width, this.height);
+        game.webgl.resize(this.width, this.height);
     }
 }

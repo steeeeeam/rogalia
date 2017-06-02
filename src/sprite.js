@@ -182,5 +182,5 @@ Sprite.prototype = {
         } catch(e) {
             game.sendError("Cannot load " + this.name + " icon");
         }
-    }
+    },
 };

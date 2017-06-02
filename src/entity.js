@@ -734,7 +734,11 @@ Entity.prototype = {
             return null;
         }
 
-        game.network.send("Open", {Id: this.Id}, () => Container.show(this));
+        if (this.belongsTo(game.player)) {
+            Container.show(this);
+        } else {
+            game.network.send("Open", {Id: this.Id}, () => Container.show(this));
+        }
         return null;
     },
     split: function() {
@@ -1043,7 +1047,7 @@ Entity.prototype = {
         this.sprite.drawOutline(this.getDrawPoint());
         var p = this.screen();
         var x = p.x - game.ctx.measureText(this.title).width / 2;
-        var y = p.y - (this.sprite.height - this.Radius) - FONT_SIZE;
+        var y = p.y - this.getDrawDy() - FONT_SIZE * 0.75;
 
         var title = this.title;
 
@@ -1119,7 +1123,6 @@ Entity.prototype = {
         }
         return (!this.Sprite.Unselectable && !this.Disposition);
     },
-    //used for controller.hovered
     intersects: function(x, y, noignore) {
         if (!this.canIntersect(noignore))
             return false;

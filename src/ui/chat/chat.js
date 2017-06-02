@@ -328,9 +328,6 @@ function Chat() {
             case "return-home":
                 game.network.send(cmd);
                 break;
-            case "fullscreen":
-                game.toggleFullscreen();
-                break;
             case "friend-add":
             case "friend-remove":
             case "blacklist-add":

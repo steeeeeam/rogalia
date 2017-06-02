@@ -108,14 +108,14 @@ function mainStage(data) {
 
         _.forEach(game.missiles, draw);
 
-        if (config.graphics.drawPath) {
-            this.drawPath();
-        }
+        // if (config.graphics.drawPath) {
+        //     this.drawPath();
+        // }
 
         snow.draw();
 
-        if (debug.map.darkness)
-            game.map.drawDarkness();
+        // if (debug.map.darkness)
+        //     game.map.drawDarkness();
 
         game.characters.forEach(drawUI);
         game.controller.draw();

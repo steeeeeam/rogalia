@@ -25,4 +25,5 @@ T.dict = {
     "L": "L atom",
     "I": "I atom",
     "K": "K atom",
+    "watch": "watch", // stupid firefox https://developer.mozilla.org/ru/docs/Web/JavaScript/Reference/Global_Objects/Object/watch
 };

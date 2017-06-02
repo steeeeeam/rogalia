@@ -11,7 +11,6 @@ function Info(message, character) {
     this.value = null;
 
     this.target = this.getTarget();
-
     if (!this.target) // target disappared (tp or death)
         return;
 
@@ -19,11 +18,13 @@ function Info(message, character) {
     this.y = this.target.info.length % 3 * 1.2 * FONT_SIZE;
 
     this.targetType = "other";
-
-    if (this.target == game.player)
+    if (this.type == "combo" && this.data.Combo == "nya") {
+        this.targetType = (this.target == game.player) ? "selfBuff" : "otherBuff";
+    } else if (this.target == game.player) {
         this.targetType = "self";
-    else if (this.character == game.player)
+    } else if (this.character == game.player) {
         this.targetType = "target";
+    }
 
     switch(this.type) {
     case "missile":
@@ -287,6 +288,8 @@ Info.prototype = {
                     self: ["#f33", big],
                     target: ["#aaf", huge],
                     other: ["#ccc"],
+                    selfBuff: ["#afa", huge],
+                    otherBuff: ["#faa", big],
                 }
             );
             break;
@@ -325,6 +328,9 @@ Info.prototype = {
         case "block":
             return game.entities.get(this.data);
         case "combo":
+            if (this.data.Combo == "nya") {
+                return this.character;
+            }
         case "attack":
             return game.entities.get(this.data.Id);
         }

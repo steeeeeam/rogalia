@@ -9,6 +9,10 @@ class Game {
         this.lang = lang;
         this.args = this._initArgs(args);
 
+        if (document.location.host == "localhost") {
+            this._initDevTools();
+        }
+
         this.world = document.getElementById("world");
         this.canvasContainer = document.getElementById("canvas-container");
         this.interface = document.getElementById("interface");
@@ -53,6 +57,8 @@ class Game {
         this.controller = new Controller(this);
         this.network = new Network();
 
+        this.updateQueue = [];
+
         // TODO: change quadtree size using (game.map.full)
         // this.quadtree = new Quadtree(0, 0, 65568, 65568);
 
@@ -77,6 +83,7 @@ class Game {
 
         } else {
             this.canvas.classList.add("bg-canvas");
+            this.webgl = WebglRenderer.stub();
         }
 
         this.popup = new Popup();
@@ -230,6 +237,13 @@ class Game {
         this.mainLoop();
     }
 
+    _initDevTools() {
+        window.addEventListener("patch", ({detail}) => {
+            const url = detail.url.replace(/.*localhost\/src\//, "");
+            console.log(`Patched ${url}`);
+        });
+    }
+
     _initArgs(args) {
         if (!args["steam"]) {
             return args;
@@ -371,6 +385,8 @@ class Game {
 
     update(currentTime) {
         this.stage.update(currentTime);
+        this.updateQueue.forEach(callback => callback());
+        this.updateQueue.length = 0;
     }
 
     draw() {

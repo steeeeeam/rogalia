@@ -27,7 +27,6 @@ Character.copy = function copy(to, from) {
 };
 
 Character.sync = function(data, remove) {
-    remove && remove.forEach((id) => game.removeCharacterById(id));
     for (var id in data) {
         var from = data[id];
         var to = game.entities.get(id);
@@ -45,6 +44,11 @@ Character.sync = function(data, remove) {
     }
     game.controller.effects.update();
     game.controller.syncMinimap();
+    if (remove) {
+        game.updateQueue.push(() => {
+            remove.forEach((id) => game.removeCharacterById(id));
+        });
+    }
 };
 
 Character.drawActions = function() {

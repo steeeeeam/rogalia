@@ -12,14 +12,7 @@ function main() {
         new Game(lang, args);
     });
 
-    if (document.location.host == "localhost") {
-        window.addEventListener("patch", ({detail}) => {
-            console.log(`Patched ${detail.url.replace(/.*localhost\/src\//, "")}`);
-        });
-    };
-
     function defaultLang(args) {
-
         // force ru for vk
         if (window.name.indexOf("fXD") == 0) {
             return "ru";
@@ -28,12 +21,11 @@ function main() {
         const lang = [
             args["lang"],
             gameStorage.getItem("lang"),
-            navigator.language.substring(0, 2)
+            navigator.language.substring(0, 2),
         ].find(lang => langs.includes(lang));
 
         return lang || langs[0];
     }
-
 
     function parseArgs() {
         return document.location.search

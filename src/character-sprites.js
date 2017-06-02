@@ -109,6 +109,7 @@ Character.spritesInfo = {
     "jesus": {
         width: 64,
         height: 96,
+        nameOffset: 100,
     },
     "charles": {
         width: 67,
@@ -123,24 +124,29 @@ Character.spritesInfo = {
         width: 120,
         height: 120,
         speed: 25000,
+        offset: 20,
     },
     "senior-mocherator": {
         width: 110,
         height: 110,
         speed: 25000,
+        offset: 12,
     },
     "mocherator": {
         width: 100,
         height: 100,
         speed: 25000,
+        offset: 11,
     },
     "omsk": {
         width: 170,
         height: 170,
+        offset: 40,
     },
     "omich": {
         width: 130,
         height: 130,
+        offset: 35,
     },
     "ufo": {
         width: 64,
@@ -151,10 +157,13 @@ Character.spritesInfo = {
         width: 256,
         height: 256,
         speed: 20000,
+        offset: 100,
     },
     "imp": {
         width: 110,
         height: 110,
+        offset: 20,
+        nameOffset: 75,
         speed: 7000,
         animations: {
             idle: {
@@ -168,18 +177,31 @@ Character.spritesInfo = {
         speed: 40000,
     },
     "higher-daemon": {
-        width: 214,
-        height: 136,
-        speed: 50000,
+        width: 150,
+        height: 150,
+        offset: 21,
+        nameOffset: 105,
+        speed: 12000,
+        animations: {
+            idle: {
+                speed: 25000,
+            },
+            attack: {
+                speed: 40000,
+            }
+        }
     },
     "prince-of-darkness": {
         width: 214,
         height: 135,
+        nameOffset: 100,
         speed: 50000,
     },
     "daemon": {
-        width: 160,
-        height: 102,
+        width: 150,
+        height: 150,
+        offset: 20,
+        nameOffset: 100,
         speed: 50000,
     },
     "small-spider": {
@@ -208,16 +230,22 @@ Character.spritesInfo = {
     "shadow": {
         width: 160,
         height: 160,
+        offset: 50,
+        nameOffset: 84,
         speed: 30000,
     },
     "bloody-shadow": {
         width: 130,
         height: 130,
+        offset: 40,
+        nameOffset: 70,
         speed: 30000,
     },
     "hell-shadow": {
         width: 100,
         height: 100,
+        offset: 30,
+        nameOffset: 62,
         speed: 30000,
     },
     "pinky-rogalian": {
@@ -225,18 +253,21 @@ Character.spritesInfo = {
         height: 170,
         speed: 30000,
         offset: 40,
+        nameOffset: 78,
     },
     "rogalian": {
         width: 160,
         height: 160,
         speed: 30000,
         offset: 30,
+        nameOffset: 110,
     },
     "hell-rogalian": {
         width: 200,
         height: 200,
         speed: 30000,
         offset: 40,
+        nameOffset: 125,
     },
     "preved-medved": {
         width: 210,
@@ -253,16 +284,19 @@ Character.spritesInfo = {
         width: 100,
         height: 100,
         offset: 45,
+        nameOffset: 45,
     },
     "wolf-undead": {
         width: 100,
         height: 100,
         offset: 45,
+        nameOffset: 45,
     },
     "wolf-demonic": {
         width: 100,
         height: 100,
         offset: 45,
+        nameOffset: 45,
     },
     "sheep": {
         width: 100,
@@ -277,11 +311,15 @@ Character.spritesInfo = {
     "wolf-fatty": {
         width: 120,
         height: 120,
+        offset: 45,
+        nameOffset: 60,
     },
     "wolf-hungry": {
         width: 80,
         height: 80,
-    },
+        offset: 30,
+        nameOffset: 40,
+},
     "training-dummy": {
         width: 55,
         height: 67,

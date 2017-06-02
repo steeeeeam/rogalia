@@ -60,6 +60,12 @@ function Settings() {
                 dom.hide(document.getElementById("combos"));
             }
         },
+        "settings.graphics.fullscreen": function(enabled) {
+            game.toggleFullscreen();
+            if (enabled && !config.graphics.fastRender) {
+                Settings.toggle("settings.graphics.fastRender");
+            }
+        },
         "settings.graphics.movingSpace": function(moving) {
             if (moving)
                 game.canvas.classList.add("animated");
@@ -74,7 +80,10 @@ function Settings() {
         "settings.graphics.centerScreen": function() {
             game.world.classList.toggle("snap-left");
         },
-        "settings.graphics.fastRender": function() {
+        "settings.graphics.fastRender": function(enabled) {
+            if (!enabled && config.graphics.fullscreen) {
+                Settings.toggle("settings.graphics.fullscreen");
+            }
             game.reload();
         },
         "settings.character.pathfinding": function() {

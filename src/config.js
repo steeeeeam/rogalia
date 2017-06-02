@@ -2,10 +2,10 @@
 
 "use strict";
 
-var CELL_SIZE = 32;
-var FONT_SIZE = 14;
-var DEFAULT_CLIENT_WIDTH = 1280;
-var DEFAULT_CLIENT_HEIGHT = 720;
+const CELL_SIZE = 32;
+const FONT_SIZE = 14;
+const DEFAULT_CLIENT_WIDTH = 1280;
+const DEFAULT_CLIENT_HEIGHT = 720;
 
 var config = {
     character: {
@@ -13,6 +13,7 @@ var config = {
         hideHelmet: function() { return game.player.Style.HideHelmet; },
         rotateWasd: false,
         autoTarget: true,
+        autoAttack: false,
         obstacleAvoidance: function() { return game.player.Settings.ObstacleAvoidance; },
     },
     ui: {
@@ -34,6 +35,7 @@ var config = {
         comboHelper: true,
     },
     graphics: {
+        fullscreen: false,
         autoHighlightDoors: false,
         snowflakes: false,
         movingSpace: false,

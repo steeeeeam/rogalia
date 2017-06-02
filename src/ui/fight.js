@@ -4,7 +4,7 @@
 function Fight() {
     var target = null;
 
-    var GCD = 500;
+    const GCD = 500;
     var lastSend = Date.now();
 
     var actions = [
@@ -41,26 +41,34 @@ function Fight() {
         return action.button;
     }));
 
-    function apply(action, prepare) {
-        var now = Date.now();
-        if (now - lastSend < GCD) {
-            game.controller.showWarning(T("Cooldown"));
+    function selectNextTarget(player = game.player) {
+        var p = new Point(game.controller.world.point).sub(player);
+        var sector = game.player.sector(Math.PI/4, p.x, p.y);
+        p = new Point(player);
+        var offset = new Point(CELL_SIZE, 0).rotate(2*Math.PI - sector * Math.PI/4);
+        p.add(offset);
+
+        player.selectNextTarget(p, null);
+    }
+
+    let applyTimeout = null;
+    function apply(action, prepare = false) {
+        clearTimeout(applyTimeout);
+
+        const now = Date.now();
+        const remain = GCD - (now - lastSend);
+        if (remain > 0) {
+            const threshold = 60;
+            if (remain < threshold) {
+                applyTimeout = setTimeout(() => apply(action, prepare), threshold - remain);
+            } else {
+                game.controller.showWarning(T("Cooldown"));
+            }
             return;
         }
-        lastSend = now;
 
-        if (!prepare && !game.controller.mouse.isValid())
+        if (!prepare && !game.controller.mouse.isValid()) {
             return;
-
-        if (config.character.autoTarget) {
-            game.player.target = null;
-            var p = new Point(game.controller.world.point).sub(new Point(game.player));
-            var sector = game.player.sector(Math.PI/4, p.x, p.y);
-            p = new Point(game.player);
-            var offset = new Point(CELL_SIZE, 0).rotate(2*Math.PI - sector * Math.PI/4);
-            p.add(offset);
-
-            game.player.selectNextTarget(p);
         }
 
         switch (action) {
@@ -81,6 +89,10 @@ function Fight() {
         case "tenkan":
             break;
         default:
+            if (config.character.autoTarget) {
+                selectNextTarget();
+            }
+
             if (!(game.player.target instanceof Character)) {
                 game.player.selectNextTarget();
             }
@@ -118,6 +130,7 @@ function Fight() {
             break;
         }
 
+        lastSend = now;
         game.network.send("waza", args);
 
         hotbar.classList.add("cooldown");
@@ -138,7 +151,7 @@ function Fight() {
 
     this.hotkey = function(key) {
         const action = _.find(actions, {hotkey: key});
-        apply(action.name);
+        apply(action.name, !config.character.autoAttack);
     };
 
     this.combo = {

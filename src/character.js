@@ -1,160 +1,175 @@
 /* global util, CELL_SIZE, game, Point, Info, dom, T, Panel, Talks, BBox, loader, config, Avatar, Effect, TS, TT, Customization, ImageFilter, FONT_SIZE, astar, ContainerSlot, Quest, Sprite */
 
 "use strict";
-function Character(id) {
-    this.Id = id;
-    this.name = "";
-    this.x = 0;
-    this.y = 0;
+class Character {
+    constructor(id) {
+        this.Id = id;
+        this.name = "";
+        this.x = 0;
+        this.y = 0;
 
-    this.Hp = null;
-    this.Invisible = false;
+        this.Hp = null;
+        this.Invisible = false;
 
-    this.Title = "";
-    this.Type = "";
-    //used to show animation of varius type, like damage deal or exp gain
-    this.info = [];
-    this.Messages = null;
-    this.PrivateMessages = null;
+        this.Title = "";
+        this.Type = "";
+        //used to show animation of varius type, like damage deal or exp gain
+        this.info = [];
+        this.Messages = null;
+        this.PrivateMessages = null;
 
-    //Character in pvp cannot move and do other actions
-    this.pvp = false;
+        this.Dst = {
+            X: 0,
+            Y: 0,
+        };
 
-    this.Dst = {
-        X: 0,
-        Y: 0,
-    };
+        this.velocity = new Point();
 
-    this.velocity = new Point();
+        this.dst = {
+            x: 0,
+            y: 0,
+            time: null,
+            radius: 0,
+        };
 
-    this.dst = {
-        x: 0,
-        y: 0,
-        time: null,
-        radius: 0,
-    };
+        this.target = null;
 
-    this.target = null;
+        this.Radius = CELL_SIZE / 4;
+        this.Speed = {Current: 0};
+        this.Equip = [];
 
-    this.Radius = CELL_SIZE / 4;
-    this.Speed = {Current: 0};
-    this.Equip = [];
+        this.IsNpc = false;
 
-    this.IsNpc = false;
+        this.Burden = 0;
+        this.burden = null;
+        this.plow = null;
 
-    this.Burden = 0;
-    this.burden = null;
-    this.plow = null;
+        this.Effects = {};
+        this.Clothes = [];
 
-    this.Effects = {};
-    this.Clothes = [];
+        this.Settings = {
+            Pathfinding: true,
+            ObstacleaAvoidance: true,
+        };
 
-    this.Settings = {
-        Pathfinding: true,
-        ObstacleaAvoidance: true,
-    };
+        this.ballon = null;
+        this.isPlayer = false;
 
-    this.ballon = null;
-    this.isPlayer = false;
+        this.Action = {};
+        this.action = {
+            progress: 0,
+            last: 0,
+        };
 
-    this.Action = {};
-    this.action = {
-        progress: 0,
-        last: 0,
-    };
+        this.animation = {up: null, down: null};
 
-    this.animation = {up: null, down: null};
+        this.sprites = Character.animations.reduce((sprites, animation) => {
+            const sprite = new Sprite();
+            sprite.name = animation;
+            sprites[animation] = sprite;
+            return sprites;
+        }, {});
+        this.sprite = this.sprites.idle;
 
-    this.sprites = Character.animations.reduce((sprites, animation) => {
-        const sprite = new Sprite();
-        sprite.name = animation;
-        sprites[animation] = sprite;
-        return sprites;
-    }, {});
-    this.sprite = this.sprites.idle;
+        this._parts = "{}"; // defaults for npcs
 
-    this._parts = "{}"; // defaults for npcs
+        this._marker = {
+            opacity: 1,
+            delta: -1,
+        };
 
-    this._marker = {
-        opacity: 1,
-        delta: -1,
-    };
+        this._messages = [];
+        this._remote = new Point();
+    }
 
-    this._messages = [];
-    this._remote = new Point();
-
-}
-
-Character.prototype = {
     get X() {
         return this.x;
-    },
+    }
+
     get Y() {
         return this.y;
-    },
-    set X(x) {},
-    set Y(y) {},
+    }
+
+    // ignore remote position (from sync)
+    set X(x) {}
+    set Y(y) {}
+
     get correction() {
         return new Point(this).sub(this._remote).length();
-    },
-    positionSyncRequired: function(x, y) {
-        return (Math.abs(this.x - x) > CELL_SIZE) || (Math.abs(this.y - y) > CELL_SIZE);
-    },
-    syncPosition: function(x, y) {
+    }
+
+    positionSyncRequired(x, y) {
+        return Math.abs(this.x - x) > CELL_SIZE || Math.abs(this.y - y) > CELL_SIZE;
+    }
+
+    syncPosition(x, y) {
         this._remote.set(x, y);
         if (this.positionSyncRequired(x, y)) {
             this.setPos(x, y);
         }
-    },
+    }
+
     syncDst(x, y) {
         if (x != 0 || y != 0) {
             this.updateDst(x, y);
             return;
         }
 
-        if ((Math.abs(this.x - this._remote.x) < CELL_SIZE) || (Math.abs(this.y - this._remote-y) < CELL_SIZE)) {
+        if (Math.abs(this.x - this._remote.x) < CELL_SIZE || Math.abs(this.y - this._remote - y) < CELL_SIZE) {
             this.setPos(this._remote.x, this._remote.y);
             this.stop();
         } else {
             this.updateDst(this._remote.x, this._remote.y);
         }
-    },
-    getZ: function() {
+    }
+    getZ() {
         return 0;
-    },
+    }
 
     get Name() {
         return this.name || util.ucfirst(this.Type);
-    },
+    }
+
     set Name(name) {
         this.name = name;
-    },
-    leftTopX: Entity.prototype.leftTopX,
-    leftTopY: Entity.prototype.leftTopY,
-    compare: function(entity) {
+    }
+
+    leftTopX() {
+        return (this.X - this.Width / 2) << 0;
+    }
+
+    leftTopY() {
+        return (this.Y - this.Height / 2) << 0;
+    }
+
+    compare(entity) {
         if (this.Effects.Sitting && this.Effects.Sitting.SeatId == entity.Id) {
             return (!entity.Orientation || entity.Orientation == "n" || entity.Orientation == "w")
                 ? +1
                 : -1;
         }
         return Entity.prototype.compare.call(this, entity);
-    },
+    }
+
     get statusPoints() {
         return {
             Current: this.Citizenship.StatusPoints,
             Max: Math.pow(10, this.Citizenship.Rank),
         };
-    },
-    setPoint: function(p) {
+    }
+
+    setPoint(p) {
         this.setPos(p.x, p.y);
-    },
-    setPos: function(x, y) {
+    }
+
+    setPos(x, y) {
         game.sortedEntities.remove(this);
         this.x = x;
         this.y = y;
         game.sortedEntities.add(this);
-    },
-    screen: function() {
+    }
+
+    screen() {
         if (this.mount) {
             var x = this.mount.X;
             var y = this.mount.Y;
@@ -163,8 +178,9 @@ Character.prototype = {
             y = this.Y;
         }
         return new Point(x, y).toScreen();
-    },
-    sync: function(data, init) {
+    }
+
+    sync(data, init) {
         Character.copy(this, data);
         if (data.X || data.Y) {
             this.syncPosition(data.X, data.Y);
@@ -238,18 +254,19 @@ Character.prototype = {
                 game.controller.updateActiveQuest();
             }
         }
-    },
-    avatar: function() {
+    }
+
+    avatar() {
         if (!this.IsNpc) {
             return Character.makeAvatar(this.sex(), this.Style && this.Style.Hair);
         }
         const name = (this.Type == "vendor")
-            ? Character.vendorSpriteName(this.Name)
-            : this.Type;
+              ? Character.vendorSpriteName(this.Name)
+              : this.Type;
         return dom.img("assets/" + this.spriteDir() + "avatars/" + name + ".png", "avatar-face");
+    }
 
-    },
-    updateParty: function(members) {
+    updateParty(members) {
         var party = game.controller.party;
         dom.clear(party);
         if (!members) {
@@ -263,8 +280,9 @@ Character.prototype = {
             game.controller.avatar.setIcon("★");
         }
         members.forEach(function(name, i) {
-            if (name == game.playerName)
+            if (name == game.playerName) {
                 return;
+            }
             const member = game.characters.get(name);
             if (member) {
                 var avatar = new Avatar(member);
@@ -291,20 +309,23 @@ Character.prototype = {
             party.appendChild(avatar.element);
             party.avatars.push(avatar);
         });
-    },
-    processMessages: function() {
+    }
+
+    processMessages() {
         if (this._messages.length > 0) {
             this._messages.forEach(message => this.info.push(new Info(message, this)));
             this._messages = [];
         }
-    },
-    reloadSprite: function() {
+    }
+
+    reloadSprite() {
         for (var i in this.sprites) {
             this.sprites[i].ready = false;
         }
         this.loadSprite();
-    },
-    init: function(data) {
+    }
+
+    init(data) {
         this.IsNpc = (data.Type != "player");
         this.IsMob = "Aggressive" in data;
 
@@ -314,8 +335,9 @@ Character.prototype = {
             this.initSprite(this.sprites.run);
             this.buildSprite(this.sprites.run);
         }
-    },
-    initSprite: function(sprite = this.sprite) {
+    }
+
+    initSprite(sprite = this.sprite) {
         sprite.speed = 14000;
         sprite.offset = this.Radius;
         sprite.angle = Math.PI/4;
@@ -332,11 +354,12 @@ Character.prototype = {
                 sprite.speed = animation.speed;
             }
         } else {
-            sprite.offset = 2*this.Radius;
+            sprite.offset = 2 * this.Radius;
             sprite.speed = 7000;
         }
-    },
-    loadSprite: function() {
+    }
+
+    loadSprite() {
         const sprite = this.sprite;
         if (sprite.loading) {
             return;
@@ -349,7 +372,8 @@ Character.prototype = {
         } else {
             this.buildSprite(sprite);
         }
-    },
+    }
+
     buildSprite(sprite) {
         // emulate loading, because we will load sprite ourselves
         sprite.loading = true;
@@ -425,8 +449,9 @@ Character.prototype = {
                 game.player.updateParty(game.player.Party);
             }
         });
-    },
-    loadNpcSprite: function() {
+    }
+
+    loadNpcSprite() {
         let name = this.Type;
         switch (name) {
         case "margo":
@@ -442,8 +467,9 @@ Character.prototype = {
         }
 
         this.sprite.load(this.spriteDir() + name + ".png");
-    },
-    spriteDir: function() {
+    }
+
+    spriteDir() {
         let dir = Character.spriteDir;
         if (this.IsNpc) {
             dir += (this.IsMob) ? "mobs/" : "npcs/";
@@ -452,33 +478,34 @@ Character.prototype = {
             }
         }
         return dir;
-    },
-    getActions: function() {
+    }
+
+    getActions() {
         var actions = {};
         switch (this.Type) {
         case "cow":
             actions = {
-                "Milk": function() {
+                Milk() {
                     game.network.send("milk", {Id: this.Id});
-                }
+                },
             };
             break;
         case "rabbit":
         case "chicken":
         case "bee":
             actions = {
-                "Catch": function() {
+                Catch() {
                     game.network.send("catch-animal", {Id: this.Id});
-                }
+                },
             };
             break;
         default:
             if (this.Riding) {
                 actions = {
-                    "Mount": function() {
+                    Mount() {
                         game.network.send("mount", {Id: this.Id});
                     },
-                    "Dismount": function() {
+                    Dismount() {
                         game.network.send("dismount");
                     },
                 };
@@ -492,42 +519,41 @@ Character.prototype = {
             common.Inspect = () => game.player.inspect(this);
         }
         if (this.isInteractive()) {
-            common.Interact =  this.interact;
+            common.Interact = this.interact;
         }
 
         var list = [common, actions];
-        if (!this.IsNpc)
+        if (!this.IsNpc) {
             list = list.concat(game.chat.makeNameActions(this.Name));
+        }
 
         if (game.player.IsAdmin) {
-            var admin = {};
-            admin.Kill = function() {
-                if (this.IsNpc && !this.IsMob)
-                    game.chat.send("*remove-npc " + this.Id);
-                else
-                    game.chat.send("*kill " + this.Id);
-            };
-            admin.ComeToMe = function() {
-                game.chat.send("*come-to-me " + this.Id);
-            };
-            admin["$cmd"] = function() {
-                game.chat.append("* " + this.Id);
-            };
-            admin.Summon = function() {
-                game.chat.send("*summon " + this.Id);
-            };
-            if (this.Type == "vendor") {
-                admin.RemoveVendor = function() {
-                    game.chat.send("*remove-vendor " + this.Name);
-                };
-            }
             list.push("---");
-            list.push(admin);
+            list.push({
+                "$cmd"() {
+                    game.chat.append("* " + this.Id);
+                },
+                kill() {
+                    if (this.Type == "vendor") {
+                        game.chat.send("*remove-vendor " + this.Name);
+                    } else {
+                        const cmd = (this.IsNpc && !this.IsMob)  ? "remove-npc" : "kill";
+                        game.chat.send(`*${cmd} ${this.Id}`);
+                    }
+                },
+                comeToMe() {
+                    game.chat.send("*come-to-me " + this.Id);
+                },
+                summon() {
+                    game.chat.send("*summon " + this.Id);
+                },
+            });
         }
 
         return list;
-    },
-    defaultAction: function(targetOnly) {
+    }
+
+    defaultAction(targetOnly) {
         if (this.isInteractive()) {
             this.interact();
             return;
@@ -554,21 +580,19 @@ Character.prototype = {
         }
 
         game.player.setTarget(this);
-    },
-    nameOffset: function() {
+    }
+
+    nameOffset() {
         switch (this.Type) {
         case "player":
-            if (this.mount)
-                return 100;
-            return 80;
+            return (this.mount) ? 100 : 90;
         case "horse":
-            if (this.rider)
-                return 130;
-            return 100;
+            return (this.rider) ? 130 : 100;
         }
-        return this.sprite.nameOffset || this.sprite.height;
-    },
-    drawAction: function() {
+        return this.sprite.nameOffset || this.sprite.height - (this.sprite.offset || 0);
+    }
+
+    drawAction() {
         if (this.Action.Duration) {
             const progress = Math.min(this.action.progress, 1);
             if (this.isPlayer) {
@@ -581,26 +605,30 @@ Character.prototype = {
             var y = p.y - this.nameOffset() + h + 1;
             h -= 2;
 
-            game.ctx.fillStyle = '#333';
-            game.ctx.fillRect(x-1, y-1, w+2, h+2);
+            game.ctx.fillStyle = "#333";
+            game.ctx.fillRect(x - 1, y - 1, w + 2, h + 2);
 
-            game.ctx.fillStyle = '#99682e';
+            game.ctx.fillStyle = "#99682e";
             game.ctx.fillRect(x, y, w, h);
 
-            game.ctx.fillStyle = '#cf9d62';
+            game.ctx.fillStyle = "#cf9d62";
             game.ctx.fillRect(x, y, progress * w, h);
         }
-    },
-    see: function(character) {
-        if (this == character)
+    }
+
+    see(character) {
+        if (this == character) {
             return true;
-        var len_x = character.X - this.X;
-        var len_y = character.Y - this.Y;
-        return util.distanceLessThan(len_x, len_y, Math.hypot(game.screen.width, game.screen.height));
-    },
-    setDst: function(x, y) {
-        if (this.Speed.Current <= 0 || this.Disabled)
+        }
+        const lenX = character.X - this.X;
+        const lenY = character.Y - this.Y;
+        return util.distanceLessThan(lenX, lenY, Math.hypot(game.screen.width, game.screen.height));
+    }
+
+    setDst(x, y) {
+        if (this.Speed.Current <= 0 || this.Disabled) {
             return;
+        }
         var leftBorder, rightBorder, topBorder, bottomBorder;
         leftBorder = this.Radius;
         topBorder = this.Radius;
@@ -619,25 +647,26 @@ Character.prototype = {
             y = bottomBorder;
         }
 
-        if (x == this.dst.x && y == this.dst.y)
-            return;
+        if (x == this.dst.x && y == this.dst.y) return;
 
         game.network.send("set-dst", {x, y});
         game.controller.resetAction();
         this.dst.radius = 9;
         this.dst.time = Date.now();
         this.updateDst(x, y);
-    },
-    updateDst: function(x, y) {
+    }
+
+    updateDst(x, y) {
         this.dst.x = x;
         this.dst.y = y;
         this.velocity.set(x, y).sub(this).normalize();
         this.updateUI();
-    },
-    getDrawPoint: function() {
+    }
+
+    getDrawPoint() {
         var p = this.screen();
         var dy = 0;
-        if (this.mount)  {
+        if (this.mount) {
             switch (this.mount.Type) {
             case "horse":
                 dy = 16;
@@ -654,21 +683,21 @@ Character.prototype = {
             }
         }
         return new Point(
-            p.x - this.sprite.width / 2,
+            p.x - this.sprite.width/2,
             p.y - this.sprite.height + this.sprite.offset - dy
         ).round();
-    },
-    draw: function(force) {
-        if ("Sleeping" in this.Effects)
-            return;
+    }
 
-        if (this.mount && !force)
+    draw(force) {
+        if ("Sleeping" in this.Effects || (this.mount && !force)) {
             return;
+        }
 
         this.drawDst();
 
-        if (!this.sprite.ready)
+        if (!this.sprite.ready) {
             return;
+        }
 
         var p = this.getDrawPoint();
         var s = this.screen();
@@ -682,16 +711,18 @@ Character.prototype = {
             );
             down.draw(downPoint);
             down.animate();
-            if (down.frame == 0) { //finished
+            if (down.frame == 0) {
+                //finished
                 this.animation.down = null;
             }
         }
 
         // drawing character model
-        if (this.Invisible)
+        if (this.Invisible) {
             this.sprite.drawAlpha(p, 0.3);
-        else
+        } else {
             this.sprite.draw(p);
+        }
 
         if (up) {
             var upPoint = new Point(
@@ -700,23 +731,27 @@ Character.prototype = {
             );
             up.draw(upPoint);
             up.animate();
-            if (up.frame == 0) { //finished
+            if (up.frame == 0) {
+                //finished
                 this.animation.up = null;
             }
         }
 
         this.drawEffects();
 
-        if (this != game.controller.world.hovered && this == game.player.target)
+        if (this != game.controller.world.hovered && this == game.player.target) {
             this.drawHovered(true);
+        }
 
-        if (this.burden)
+        if (this.burden) {
             this.drawBurden(this.burden);
+        }
 
         if (this.rider) {
             this.rider.draw(true);
         }
-    },
+    }
+
     drawBowRadius() {
         var ranged = Entity.get(this.equipSlot("right-hand"));
         if (!ranged || !ranged.Range) {
@@ -733,9 +768,9 @@ Character.prototype = {
         // effective range radius
         game.ctx.fillStyle = "rgba(0, 255, 0, 0.2)";
         game.iso.fillCircle(this.X, this.Y, ranged.Range.Effective);
+    }
 
-    },
-    drawCorpsePointer: function() {
+    drawCorpsePointer() {
         if (!this.Corpse || this.Instance == "sanctuary" || (this.Corpse.X == 0 && this.Corpse.Y == 0)) {
             return;
         }
@@ -748,37 +783,43 @@ Character.prototype = {
         p.toScreen().add(dir).round();
         Character.corpse.corpse.draw(p);
         // Character.corpse.arrow.draw(p);
-    },
-    drawBurden: function(burden) {
+    }
+
+    drawBurden(burden) {
         var point = this.getDrawPoint();
         var sprite = burden.sprite;
         point.x += this.sprite.width/2 - sprite.width/2;
-        point.y -= sprite.height/2;
+        point.y -= sprite.height / 2;
         burden.sprite.draw(point);
-    },
-    drawEffects: function() {
+    }
+
+    drawEffects() {
         var p = this.getDrawPoint();
         var sp = this.screen();
 
         for (var name in this.Effects) {
             name = name.toLowerCase();
             var sprite = Character.sprites.effects[name];
-            if (!sprite)
+            if (!sprite) {
                 continue;
-            p.x = sp.x - sprite.width/2;
+            }
+            p.x = sp.x - sprite.width / 2;
             sprite.draw(p);
             sprite.animate(); //TODO: should be animated per character basis;
         }
-    },
-    drawAura: function() {
-        if (config.ui.showAttackRadius && this.Action.Name == "attack")
+    }
+
+    drawAura() {
+        if (config.ui.showAttackRadius && this.Action.Name == "attack") {
             this.drawAttackRadius();
+        }
 
         if (this.isPlayer && game.controller.modifier.shift && game.controller.modifier.ctrl) {
             this.drawBowRadius();
         }
-    },
-    drawUI: function() {
+    }
+
+    drawUI() {
         var marker = this.getQuestMarker();
         if (marker) {
             this.drawMarker(marker, 0.01);
@@ -790,8 +831,9 @@ Character.prototype = {
         }
 
         if (game.debug.player.box || game.controller.hideStatic) {
-            if (!this.mount)
+            if (!this.mount) {
                 this.drawBox();
+            }
         }
 
         // else drawn in controller
@@ -811,8 +853,9 @@ Character.prototype = {
         }
 
         this.drawCorpsePointer();
-    },
-    drawMarker: function(marker, intensity) {
+    }
+
+    drawMarker(marker, intensity) {
         this._marker.opacity += this._marker.delta * intensity;
 
         if (this._marker.opacity >= 1 || this._marker.opacity < 0.7) {
@@ -826,8 +869,9 @@ Character.prototype = {
         game.ctx.globalAlpha = this._marker.opacity;
         game.ctx.drawImage(marker, p.x, p.y);
         game.ctx.globalAlpha = 1;
-    },
-    getNPCMarker: function() {
+    }
+
+    getNPCMarker() {
         switch (this.Type) {
         case "charles":
         case "diego":
@@ -843,11 +887,13 @@ Character.prototype = {
             return game.loader.loadImage("icons/npcs/vendor.png");
         }
         return null;
-    },
-    getQuestMarker: function() {
+    }
+
+    getQuestMarker() {
         // has owner -> vendor -> no quests
-        if (this.Owner)
+        if (this.Owner) {
             return null;
+        }
         // 1. yellow (?) -> has "ready" quest
         // 2. yellow (!) -> has "available" quest
         // 3. gray (?) -> has "active" quest
@@ -856,21 +902,27 @@ Character.prototype = {
         for (var name in game.player.ActiveQuests) {
             var questLog = game.player.ActiveQuests[name];
             var quest = questLog.Quest;
-            if (quest.End != this.Type)
+            if (quest.End != this.Type) {
                 continue;
-            if (questLog.State == "ready")
+            }
+            if (questLog.State == "ready") {
                 return game.loader.loadImage("icons/quests/ready.png");
+            }
             active = active || questLog.State == "active";
         }
-        if (this.getAvailableQuests().length > 0)
+        if (this.getAvailableQuests().length > 0) {
             return game.loader.loadImage("icons/quests/available.png");
-        if (active)
+        }
+        if (active) {
             return game.loader.loadImage("icons/quests/active.png");
+        }
         return null;
-    },
-    drawDst: function() {
-        if (this.dst.radius <= 0)
+    }
+
+    drawDst() {
+        if (this.dst.radius <= 0) {
             return;
+        }
         var now = Date.now();
         if (this.dst.time + 33 > now) {
             game.ctx.strokeStyle = "#ff0";
@@ -880,14 +932,16 @@ Character.prototype = {
             game.iso.strokeCircle(x, y, this.dst.radius--);
             this.dst.time = now;
         }
-    },
-    drawBox: function() {
+    }
+
+    drawBox() {
         var p = this.screen();
         game.ctx.strokeStyle = "cyan";
         game.iso.strokeRect(this.leftTopX(), this.leftTopY(), this.Width, this.Height);
         game.iso.strokeCircle(this.X, this.Y, this.Radius);
-    },
-    getFullName: function() {
+    }
+
+    getFullName() {
         var name = this.Name;
         if (this.Type == "vendor") {
             return name.substring(1);
@@ -897,20 +951,26 @@ Character.prototype = {
             return TS(this.Name);
         }
 
-        if (this.Title)
-            name = TT(this.Title, {name: name});
+        if (this.Title) {
+            name = TT(this.Title, {name});
+        }
 
         if (this.Fame == 10000) {
             name = T("Lord") + " " + name;
         }
         return name;
-    },
-    inPvp: function() {
+    }
+
+    inPvp() {
         var pvpExpires = new Date(this.PvpExpires * 1000);
         return pvpExpires > Date.now();
-    },
-    drawName: function(drawHp, drawName) {
+    }
+
+    drawName(drawHp, drawName) {
         var name = this.getFullName();
+        if (this == game.player.target) {
+            name = "{" + name + "}";
+        }
 
         if (game.controller.modifier.shift) {
             name += " | " + T("Lvl") + ": " + this.Lvl;
@@ -921,7 +981,7 @@ Character.prototype = {
         var y = p.y - this.nameOffset();
         var dy = FONT_SIZE * 0.5;
 
-        drawHp = (this.isInteractive())
+        drawHp = this.isInteractive()
             ? false
             : drawHp || ((!this.IsNpc || game.config.ui.npc) && game.config.ui.hp);
 
@@ -933,21 +993,24 @@ Character.prototype = {
             // blink when less then 3 sec
             if (diff > 0 && (diff > 3e3 || diff % 1000 < 500)) {
                 var pdy = Character.pvpFlag.height;
-                if (drawHp)
+                if (drawHp) {
                     pdy += dy;
-                if (drawName)
+                }
+                if (drawName) {
                     pdy += dy;
+                }
 
                 var pvpPoint = new Point(p.x, y);
-                pvpPoint.x -= Character.pvpFlag.width/2;
-                pvpPoint.y -= pdy*1.25;
+                pvpPoint.x -= Character.pvpFlag.width / 2;
+                pvpPoint.y -= pdy * 1.25;
 
                 Character.pvpFlag.draw(pvpPoint);
             }
         }
 
-        if (!drawHp && !drawName)
+        if (!drawHp && !drawName) {
             return;
+        }
 
         const nameWidth = game.ctx.measureText(name).width;
         var x = p.x - nameWidth / 2;
@@ -963,7 +1026,7 @@ Character.prototype = {
             }
 
             game.ctx.fillStyle = "#333";
-            game.ctx.fillRect(p.x - w/2-1, y-1, w+2, dy+2); //wtf
+            game.ctx.fillRect(p.x - w/2 - 1, y - 1, w + 2, dy + 2); //wtf
 
             //full red rect
             game.ctx.fillStyle = "#883527";
@@ -975,7 +1038,7 @@ Character.prototype = {
 
             if (this.Domestical && game.controller.modifier.shift) {
                 game.ctx.fillStyle = "#333";
-                game.ctx.fillRect(p.x - w/2-1, y + dy-1, w+2, dy+2); //wtf
+                game.ctx.fillRect(p.x - w/2 - 1, y + dy - 1, w + 2, dy + 2); //wtf
 
                 game.ctx.fillStyle = "#883527";
                 game.ctx.fillRect(p.x - w/2, y + dy, w, dy); //wtf
@@ -983,60 +1046,69 @@ Character.prototype = {
                 game.ctx.fillStyle = "#fea237";
                 game.ctx.fillRect(p.x - w/2, y + dy, w * this.Fullness.Current / this.Fullness.Max, dy); //wtf
             }
-
         } else {
             dy = 0;
         }
         if (drawName) {
             var nameColor = "#e2e9ec";
-            if (this.Karma < 0 || this.Aggressive)
+            if (this.Karma < 0 || this.Aggressive) {
                 nameColor = "#e23624";
-            else if (this.isPlayer)
+            } else if (this.isPlayer) {
                 nameColor = "#caff8c";
-            else if (this.IsNpc)
+            } else if (this.IsNpc) {
                 nameColor = "#ffca8c";
+            }
 
+            dy *= 0.75;
             game.ctx.fillStyle = nameColor;
-            game.drawStrokedText(name, x, y - dy / 2);
+            game.drawStrokedText(name, x, y - dy);
             var flag = this.flag();
             if (flag) {
-                flag.draw({x: x - 20, y: y - dy/2  - 14});
+                flag.draw({x: x - 20, y: y - dy - 14});
             }
 
             const chevron = this.chevron();
             if (chevron) {
                 const img = loader.loadImage(`icons/chevrons/${this.Style.Chevron}.png`);
-                img.width && game.ctx.drawImage(img, x + nameWidth + 5, y - dy/2  - 14, 16, 16);
+                if (img.width) {
+                    game.ctx.drawImage(img, x + nameWidth + 5, y - dy - 14, 16, 16);
+                }
             }
         }
-    },
-    chevron: function() {
+    }
+
+    chevron() {
         return this.Style && this.Style.Chevron;
-    },
-    flag: function() {
-        if (this.Team)
+    }
+    flag() {
+        if (this.Team) {
             return Character.flags[this.Team];
-        if (this.Citizenship)
+        }
+        if (this.Citizenship) {
             return Character.flags[this.Citizenship.Faction];
+        }
         return null;
-    },
-    idle: function() {
+    }
+
+    idle() {
         return this.velocity.isZero() && this.Action.Name == "";
-    },
-    sector: function(angle, x, y) {
-        var sectors = 2*Math.PI / angle;
+    }
+
+    sector(angle, x, y) {
+        var sectors = 2 * Math.PI/angle;
         var alpha = Math.atan2(-y, x) + Math.PI;
-        var sector = ((alpha + angle/2) / angle) << 0;
-        return (sector + sectors/2) % sectors;
-    },
-    animate: function() {
+        var sector = ((alpha + angle / 2) / angle) << 0;
+        return (sector + sectors / 2) % sectors;
+    }
+
+    animate() {
         var animation = "idle";
         var self = (this.mount) ? this.mount : this;
         var position = (this.IsNpc && !this.rider) ? self.Dir : self.sprite.position;
         if (self.sprite.angle == 0) {
             position = 0;
         } else if (self.sprite.angle == Math.PI/2 && position > 4) {
-            position = (position / 2)<<0;
+            position = (position / 2) << 0;
         }
 
         if (self.velocity.x || self.velocity.y) {
@@ -1051,13 +1123,17 @@ Character.prototype = {
             if (seat) {
                 switch (seat.Orientation) {
                 case "w":
-                    position = 1; break;
+                    position = 1;
+                    break;
                 case "s":
-                    position = 3; break;
+                    position = 3;
+                    break;
                 case "e":
-                    position = 5; break;
+                    position = 5;
+                    break;
                 case "n":
-                    position = 7; break;
+                    position = 7;
+                    break;
                 }
             }
         } else {
@@ -1095,7 +1171,7 @@ Character.prototype = {
         }
 
         var now = Date.now();
-        var speed = (this.Speed && this.Speed.Current || 100);
+        var speed = (this.Speed && this.Speed.Current) || 100;
 
         var spriteSpeed = this.sprite.speed;
         switch (animation) {
@@ -1110,13 +1186,14 @@ Character.prototype = {
             break;
         case "attack":
             spriteSpeed = this.Action.Duration / this.sprite.framesNum;
-            if (!this.IsMob)
+            if (!this.IsMob) {
                 spriteSpeed *= 2;
+            }
             speed = 1;
             break;
         }
 
-        if (now - this.sprite.lastUpdate > (spriteSpeed / speed)) {
+        if (now - this.sprite.lastUpdate > spriteSpeed / speed) {
             this.sprite.frame++;
             this.sprite.lastUpdate = now;
         }
@@ -1125,11 +1202,10 @@ Character.prototype = {
 
         if (this.sprite.frame < start || this.sprite.frame >= end) {
             this.sprite.frame = start;
-            if (this.Type == "desu")
-                this.sprite.lastUpdate = now + util.rand(5, 60) * 60;
         }
-    },
-    drawAttackRadius: function(angle = this.AttackAngle) {
+    }
+
+    drawAttackRadius(angle = this.AttackAngle) {
         if (this.isPlayer) {
             game.ctx.strokeStyle = "rgba(0, 255, 0, 0.4)";
             game.ctx.fillStyle = "rgba(255, 255, 255, 0.3)";
@@ -1141,39 +1217,96 @@ Character.prototype = {
             game.ctx.fillStyle = "rgba(255, 0, 0, 0.3)";
         }
 
-
-        let attackRadius = 1.5 * CELL_SIZE;
-        if (this.target) {
-            const attackVector = new Point(game.controller.world.point).sub(new Point(game.player));
-            const attackAngle = Math.atan2(-attackVector.y, attackVector.x);
-            const distanceVector = new Point(this.target).sub(new Point(this));
-            const distanceAngle = Math.atan2(-distanceVector.y, distanceVector.x);
-            let diff = Math.abs(attackAngle - distanceAngle);
-            if (diff > Math.PI) {
-                diff = 2*Math.PI - diff;
-            }
-            if (diff < Math.PI/4 && this.distanceTo(this.target) < attackRadius + this.target.Radius) {
-                game.ctx.fillStyle = "rgba(0, 255, 0, 0.3)";
-            }
+        const attackRadius = this.AttackRadius || 1.5 * CELL_SIZE;
+        const attackHalfAngle = Math.PI/4;
+        if (this.target && this.canHit(this.target, attackRadius, attackHalfAngle)) {
+            game.ctx.fillStyle = "rgba(0, 255, 0, 0.3)";
         }
-        const start = -angle - Math.PI/4;
-        const end = -angle + Math.PI/4;
+        const start = -angle - attackHalfAngle;
+        const end = -angle + attackHalfAngle;
         game.iso.fillSector(this.X, this.Y, attackRadius, start, end);
         game.iso.strokeSector(this.X, this.Y, attackRadius, start, end);
-    },
-    toggleActionSound: function() {
-        if (this.action.name)
+    }
+
+    canHit(target, attackRadius, attackHalfAngle) {
+        const point = new Point(this);
+        if (point.distanceMoreThen(this.target, attackRadius + this.target.Radius)) {
+            return false; // out of radius
+        }
+
+        if (point.distanceLessThen(this.target, this.target.Radius)) {
+            return true; // inside target's radius
+        }
+
+        const attackAngle = new Point(game.controller.world.point).sub(point).angle();
+        const distanceAngle = new Point(this.target).sub(this).angle();
+
+        let diff = Math.abs(attackAngle - distanceAngle);
+        if (diff > Math.PI) {
+            diff = 2*Math.PI - diff;
+        }
+        if (diff < attackHalfAngle) {
+            return true;
+        }
+
+        const attackFirstPoint = new Point(
+            Math.cos(-attackAngle - attackHalfAngle),
+            Math.sin(-attackAngle - attackHalfAngle)
+        ).mul(attackRadius).add(game.player);
+
+        if (attackFirstPoint.distanceLessThen(this.target, this.target.Radius)) {
+            return true;
+        }
+
+        const attackSecondPoint = new Point(
+            Math.cos(-attackAngle + attackHalfAngle),
+            Math.sin(-attackAngle + attackHalfAngle)
+        ).mul(attackRadius).add(this);
+        if (attackSecondPoint.distanceLessThen(this.target, this.target.Radius)) {
+            return true;
+        }
+
+        const firstSection = util.commonSectionCircle(
+            this.x,
+            this.y,
+            attackFirstPoint.x,
+            attackFirstPoint.y,
+            this.target.x,
+            this.target.y,
+            this.target.Radius
+        );
+        if (firstSection) {
+            return true;
+        }
+
+        return util.commonSectionCircle(
+            this.x,
+            this.y,
+            attackSecondPoint.x,
+            attackSecondPoint.y,
+            this.target.x,
+            this.target.y,
+            this.target.Radius
+        );
+    }
+
+    toggleActionSound() {
+        if (this.action.name) {
             game.sound.stopSound(this.action.name);
+        }
 
         this.action.name = this.Action.Name;
 
-        if (!this.Action.Duration)
+        if (!this.Action.Duration) {
             return;
+        }
 
-        if (this.action.name in game.sound.sounds)
+        if (this.action.name in game.sound.sounds) {
             game.sound.playSound(this.action.name, 0);
-    },
-    update: function(k) {
+        }
+    }
+
+    update(k) {
         this.processMessages();
         this.animate();
 
@@ -1188,7 +1321,7 @@ Character.prototype = {
                     height: 64,
                     dy: -16,
                     speed: 177,
-                }
+                },
             });
         }
         if (this.Action) {
@@ -1215,8 +1348,9 @@ Character.prototype = {
         if (this.Mount) {
             if (!this.mount) {
                 this.mount = Entity.get(this.Mount);
-                if (this.mount)
+                if (this.mount) {
                     this.mount.rider = this;
+                }
             }
         } else {
             if (this.mount) {
@@ -1228,8 +1362,9 @@ Character.prototype = {
 
         if (this.isPlayer) {
             // clear target if one is disappeared
-            if (this.target && !game.entities.has(this.target.Id))
+            if (this.target && !game.entities.has(this.target.Id)) {
                 this.setTarget(null);
+            }
 
             this.updateBuilding();
             this.updateActionButton();
@@ -1242,13 +1377,13 @@ Character.prototype = {
         if (this.ballon) {
             this.ballon.update();
         }
+    }
 
-    },
-    updateBuilding: function() {
+    updateBuilding() {
         if (!config.graphics.autoHideWalls) {
             return;
         }
-        var n = false, w = false, s = false,  e = false;
+        var n = false, w = false, s = false, e = false;
         var x = this.X;
         var y = this.Y;
 
@@ -1262,18 +1397,20 @@ Character.prototype = {
         });
 
         this.inBuilding = (n && w && s && e);
-    },
-    equipSlot: function(name) {
+    }
+
+    equipSlot(name) {
         return this.Equip[Character.equipSlots.indexOf(name)];
-    },
-    updateActionButton: function () {
+    }
+
+    updateActionButton() {
         var button = game.controller.actionButton;
         if (this.burden) {
             button.setAction("drop", () => this.liftStop());
             return;
         }
-        var left =  Entity.get(this.equipSlot("left-hand"));
-        var right =  Entity.get(this.equipSlot("right-hand"));
+        var left = Entity.get(this.equipSlot("left-hand"));
+        var right = Entity.get(this.equipSlot("right-hand"));
         if (is(rangedWeaponp)) {
             button.setAction("shot", () => this.shot());
             return;
@@ -1286,17 +1423,10 @@ Character.prototype = {
         }
 
         var targetable = is(targetablep);
-            if (targetable) {
-            button.setAction(
-                targetable.Group,
-                function() {
-                    game.controller.cursor.set(
-                        targetable,
-                        game.controller.mouse.x,
-                        game.controller.mouse.y
-                    );
-                }
-            );
+        if (targetable) {
+            button.setAction(targetable.Group, () => {
+                game.controller.cursor.set(targetable, game.controller.mouse.x, game.controller.mouse.y);
+            });
             return;
         }
 
@@ -1365,9 +1495,9 @@ Character.prototype = {
             cursor.sprite.height = icon.height;
             game.controller.creatingCursor(cursor, action, callback);
         }
-    },
-    fish: function fish(data) {
-        var repeat = fish.bind(this);
+    }
+
+    fish(data) {
         var panel = game.panels["fishing"];
         if (!panel) {
             var rating = dom.div("rating");
@@ -1387,7 +1517,6 @@ Character.prototype = {
             fishMeter.max = 300;
             fishMeter.style.width = "100%";
             fishMeter.title = T("Fish");
-
 
             panel = new Panel("fishing", "Fishing", [
                 rating,
@@ -1424,30 +1553,25 @@ Character.prototype = {
             this.disabled = false;
         });
         panel.show();
-        return repeat;
-
+        return (data) => this.fish(data);
 
         function makeButtons(actions, offset) {
             return dom.wrap("button-group", actions.map(function(action, index) {
-                var button = dom.button(
-                    T(action),
-                    "",
-                    function() {
-                        game.network.send("fishing-move", {move: offset + this.move});
-                        dom.forEach("#fishing-buttons button", function() {
-                            this.disabled = true;
-                        });
-                    }
-                );
+                var button = dom.button(T(action), "", function() {
+                    game.network.send("fishing-move", {move: offset + this.move});
+                    dom.forEach("#fishing-buttons button", function() {
+                        this.disabled = true;
+                    });
+                });
 
                 button.move = index;
                 button.disabled = true;
                 return button;
             }));
         }
-    },
+    }
 
-    findMovePosition: function(k = 16/1000) {
+    findMovePosition(k = 16/1000) {
         var delta = this.Speed.Current * k;
         var biom = game.map.biomAt(this.X, this.Y);
         if (biom && biom.Speed != 0) {
@@ -1464,13 +1588,16 @@ Character.prototype = {
 
         const v = this.velocity.clone().mul(delta);
         return p.add(v);
-    },
-    canCollideNow: function() {
+    }
+
+    canCollideNow() {
         return true;
-    },
-    updatePosition: function(k) {
-        if (this.mount)
+    }
+
+    updatePosition(k) {
+        if (this.mount) {
             return;
+        }
 
         if (this.X == this.dst.x && this.Y == this.dst.y) {
             return;
@@ -1485,52 +1612,61 @@ Character.prototype = {
         }
 
         this.updatePlow();
-    },
+    }
+
     updateUI() {
-        if (game.controller.ready && (this.isPlayer || this.rider && this.rider.isPlayer)) {
+        if (game.controller.ready && (this.isPlayer || (this.rider && this.rider.isPlayer))) {
             game.controller.updateVisibility();
             game.controller.minimap.update();
         }
-    },
-    willCollide: function(point, gap = 0) {
+    }
+
+    willCollide(point, gap = 0) {
         let bbox = BBox.centeredAtPoint(point, 2*(this.Radius + gap), 2*(this.Radius + gap));
         return game.quadtree.find(bbox, (object) => {
-            if (object == this || !object.canCollideNow())
+            if (object == this || !object.canCollideNow()) {
                 return false;
+            }
             if (object.Width && object.Height) {
                 return true;
             }
             const radius = object.Radius + this.Radius + gap;
             return util.distanceLessThan(point.x - object.X, point.y - object.Y, radius);
         });
-    },
-    updatePlow: function() {
-        if (!this.plow)
+    }
+
+    updatePlow() {
+        if (!this.plow) {
             return;
+        }
         var p = new Point(this);
-        var sector = (this.sprite.position - 1);
+        var sector = this.sprite.position - 1;
         // y = 1 used to fix rendering order
         var offset = new Point(this.plow.Radius, 1).rotate(2*Math.PI - sector * Math.PI/4);
         p.add(offset);
         this.plow.setPoint(p);
         this.plow.sprite.position = this.sprite.position;
 
-        if (this.velocity.x || this.velocity.y)
+        if (this.velocity.x || this.velocity.y) {
             this.plow.sprite.animate();
-    },
-    pickUp: function() {
-        var self = this;
-        var list = game.findItemsNear(this.X, this.Y).filter(function(e) {
-            return e.MoveType == Entity.MT_PORTABLE;
-        }).sort(function(a, b) {
-            return a.distanceTo(self) - b.distanceTo(self);
-        });
-        if (list.length > 0)
+        }
+    }
+
+    pickUp() {
+        const list = game
+              .findItemsNear(this.X, this.Y)
+              .filter(e => e.MoveType == Entity.MT_PORTABLE)
+              .sort((a, b) => a.distanceTo(this) - b.distanceTo(this));
+
+        if (list.length > 0) {
             list[0].pickUp();
-    },
-    harvest: function(dontStop = false, type = null) {
-        const plant = game.findItemsNear(this.X, this.Y, 4*CELL_SIZE)
-              .filter(function(entity) {
+        }
+    }
+
+    harvest(dontStop = false, type = null) {
+        const plant = game
+              .findItemsNear(this.X, this.Y, 4 * CELL_SIZE)
+              .filter(entity => {
                   if (entity.State != "adult") {
                       return false;
                   }
@@ -1544,29 +1680,34 @@ Character.prototype = {
                 game.player.harvest(true, plant.Type);
             }
         });
-    },
-    liftStart: function() {
-        const list = game.findItemsNear(this.X, this.Y)
+    }
+
+    liftStart() {
+        const list = game
+              .findItemsNear(this.X, this.Y)
               .filter(e => e.MoveType == Entity.MT_LIFTABLE)
               .sort((a, b) => a.distanceTo(this) - b.distanceTo(this));
 
         if (list.length > 0) {
             list[0].lift();
         }
-    },
-    liftStop: function() {
+    }
+
+    liftStop() {
         if (this.burden) {
             game.controller.creatingCursor(this.burden, "lift-stop");
             game.controller.lastAction.set(null);
         }
-    },
-    stop: function() {
+    }
+
+    stop() {
         this.Dst.X = this.dst.x = this.X;
         this.Dst.Y = this.dst.y = this.Y;
         this.velocity.set(0, 0);
         this.updateUI();
-    },
-    isNear: function(entity) {
+    }
+
+    isNear(entity) {
         const target = this.mount || this;
         const padding = target.Radius * 2 + target.correction;
 
@@ -1590,30 +1731,37 @@ Character.prototype = {
             entity.Y - target.Y,
             padding + Math.max(entity.Radius, Math.min(entity.Width, entity.Height) / 2) + 2
         );
-    },
-    drawHovered: function(nameOnly) {
-        if (this.Invisible)
+    }
+
+    drawHovered(nameOnly) {
+        if (this.Invisible) {
             return;
+        }
 
-        if (!nameOnly)
+        if (!nameOnly) {
             this.sprite.drawOutline(this.getDrawPoint());
+        }
 
-        if (this == game.player.target)
+        if (this == game.player.target) {
             game.setFontSize(17);
+        }
 
         this.drawName(true, true);
 
-        if (this == game.player.target)
+        if (this == game.player.target) {
             game.setFontSize(0);
-    },
-    intersects: Entity.prototype.intersects,
-    canIntersect: function() {
+        }
+    }
+
+    canIntersect() {
         return this.sprite.outline != null && (config.ui.allowSelfSelection || this != game.player);
-    },
-    bag: function() {
+    }
+
+    bag() {
         return Entity.get(this.Equip[0]);
-    },
-    findItems: function(kinds) {
+    }
+
+    findItems(kinds) {
         var found = {};
         var self = this;
 
@@ -1635,14 +1783,13 @@ Character.prototype = {
         });
 
         function search(entity) {
-            if (!entity)
+            if (!entity) {
                 return;
+            }
 
             var items = (entity.Props.Slots) ? entity.Props.Slots.map(Entity.get) : [entity];
             items.forEach(function(entity) {
-                if (!entity)
-                    return;
-                kinds.forEach(function(kind) {
+                entity && kinds.forEach(function(kind) {
                     if (entity.is(kind)) {
                         found[kind].push(entity);
                     }
@@ -1651,21 +1798,26 @@ Character.prototype = {
         }
 
         return found;
-    },
-    equippedWith: function(group) {
+    }
+
+    equippedWith(group) {
         return this.Equip
             .filter(Number)
             .map(Entity.get)
             .some(item => item.Group == group);
-    },
-    icon: function() {
-        if (!this._icon)
+    }
+
+    icon() {
+        if (!this._icon) {
             this._icon = this.sprite.icon();
+        }
         return this._icon;
-    },
-    getParts: function() {
-        if (this.IsNpc)
+    }
+
+    getParts() {
+        if (this.IsNpc) {
             return {};
+        }
         var parts = {
             legs: null,
             feet: null,
@@ -1674,11 +1826,11 @@ Character.prototype = {
             head: null,
         };
         var hideHelmet = this.Style && this.Style.HideHelmet;
-        Character.clothes.forEach(function(type, i) {
+        Character.clothes.forEach((type, i) => {
             parts[type] = {
-                name: (type == "head" && hideHelmet) ? "" : this.Clothes[i]
+                name: (type == "head" && hideHelmet) ? "" : this.Clothes[i],
             };
-        }.bind(this));
+        });
 
         if (!parts.head.name && this.Style && this.Style.Hair) {
             var hairStyle = this.Style.Hair.split("#");
@@ -1689,79 +1841,57 @@ Character.prototype = {
             };
         }
         return parts;
-    },
-    interact: function() {
-        var self = this;
+    }
+
+    interact() {
         game.player.setTarget(this);
-        game.network.send("follow", {Id: this.Id}, function interact() {
-            switch (self.Type) {
-            case "vendor":
-                game.controller.vendor.open(self);
+        game.network.send("follow", {Id: this.Id}, () => {
+            if (this.Type == "vendor") {
+                game.controller.vendor.open(this);
                 return;
             }
 
-            var quests = self.getQuests();
-            if (quests.length > 0 && self.Type == "plato") {
-                new Quest(quests[0], self).showPanel();
+            var quests = this.getQuests();
+            if (quests.length > 0 && this.Type == "plato") {
+                new Quest(quests[0], this).showPanel();
                 return;
             }
 
-            var talks = self.getTalks();
+            var talks = this.getTalks();
             if (talks.talks.length == 0) {
-                Character.npcActions.Quest.call(self);
-                return;
+                Character.npcActions.Quest.call(this);
+            } else {
+                Character.npcActions.Talk.call(this);
             }
-
-            Character.npcActions.Talk.call(self);
-            // TODO: remove dead code if users will like the new behaviour
-            return;
-            var actions = ["Talk"];
-
-            if (quests.length > 0)
-                actions.push("Quest");
-
-            actions = actions.concat(Object.keys(talks.actions));
-
-            if (actions.length == 1) {
-                Character.npcActions.Talk.call(self);
-                return;
-            }
-
-            var panel = new Panel(
-                "interaction",
-                self.Name,
-                actions.map(function(title) {
-                    var cls = (title == "Quest") ? "quest-button" : "";
-                    return dom.button(T(title), cls, function() {
-                        panel.close();
-                        Character.npcActions[title].call(self);
-                    });
-                })
-            );
-            panel.entity = self;
-            panel.show();
         });
-    },
-    getTalks: function() {
+    }
+
+    getTalks() {
         return Talks.get(
             this.Type,
             game.player.Citizenship.Faction.toLowerCase(),
             game.player.sex()
         );
-    },
-    sex: function() {
+    }
+
+    sex() {
         return Character.sex(this.Sex);
-    },
-    isInteractive: function() {
-        if (this.Type == "vendor")
+    }
+
+    isInteractive() {
+        if (this.Type == "vendor") {
             return true;
-        if (this.getQuests().length > 0)
+        }
+        if (this.getQuests().length > 0) {
             return true;
-        if (this.Type.toLowerCase() in Talks.npcs)
+        }
+        if (this.Type.toLowerCase() in Talks.npcs) {
             return true;
+        }
         return false;
-    },
-    use: function(entity, callback) {
+    }
+
+    use(entity, callback) {
         switch (entity.Group) {
         case "shit":
         case "snowball":
@@ -1775,8 +1905,9 @@ Character.prototype = {
             return true;
         }
         return false;
-    },
-    canUse: function(entity) {
+    }
+
+    canUse(entity) {
         if (entity instanceof Character) {
             return this.distanceTo(entity) < 2*CELL_SIZE + this.correction;
         }
@@ -1798,8 +1929,9 @@ Character.prototype = {
         default:
             return this.isNear(entity);
         }
-    },
-    updateActionAnimation: function() {
+    }
+
+    updateActionAnimation() {
         switch (this.Action.Name) {
         case "cast":
             this.playAnimation({
@@ -1808,56 +1940,67 @@ Character.prototype = {
                     width: 100,
                     height: 60,
                     dy: -18,
-                }
+                },
             });
             break;
         }
-    },
+    }
+
     // available anims: {up: {...}, down: {...}}
-    playAnimation: function(anims) {
+    playAnimation(anims) {
         for (var type in anims) {
-            if (this.animation[type] == null)
+            if (this.animation[type] == null) {
                 this.loadAnimation(type, anims[type]);
+            }
         }
-    },
-    loadAnimation: function(type, anim) {
+    }
+
+    loadAnimation(type, anim) {
         var sprt = new Sprite(
             "animations/" + anim.name + "-" + type + ".png",
             anim.width,
             anim.height,
             (anim.speed || 80)
         );
-        if (anim.dy)
+        if (anim.dy) {
             sprt.dy = anim.dy;
+        }
 
-        loader.ready(function() {
+        loader.ready(() => {
             this.animation[type] = sprt;
-        }.bind(this));
-    },
-    distanceTo: function(e) {
-        if (this.mount)
-            return Math.hypot(this.mount.X - e.X, this.mount.Y - e.Y );
+        });
+    }
 
-        return Math.hypot(this.X - e.X, this.Y - e.Y);
-    },
-    selectNextTarget: function(p = new Point(this)) {
+    distanceTo(e) {
+        return (this.mount)
+            ? Math.hypot(this.mount.X - e.X, this.mount.Y - e.Y)
+            : Math.hypot(this.X - e.X, this.Y - e.Y);
+    }
+
+    selectNextTarget(p = new Point(this), ignore = this.target) {
         var party = this.Party || [];
-        var list = game.findCharsNear(p.x, p.y, 5*CELL_SIZE).filter(c => {
-            if (c == this || c == this.target || c == this.mount) {
-                return false;
-            }
-            if (c.Team && c.Team == this.Team)
-                return false;
-            if (c.IsNpc && !c.IsMob)
-                return false;
-            return party.indexOf(c.Name) == -1;
-        }).sort((a, b) => new Point(a).distanceTo(p) - new Point(b).distanceTo(p));
+        var list = game
+            .findCharsNear(p.x, p.y, 5 * CELL_SIZE)
+            .filter(c => {
+                if (c == this || c == ignore || c == this.mount) {
+                    return false;
+                }
+                if (c.Team && c.Team == this.Team) {
+                    return false;
+                }
+                if (c.IsNpc && !c.IsMob) {
+                    return false;
+                }
+                return party.indexOf(c.Name) == -1;
+            })
+            .sort((a, b) => new Point(a).distanceTo(p) - new Point(b).distanceTo(p));
 
         if (list.length > 0) {
             this.setTarget(list[0]);
         }
-    },
-    setTarget: function(target) {
+    }
+
+    setTarget(target) {
         this.target = target;
         var cnt = game.controller.targetContainer;
         if (!target) {
@@ -1866,18 +2009,21 @@ Character.prototype = {
             return;
         }
 
-        if (cnt.dataset.targetId == target.Id)
+        if (cnt.dataset.targetId == target.Id) {
             return;
+        }
 
         cnt.dataset.targetId = target.Id;
         cnt.avatar = new Avatar(target);
         dom.setContents(cnt, cnt.avatar.element);
         dom.show(cnt);
-    },
-    inspect: function(target) {
+    }
+
+    inspect(target) {
         game.network.send("inspect", {Id: target.Id}, function(data) {
-            if (!data.Equip)
+            if (!data.Equip) {
                 return;
+            }
             // TODO: merge with stats.js
             const slots = data.Equip.reduce(function(slots, item, i) {
                 var name = Character.equipSlots[i];
@@ -1924,43 +2070,45 @@ Character.prototype = {
             panel.temporary = true;
             panel.show();
         });
-    },
-    getAvailableQuests: function() {
+    }
+
+    getAvailableQuests() {
         return game.player.AvailableQuests[this.Type] || [];
-    },
-    getQuests: function() {
-        var quests =  this.getAvailableQuests();
+    }
+    getQuests() {
+        var quests = this.getAvailableQuests();
         for (var id in game.player.ActiveQuests) {
             var quest = game.player.ActiveQuests[id].Quest;
-            if (quest.End == this.Type)
-                quests.push(quest);
+            if (quest.End == this.Type) quests.push(quest);
         }
         return quests;
-    },
-    updateActiveQuest: function() {
-        var panel = game.panels.quest;
-        if (!panel)
-            return;
-        panel.setContents(panel.quest.getContents());
-    },
-    onremove: function() {
-    },
-    shot: function(x = 0, y = 0) {
-        if (!(this.target instanceof Character)) {
+    }
+
+    updateActiveQuest() {
+        const panel = game.panels.quest;
+        panel && panel.setContents(panel.quest.getContents());
+    }
+
+    onremove() {}
+
+    shot(x = 0, y = 0) {
+        if (this.target instanceof Character) {
+            game.network.send("waza", {Name: "Shot", Id: this.target.Id, X: x, Y: y});
+        } else {
             game.controller.showWarning("Select target");
-            return;
         }
-        game.network.send("waza", {Name: "Shot", Id: this.target.Id, X: x, Y: y});
-    },
-    onclick: function(x, y) {
+    }
+
+    onclick(x, y) {
         if (game.controller.wantShot()) {
             this.shot(x, y);
         } else {
             this.setDst(x, y);
         }
-    },
-    armored: function() {
-        var armoredMob = _.includes([
+    }
+
+    armored() {
+        const armoredMob = [
             "training-dummy",
             "kitty-pahan",
             "rogalian",
@@ -1968,19 +2116,22 @@ Character.prototype = {
             "ufo",
             "red-chopper",
             "blue-chopper",
-        ], this.Type);
-        if (armoredMob)
+        ].includes(this.Type);
+        if (armoredMob) {
             return true;
-        var armor = this.Clothes[2];
-        return _.includes(["iron", "steel", "titanium", "meteorite", "bloody"], armor);
-    },
-    synodProtection: function() {
+        }
+        const armor = this.Clothes[2]; // see getParts()
+        return ["iron", "steel", "titanium", "meteorite", "bloody"].includes(armor);
+    }
+
+    synodProtection() {
         if (this.Karma < 0 || this.inPvp()) {
             return false;
         }
         return (this.Z == 0) || (this.Z == 3 && this.X < 2804 && this.Y < 3341);
-    },
-    bbox: function() {
+    }
+
+    bbox() {
         return new BBox(
             this.X - this.Width/2,
             this.Y - this.Height/2,
@@ -1988,4 +2139,6 @@ Character.prototype = {
             this.Height
         );
     }
-};
+}
+
+Character.prototype.intersects = Entity.prototype.intersects;

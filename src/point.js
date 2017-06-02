@@ -116,6 +116,11 @@ Point.prototype = {
     length: function() {
         return Math.hypot(this.x, this.y);
     },
+    // canvas and world Y axis goes down
+    // but angle is given for negated `y` value as in school math
+    angle() {
+        return Math.atan2(-this.y, this.x);
+    },
     normalize: function() {
         const len = this.length();
         if (len == 0) {
@@ -170,5 +175,15 @@ Point.prototype = {
     },
     distanceTo(p) {
         return Math.hypot(this.x - p.x, this.y - p.y);
+    },
+    distanceLessThen(p, r) {
+        const lenX = this.x - p.x;
+        const lenY = this.y - p.y;
+        return lenX * lenX + lenY * lenY < r * r;
+    },
+    distanceMoreThen(p, r) {
+        const lenX = this.x - p.x;
+        const lenY = this.y - p.y;
+        return lenX * lenX + lenY * lenY > r * r;
     },
 };
