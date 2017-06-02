@@ -15,8 +15,8 @@ class WebglRenderer {
     async load(canvas) {
         const {gl} = this;
 
-        const vs = await this.loadShader("draw-image.vs");
-        const fs = await this.loadShader("draw-image.fs");
+        const vs = await this.loadShader("map.vs");
+        const fs = await this.loadShader("map.fs");
 
         const vertexShader = this.createShader(gl, gl.VERTEX_SHADER, vs);
         const fragmentShader = this.createShader(gl, gl.FRAGMENT_SHADER, fs);
@@ -27,6 +27,7 @@ class WebglRenderer {
         this.positionLocation = gl.getAttribLocation(program, "a_position");
         this.matrixLocation = gl.getUniformLocation(program, "u_matrix");
         this.textureLocation = gl.getUniformLocation(program, "u_texture");
+        this.transitionsLocation = gl.getUniformLocation(program, "u_transitions");
         this.minimapLocation = gl.getUniformLocation(program, "u_minimap");
         this.locationLocation = gl.getUniformLocation(program, "u_location");
 
@@ -35,18 +36,18 @@ class WebglRenderer {
 
         gl.bufferData(
             gl.ARRAY_BUFFER,
-            new Float32Array([
-                0, 0,
-                0, 1,
-                1, 0,
-                1, 0,
-                0, 1,
-                1, 1,
-            ]),
+            new Float32Array([0, 0, 0, 1, 1, 0, 1, 0, 0, 1, 1, 1]),
             gl.STATIC_DRAW
         );
 
         this.mapTexture = await this.loadImageAndCreateTexture("assets/map/map.png");
+
+        this.transitionsTexture = await this.loadImageAndCreateTexture(
+            "assets/map/transitions.png"
+        );
+        gl.bindTexture(gl.TEXTURE_2D, this.transitionsTexture);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
 
         const tex = gl.createTexture();
         this.minimapTexture = tex;
@@ -110,8 +111,7 @@ class WebglRenderer {
         console.error(gl.getShaderInfoLog(shader));
         gl.deleteShader(shader);
         return null;
-    };
-
+    }
 
     createProgram(gl, vertexShader, fragmentShader) {
         const program = gl.createProgram();
@@ -128,14 +128,13 @@ class WebglRenderer {
         return null;
     }
 
-    updateMap() {
-    }
+    updateMap() {}
 
     drawMap() {
-        const {gl} = this;
-        if (!this.mapTexture) {
+        if (!this.mapTexture || !this.transitionsTexture || !this.minimapTexture) {
             return;
         }
+        const {gl} = this;
         gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
 
         gl.clear(gl.COLOR_BUFFER_BIT);
@@ -149,14 +148,9 @@ class WebglRenderer {
         const size = 2896.309375740099; //new Point(64*64).rotate(Math.PI/4);
         const loc = game.map.location;
         const p = loc.clone().toScreen();
-        matrix = m4.translate(
-            matrix,
-            p.x - game.camera.x,
-            p.y - game.camera.y,
-            0
-        );
-        matrix = m4.scale(matrix, size, size/2, 1);
-        matrix = m4.zRotate(matrix, Math.PI/4);
+        matrix = m4.translate(matrix, p.x - game.camera.x, p.y - game.camera.y, 0);
+        matrix = m4.scale(matrix, size, size / 2, 1);
+        matrix = m4.zRotate(matrix, Math.PI / 4);
         gl.uniformMatrix4fv(this.matrixLocation, false, matrix);
 
         const texWidth = 128;
@@ -165,16 +159,20 @@ class WebglRenderer {
         texMatrix = m4.scale(texMatrix, size / texWidth, size / texHeight, 1);
         gl.uniformMatrix4fv(this.textureMatrixLocation, false, texMatrix);
 
-        gl.uniform2fv(this.locationLocation, [loc.x/CELL_SIZE, loc.y/CELL_SIZE]);
-
+        gl.uniform2fv(this.locationLocation, [loc.x / CELL_SIZE, loc.y / CELL_SIZE]);
 
         gl.uniform1i(this.textureLocation, 0);
         gl.uniform1i(this.minimapLocation, 1);
+        gl.uniform1i(this.transitionsLocation, 2);
 
         gl.activeTexture(gl.TEXTURE0);
         gl.bindTexture(gl.TEXTURE_2D, this.mapTexture);
+
         gl.activeTexture(gl.TEXTURE1);
         gl.bindTexture(gl.TEXTURE_2D, this.minimapTexture);
+
+        gl.activeTexture(gl.TEXTURE2);
+        gl.bindTexture(gl.TEXTURE_2D, this.transitionsTexture);
 
         gl.drawArrays(gl.TRIANGLES, 0, 6);
     }
@@ -184,4 +182,12 @@ class WebglRenderer {
         this.canvas.height = height;
     }
 
+    static stub() {
+        return {
+            drawMap() {},
+            resize() {},
+            updateMap() {},
+            sync() {},
+        };
+    }
 }
