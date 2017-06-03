@@ -1,4 +1,4 @@
-/* global dom, game, T, playerStorage */
+/* global dom, game, T, playerStorage, util, getComputedStyle */
 
 "use strict";
 function Panel(name, title, elements, hooks) {
@@ -29,6 +29,13 @@ function Panel(name, title, elements, hooks) {
     this.closeButton.onclick = () => this.hide();
 
     this.titleBar = dom.wrap("title-bar", [this.title, this.closeButton]);
+    this.titleBar.ondblclick = () => {
+        if (this._minimized) {
+            this.maximize();
+        } else {
+            this.minimize();
+        }
+    };
 
     this.element = dom.wrap("panel draggable", this.titleBar);
     this.element.id = name;
@@ -67,6 +74,10 @@ function Panel(name, title, elements, hooks) {
         this.show();
     }
 
+    this._minimized = config.minimized;
+    if (config.minimized) {
+        this.minimize();
+    }
 
     if ("position" in config) {
         this.x = config.position.x;
@@ -112,11 +123,11 @@ Panel.prototype = {
     get height() {
         return parseInt(getComputedStyle(this.element).height);
     },
-    resetPosition: function() {
+    resetPosition() {
         this.x = game.offset.x + (game.screen.width - this.width) / 2;
         this.y = game.offset.y + (game.screen.height - this.height) / 2;
     },
-    toTop: function() {
+    toTop() {
         if (Panel.top && Panel.top != this)
             Panel.top.element.classList.remove("top");
 
@@ -130,7 +141,7 @@ Panel.prototype = {
 
         Panel.top = this;
     },
-    hide: function() {
+    hide() {
         this.hooks.hide && this.hooks.hide.call(this);
         this.savePosition();
         this.element.style.visibility = "hidden";
@@ -143,19 +154,19 @@ Panel.prototype = {
             Panel.top = next;
         }
     },
-    hideCloseButton: function() {
+    hideCloseButton() {
         dom.hide(this.closeButton);
         return this;
     },
-    hideTitle: function() {
+    hideTitle() {
         dom.hide(this.titleBar);
         return this;
     },
-    showTitle: function() {
+    showTitle() {
         dom.show(this.titleBar);
         return this;
     },
-    close: function() {
+    close() {
         this.hide();
         if (this.element && this.element.parentNode) {
             dom.remove(this.element);
@@ -164,29 +175,29 @@ Panel.prototype = {
         delete game.panels[this.name];
         this.hooks.close && this.hooks.close.call(this);
     },
-    setTitle: function(text) {
+    setTitle(text) {
         this.title.title = T(text);
         this.title.textContent = T(text);
     },
-    setContents: function(elements) {
+    setContents(elements) {
         dom.clear(this.contents);
         dom.append(this.contents, elements);
     },
-    makeBackButton: function() {
+    makeBackButton() {
         var back = document.createElement("button");
         back.textContent = T("Back");
         back.onclick = function() {};
         return back;
     },
-    setEntity: function(entity) {
+    setEntity(entity) {
         this.entity = entity;
         return this;
     },
-    setTemporary: function(temporary) {
+    setTemporary(temporary) {
         this.temporary = temporary;
         return this;
     },
-    show: function(x, y) {
+    show(x, y) {
         this.toTop();
         this.element.style.visibility = "visible";
         if (this.button) {
@@ -194,7 +205,6 @@ Panel.prototype = {
         }
 
         this.visible = true;
-
 
         if (x === undefined && y === undefined) {
             if (this._forcePositionReset) {
@@ -211,15 +221,20 @@ Panel.prototype = {
             this.x, this.y, this.width, this.height,
             0, 0, window.innerWidth, window.innerHeight
         );
-        if (!valid)
+        if (!valid) {
             this.resetPosition();
+        }
+
+        if (this._minimized) {
+            this.maximize();
+        }
 
 
         this.hooks.show && this.hooks.show.call(this);
         window.scrollTo(0, 0);
         return this;
     },
-    fitToScreen: function() {
+    fitToScreen() {
         if (this.x + this.width > window.innerWidth) {
             this.x = window.innerWidth - this.width;
         }
@@ -227,13 +242,21 @@ Panel.prototype = {
             this.y = window.innerHeight - this.height;
         }
     },
-    toggle: function() {
+    toggle() {
         if (this.visible)
             this.hide();
         else
             this.show();
     },
-    savePosition: function() {
+    minimize() {
+        this._minimized = true;
+        this.element.classList.add("minimize");
+    },
+    maximize() {
+        this._minimized = false;
+        this.element.classList.remove("minimize");
+    },
+    savePosition() {
         if (this.temporary)
             return;
 
@@ -243,27 +266,32 @@ Panel.prototype = {
                 y: this.y,
             },
             visible: this.visible,
+            minimized: this._minimized,
         });
     },
-    center: function(ratioX = 0.5, ratioY = 0.5) {
+    center(ratioX = 0.5, ratioY = 0.5) {
         this.x = game.offset.x + (game.world.offsetWidth - this.element.offsetWidth) * ratioX;
         this.y = game.offset.y + (game.world.offsetHeight - this.element.offsetHeight) * ratioY;
         return this;
     },
-    setWidth: function(w) {
+    setWidth(w) {
         const pad = 6;
         this.element.style.width = w + pad + "px";
         this.element.style.maxWidth = w + pad + "px";
     },
-    fixHeight: function(h) {
-        this.contents.style.minHeight = (h || this.height) + "px";
+    fixHeight(height = this.height) {
+        this.contents.style.minHeight = height + "px";
     },
     setVisibilityCheck(value) {
         this.visibilityCheck = value;
         return this;
     },
-    updateVisibility: function() {
-        if (this.visible && this.visibilityCheck && this.entity && !game.player.canUse(this.entity)) {
+    updateVisibility() {
+        if (this.visible &&
+            !this._minimized &&
+            this.visibilityCheck &&
+            this.entity &&
+            !game.player.canUse(this.entity)) {
             this.close();
         }
     },

@@ -1,4 +1,4 @@
-/* global Panel, dom, game, T, ContainerSlot, playerStorage, ContainerSearch */
+/* global Panel, dom, game, T, ContainerSlot, playerStorage, ContainerSearch, TS */
 
 "use strict";
 function Container(entity) {
@@ -310,12 +310,29 @@ Container.prototype = {
         entity.dwim();
     },
     init() {
-        var entity = this.entity;
-        var props = entity.Props;
+        const props = this.entity.Props;
         this._slots = props.Slots || [];
         this._slotsWidth = props.SlotsWidth;
         this._slotsHeight = props.SlotsHeight;
+        this.updateName();
+    },
+    updateName() {
+        let entity = this.entity;
         this.name = TS(entity.Name);
+        let container = entity.findContainer();
+        let indices = [];
+        while (container && container.Props.Slots) {
+            const index = container.Props.Slots.indexOf(entity.Id) + 1;
+            indices.push(index);
+            entity = container;
+            container = container.findContainer();
+        }
+        if (indices.length > 0) {
+            this.name += ` [${indices.join('>')}]`;
+        }
+        if (this.panel) {
+            this.panel.setTitle(this.name);
+        }
     },
     // called on each Entity.sync()
     update() {
@@ -332,6 +349,10 @@ Container.prototype = {
             if (!entity) {
                 // game.sendErrorf("Entity with id %d is not found in container %d", id, this.id);
                 continue;
+            }
+            const subContainer = game.containers[entity.Id];
+            if (subContainer) {
+                subContainer.updateName();
             }
             slot.set(entity);
         }

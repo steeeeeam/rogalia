@@ -237,7 +237,7 @@ function Minimap() {
         point.x = x;
         point.y = y;
         point.z = z;
-        if (z === null || z == self.lvl) {
+        if (z === null || (z == self.lvl && z <= 3)) {
             dom.show(point);
         } else {
             dom.hide(point);

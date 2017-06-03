@@ -796,7 +796,7 @@ function Chat() {
         });
     }
 
-    const maxMessages = 128;
+    const maxMessages = 64;
     function cleanUpTab(messagesElement) {
         let len = messagesElement.children.length;
         while (len-- >= maxMessages) {
