@@ -624,8 +624,16 @@ Entity.prototype = {
         game.controller.creatingCursor(ghost, "relocate");
     },
     actionApplySimple: function(action) {
+        if (this.isTool()) {
+            game.popup.confirm(T("It will be destroyed. Are you sure?"), () => {
+                game.network.send(action, {id: this.Id});
+            });
+            return;
+        }
         if (this.isContainer()) {
-            game.popup.confirm(T("It will be destroyed with all it's contents"), () => game.network.send(action, {id: this.Id}));
+            game.popup.confirm(T("It will be destroyed with all it's contents"), () => {
+                game.network.send(action, {id: this.Id});
+            });
             return;
         }
 

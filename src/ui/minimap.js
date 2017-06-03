@@ -5,7 +5,7 @@ function Minimap() {
     var self = this;
     const defaultWidth = 300;
     this.width = defaultWidth;
-
+    this.lvl = 0;
     this.mapImage = new Image();
     this.mapImage.id = "minimap-image";
     this.mapImage.width = defaultWidth;
@@ -75,6 +75,8 @@ function Minimap() {
     const lvlDown = dom.button("↧", "", () => {
         if (this.lvl < 3) {
             this.selectLevel(this.lvl + 1);
+        } else if (this.lvl > 3) {
+            this.selectLevel(1);
         }
     });
 
@@ -126,12 +128,12 @@ function Minimap() {
         }
     };
 
-    this.selectLevel = function(level, force = false) {
+    this.selectLevel = function(level) {
         if (this.lvl != level) {
             this.lvl = level;
             const lvl = (this.lvl > 0 && this.lvl <= 3) ? "/" + this.lvl : "";
             this.mapImage.src = game.proto() + "//" + game.network.addr + "/map" + lvl;
-            coord.textContent = this.lvl;
+            coord.textContent = (lvl) ? -level : 0;
         }
     };
 
@@ -149,6 +151,9 @@ function Minimap() {
         this.syncObject("$corpse", game.player.Corpse);
         this.syncObject("$respawn", game.player.Respawn);
         game.player.Claims && game.player.Claims.forEach(c => this.syncObject("$claim", c));
+        _.forEach(game.mapMarkers, (point, name) => {
+            this.syncObject(name, point);
+        });
     };
 
     this.lvl = undefined;
@@ -297,6 +302,10 @@ function Minimap() {
             case "$claim":
                 point.classList.add("claim-point");
                 point.title = T("Claim");
+                break;
+            case "$red-portal":
+                point.id = "red-portal-point";
+                point.title = T("Red portal");
                 break;
             default:
                 point.classList.add("character");

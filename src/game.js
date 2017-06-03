@@ -53,6 +53,7 @@ class Game {
         this.steamSession = null;
 
         this.map = new WorldMap();
+        this.mapMarkers = null;
 
         this.controller = new Controller(this);
         this.network = new Network();

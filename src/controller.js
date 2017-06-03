@@ -527,6 +527,9 @@ function Controller(game) {
         9: { //tab
             callback() {
                 game.player.selectNextTarget();
+                if (!game.player.target) {
+                    game.player.selectNextTarget(new Point(game.controller.world.point));
+                }
             },
             help: "Select next target",
         },

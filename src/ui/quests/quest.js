@@ -41,7 +41,6 @@ Quest.prototype = {
             game.sound.stopVoice();
         };
         panel.quest = this;
-        panel.entity = this.npc;
         panel.show();
     },
     update() {

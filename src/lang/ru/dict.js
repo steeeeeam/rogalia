@@ -1775,6 +1775,7 @@ T.dict = {
     "Please enter amount": "Пожалуйста, введите сумму",
     "Please enter price": "Пожалуйста, введите стоимость",
     "It will be destroyed with all it's contents": "Контейнер будет уничтожен вместе со всем содержимым",
+    "It will be destroyed. Are you sure?": "Предмет будет уничтожен. Вы уверены?",
     "You can get claim from the Scrooge in the bank": "Вы можете получить клейм у Скруджа в банке",
     "Get claim for {n} gold?": "Получить клейм за {n} золота?",
     "Don't forget to pay for a claim!": "Не забудьте оплатить клейм!",
