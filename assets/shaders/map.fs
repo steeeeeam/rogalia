@@ -13,23 +13,33 @@ const float map_size = 4096.0; // 64 * 64
 const float map_tex_width = 512.0;
 const float map_tex_height = 1536.0;
 
-const float transition_tile_size = 128.0;
-const float transitions_size = 640.0;
-const float transitions_width = 3.0 * transitions_size;
-const float transitions_height = transitions_size;
-
 const ivec2 grass = ivec2(65, 0);
 const ivec2 sand = ivec2(221, 0);
 const ivec2 soil = ivec2(211, 0);
+const ivec2 plowed_soil = ivec2(210, 0);
 
-const int bioms_num = 3;
+const int bioms_num = 4;
 ivec2 bioms[bioms_num];
+ivec2 bioms_order[bioms_num];
 
 void init_bioms() {
     bioms[0] = grass;
     bioms[1] = sand;
     bioms[2] = soil;
+    bioms[3] = plowed_soil;
+
+    bioms_order[0] = grass;
+    bioms_order[1] = sand;
+    bioms_order[2] = soil;
+    bioms_order[3] = plowed_soil;
+
 }
+
+const float transition_tile_size = 128.0;
+const float transitions_size = 512.0;
+const float transitions_width = 4096.0;
+const float transitions_height = 4096.0;
+
 
 
 float tex_map_coord(float coord, float size) {
@@ -95,7 +105,7 @@ vec4 biom_color(vec4 biom, vec2 p) {
         // rock
         p.y += tex_map_offset(7.0);
         p.x += tex_map_variant(v_position, 8.0);
-    } else if (red == 210) {
+    } else if (red == plowed_soil.r) {
         // plowed soil
         p.y += tex_map_offset(8.0);
         p.x += tex_map_variant(v_position, 8.0);
@@ -392,6 +402,16 @@ int ibiom_layer_index(ivec2 ibiom) {
     return -1;
 }
 
+int ibiom_order(ivec2 ibiom) {
+    for (int i = 0; i < bioms_num; i++) {
+        if (ibiom == bioms_order[i]) {
+            return i;
+        }
+    }
+    return -1;
+}
+
+
 vec4 transition_aux_color(vec2 direction, vec4 color, vec2 v_position, vec4 offset, vec2 delta) {
     vec4 biom = texture2D(u_minimap, v_position);
     vec4 transition_biom = neighbor_biom(v_position, direction.x, direction.y);
@@ -402,13 +422,11 @@ vec4 transition_aux_color(vec2 direction, vec4 color, vec2 v_position, vec4 offs
     ivec2 ibiom = biom_to_ibiom(biom);
     ivec2 itransition_biom = biom_to_ibiom(transition_biom);
 
-    int ibiom_index = ibiom_layer_index(ibiom);
-    int itransition_biom_index = ibiom_layer_index(itransition_biom);
-
-    if (ibiom_index < itransition_biom_index) {
+    if (ibiom_order(ibiom) < ibiom_order(itransition_biom)) {
         return color;
     }
 
+    int itransition_biom_index = ibiom_layer_index(itransition_biom);
     if (itransition_biom_index == -1) {
         return color;
     }
@@ -441,9 +459,7 @@ vec4 transition_aux_color(vec2 direction, vec4 color, vec2 v_position, vec4 offs
     vec2 transitions_pos = vec2(variant.x * transition_tile_size / transitions_width,
                                 variant.y * transition_tile_size / transitions_height);
 
-    if (itransition_biom.r == 221) {
-        transitions_pos.x += 1.0 * (transitions_size / transitions_width);
-    }
+    transitions_pos.x += float(itransition_biom_index) * (transitions_size / transitions_width);
 
     vec2 p;
     p.x = mod(v_position.x * map_size, tile_size)/tile_size+delta.x;

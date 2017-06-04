@@ -1,4 +1,4 @@
-/* global game, util, Panel, dom, loader, Character, Stage */
+/* global game, util, Panel, dom, loader, Character, Stage, gameStorage */
 
 "use strict";
 function lobbyStage(data) {

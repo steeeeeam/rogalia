@@ -49,22 +49,26 @@ function selectServerStage(panel) {
         return dom.table(
             [
                 T("Server"),
-                T("Online"),
                 T("Population"),
                 T("Description"),
                 T("Status"),
                 ""
             ],
             _.map(servers, function(server) {
-                var enterButton = dom.button(T("Enter"), "", function() {
+                const enterButton = dom.button(T("Enter"), "", function() {
                     enter(server);
                 });
-                if (server.Status != "online")
+                if (server.Status != "online") {
                     enterButton.disabled = true;
+                }
+                const players = server.Players;
+                const population = (document.location.hostname == "localhost")
+                      ? `${players.Online}/${players.Limit} (${players.Population})`
+                      : players.Population;
+
                 return [
                     server.Name,
-                    sprintf("%d/%d", server.Players.Online, server.Players.Limit),
-                    server.Players.Population,
+                    population,
                     server.Desc,
                     TS(server.Status),
                     enterButton,
