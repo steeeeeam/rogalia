@@ -35,7 +35,7 @@ class Character {
         this.target = null;
 
         this.Radius = CELL_SIZE / 4;
-        this.Speed = {Current: 0};
+        this.Speed = 0;
         this.Equip = [];
 
         this.IsNpc = false;
@@ -633,7 +633,7 @@ class Character {
     }
 
     setDst(x, y) {
-        if (this.Speed.Current <= 0 || this.Disabled) {
+        if (this.Speed <= 0 || this.Disabled) {
             return;
         }
         var leftBorder, rightBorder, topBorder, bottomBorder;
@@ -1170,7 +1170,7 @@ class Character {
         }
 
         var now = Date.now();
-        var speed = (this.Speed && this.Speed.Current) || 100;
+        var speed = this.Speed || 100;
 
         var spriteSpeed = this.sprite.speed;
         switch (animation) {
@@ -1571,7 +1571,7 @@ class Character {
     }
 
     findMovePosition(k = 16/1000) {
-        var delta = this.Speed.Current * k;
+        var delta = this.Speed * k;
         var biom = game.map.biomAt(this.X, this.Y);
         if (biom && biom.Speed != 0) {
             // Client is ahead of server so we can get into blocked tile here but not on server.

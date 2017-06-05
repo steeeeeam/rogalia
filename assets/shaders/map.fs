@@ -13,33 +13,48 @@ const float map_size = 4096.0; // 64 * 64
 const float map_tex_width = 512.0;
 const float map_tex_height = 1536.0;
 
-const ivec2 grass = ivec2(65, 0);
-const ivec2 sand = ivec2(221, 0);
-const ivec2 soil = ivec2(211, 0);
-const ivec2 plowed_soil = ivec2(210, 0);
+const ivec3 plowed_soil = ivec3(210, 0, 0);
+const ivec3 soil = ivec3(211, 0, 1);
+const ivec3 ground = ivec3(17, 0, 2);
+const ivec3 sand = ivec3(221, 0, 3);
+const ivec3 shallow_water = ivec3(36, 0, 4);
+const ivec3 deep_water = ivec3(32, 0, 5);
+const ivec3 rock = ivec3(226, 0, 6);
+const ivec3 grass = ivec3(65, 0, 7);
+const ivec3 leaf_forest = ivec3(13, 0, 8);
+const ivec3 pine_forest = ivec3(23, 0, 9);
+const ivec3 stone_tiles = ivec3(28, 37, 10);
+const ivec3 light_stone_tiles = ivec3(119, 0, 11);
+const ivec3 red_stone_tiles = ivec3(192, 0, 12);
+const ivec3 solid_ground = ivec3(0, 0, 13);
 
-const int bioms_num = 4;
-ivec2 bioms[bioms_num];
-ivec2 bioms_order[bioms_num];
+const int bioms_num = 14;
+ivec3 bioms[bioms_num];
 
 void init_bioms() {
     bioms[0] = grass;
     bioms[1] = sand;
     bioms[2] = soil;
     bioms[3] = plowed_soil;
-
-    bioms_order[0] = grass;
-    bioms_order[1] = sand;
-    bioms_order[2] = soil;
-    bioms_order[3] = plowed_soil;
-
+    bioms[4] = shallow_water;
+    bioms[5] = deep_water;
+    bioms[6] = leaf_forest;
+    bioms[7] = pine_forest;
+    bioms[8] = ground;
+    bioms[9] = solid_ground;
+    bioms[10] = rock;
+    bioms[11] = stone_tiles;
+    bioms[12] = light_stone_tiles;
+    bioms[13] = red_stone_tiles;
 }
 
-const float transition_tile_size = 128.0;
-const float transitions_size = 512.0;
-const float transitions_width = 4096.0;
-const float transitions_height = 4096.0;
+const float transition_tile_size = 64.0;
+const float transitions_biom_width = transition_tile_size * 4.0;
+const float transitions_biom_height = transitions_biom_width + transition_tile_size;
+const float transitions_size = transitions_biom_width * 8.0;
+const float transitions_k = transition_tile_size / transitions_size;
 
+vec2 quads[4];
 
 
 float tex_map_coord(float coord, float size) {
@@ -74,39 +89,30 @@ vec4 biom_color(vec4 biom, vec2 p) {
     int red = int(biom.r * 256.0);
     int blue = int(biom.b * 256.0);
 
-    if (red == 32) {
-        // deep water
+    if (red == deep_water.r) {
         p.x += tex_map_variant(v_position, 8.0);
-    } else if (red == 36) {
-        // shallow-water
+    } else if (red == shallow_water.r) {
         p.y += tex_map_offset(1.0);
         p.x += tex_map_variant(v_position, 8.0);
     } else if (red == sand.r) {
-        // sand
         p.y += tex_map_offset(2.0);
         p.x += tex_map_variant(v_position, 8.0);
     } else if (red == soil.r) {
-        // soil
         p.y += tex_map_offset(3.0);
         p.x += tex_map_variant(v_position, 8.0);
     } else if (red == grass.r) {
-        // grass
         p.y += tex_map_offset(4.0);
         p.x += tex_map_variant(v_position, 8.0);
-    } else if (red == 13) {
-        // leaf forest
+    } else if (red == leaf_forest.r) {
         p.y += tex_map_offset(5.0);
         p.x += tex_map_variant(v_position, 8.0);
-    } else if (red == 23) {
-        // pine forest
+    } else if (red == pine_forest.r) {
         p.y += tex_map_offset(6.0);
         p.x += tex_map_variant(v_position, 8.0);
-    } else if (red == 226) {
-        // rock
+    } else if (red == rock.r) {
         p.y += tex_map_offset(7.0);
         p.x += tex_map_variant(v_position, 8.0);
     } else if (red == plowed_soil.r) {
-        // plowed soil
         p.y += tex_map_offset(8.0);
         p.x += tex_map_variant(v_position, 8.0);
     } else if (red == 28 && blue == 0) {
@@ -141,24 +147,19 @@ vec4 biom_color(vec4 biom, vec2 p) {
         // tile floor
         p.y += tex_map_offset(16.0);
         p.x += tex_map_variant(v_position, 4.0);
-    } else if (red == 28 && blue == 37) {
-        // stone tiles
+    } else if (red == stone_tiles.r && stone_tiles.b == 37) {
         p.y += tex_map_offset(17.0);
         p.x += tex_map_variant(v_position, 4.0);
-    } else if (red == 119) {
-        // light stone tiles
+    } else if (light_stone_tiles.r == 119) {
         p.y += tex_map_offset(18.0);
         p.x += tex_map_variant(v_position, 4.0);
-    } else if (red == 192) {
-        // red stone tiles
+    } else if (red == red_stone_tiles.r) {
         p.y += tex_map_offset(19.0);
         p.x += tex_map_variant(v_position, 4.0);
-    } else if (red == 17) {
-        // ground
+    } else if (red == ground.r) {
         p.y += tex_map_offset(20.0);
         p.x += tex_map_variant(v_position, 8.0);
-    } else if (red == 0 && blue == 0) {
-        // solid ground
+    } else if (red == solid_ground.r && blue == solid_ground.b) {
         p.y += tex_map_offset(21.0);
         p.x += tex_map_variant(v_position, 8.0);
     } else if (red == 0 && blue == 1) {
@@ -170,10 +171,6 @@ vec4 biom_color(vec4 biom, vec2 p) {
     }
 
     return texture2D(u_texture, p);
-}
-
-vec4 blend(vec4 background, vec4 foreground) {
-    return (foreground.rgba * foreground.a) + background.rgba * (1.0 - foreground.a);
 }
 
 vec4 neighbor_biom(vec2 pos, float dx, float dy) {
@@ -203,8 +200,6 @@ vec2 top_left_variant(int neighbors) {
         variant = vec2(1.0, 1.0);
     } else if (neighbors == 11) {
         variant = vec2(1.0, 3.0);
-    } else {
-        variant = vec2(0.0, 0.0);
     }
     return variant;
 }
@@ -226,8 +221,6 @@ vec2 top_right_variant(int neighbors) {
         variant = vec2(2.0, 1.0);
     } else if (neighbors == 11) {
         variant = vec2(2.0, 3.0);
-    } else {
-        variant = vec2(0.0, 0.0);
     }
     return variant;
 }
@@ -248,8 +241,6 @@ vec2 bottom_left_variant(int neighbors) {
         variant = vec2(1.0, 1.0);
     } else if (neighbors == 11) {
         variant = vec2(1.0, 2.0);
-    } else {
-        variant = vec2(0.0, 0.0);
     }
     return variant;
 }
@@ -270,10 +261,7 @@ vec2 bottom_right_variant(int neighbors) {
         variant = vec2(2.0, 1.0);
     } else if (neighbors == 11) {
         variant = vec2(2.0, 3.0);
-    } else {
-        variant = vec2(0.0, 0.0);
     }
-
     return variant;
 }
 
@@ -309,8 +297,6 @@ vec2 top_left_aux(int neighbors) {
         variant = vec2(1.0, 4.0);
     } else if (neighbors == 11) {
         variant = vec2(0.0, 3.0);
-    } else {
-        variant = vec2(0.0, 0.0);
     }
     return variant;
 }
@@ -320,9 +306,7 @@ vec2 top_right_aux(int neighbors) {
     if (neighbors == 110) {
         variant = vec2(1.0, 1.0);
     } else if (neighbors == 100) {
-        variant = vec2(1.0, 1.0);
-    } else if (neighbors == 0) {
-        variant = vec2(2.0, 0.0);
+        variant = vec2(1.0, 0.0);
     } else if (neighbors == 10) {
         variant = vec2(1.0, 4.0);
     } else if (neighbors == 101) {
@@ -333,8 +317,6 @@ vec2 top_right_aux(int neighbors) {
         variant = vec2(0.0, 3.0);
     } else if (neighbors == 111) {
         variant = vec2(1.0, 3.0);
-    } else {
-        variant = vec2(0.0, 0.0);
     }
     return variant;
 }
@@ -357,8 +339,6 @@ vec2 bottom_left_aux(int neighbors) {
         variant = vec2(0.0, 2.0);
     } else if (neighbors == 111) {
         variant = vec2(2.0, 2.0);
-    } else {
-        variant = vec2(0.0, 0.0);
     }
     return variant;
 }
@@ -369,8 +349,6 @@ vec2 bottom_right_aux(int neighbors) {
         variant = vec2(1.0, 1.0);
     } else if (neighbors == 100) {
         variant = vec2(1.0, 4.0);
-    } else if (neighbors == 0) {
-        variant = vec2(2.0, 4.0);
     } else if (neighbors == 10) {
         variant = vec2(1.0, 0.0);
     } else if (neighbors == 101) {
@@ -381,57 +359,74 @@ vec2 bottom_right_aux(int neighbors) {
         variant = vec2(0.0, 2.0);
     } else if (neighbors == 111) {
         variant = vec2(1.0, 2.0);
-    } else {
-        variant = vec2(0.0, 0.0);
     }
 
     return variant;
 }
 
-ivec2 biom_to_ibiom(vec4 biom) {
+ivec4 biom_to_ibiom(vec4 biom) {
     int red = int(biom.r * 256.0);
-    return ivec2(red, 0);
-}
-
-int ibiom_layer_index(ivec2 ibiom) {
+    // int blue = int(biom.b * 256.0);
     for (int i = 0; i < bioms_num; i++) {
-        if (ibiom == bioms[i]) {
-            return i;
+        // if ((red == 28 || red == 0) && blue != bioms[i].b) {
+        //     continue;
+        // }
+        if (bioms[i].r == red) {
+            return ivec4(bioms[i], i);
         }
     }
-    return -1;
+    return ivec4(0, 0, 0, -1);
 }
 
-int ibiom_order(ivec2 ibiom) {
-    for (int i = 0; i < bioms_num; i++) {
-        if (ibiom == bioms_order[i]) {
-            return i;
-        }
-    }
-    return -1;
+vec2 ibiom_position_offset(vec2 variant, ivec4 ibiom) {
+    const int bioms_per_row = int(transitions_size / transitions_biom_width);
+    vec2 offset = variant * transitions_k;
+    offset.x += float(ibiom.w) * (transitions_biom_width / transitions_size);
+    offset.y += float(ibiom.w/bioms_per_row) * (transitions_biom_height / transitions_size);
+    return offset;
 }
 
+vec2 ibiom_uv(vec2 v_position, vec2 variant, vec2 delta, ivec4 ibiom) {
+    vec2 transitions_pos = ibiom_position_offset(variant, ibiom);
 
-vec4 transition_aux_color(vec2 direction, vec4 color, vec2 v_position, vec4 offset, vec2 delta) {
-    vec4 biom = texture2D(u_minimap, v_position);
-    vec4 transition_biom = neighbor_biom(v_position, direction.x, direction.y);
-    if (transition_biom == biom) {
+    vec2 p = v_position * map_size;
+    p.x = mod(p.x, tile_size);
+    p.y = mod(p.y, tile_size);
+    p /= tile_size;
+    p += delta;
+    p *= transitions_k;
+
+    return transitions_pos + p;
+}
+
+struct Aux {
+    vec2 direction;
+    vec4 biom;
+    ivec4 ibiom;
+};
+
+Aux transition_biom(vec2 direction, vec2 v_position) {
+    Aux aux;
+    aux.direction = direction;
+    aux.biom = neighbor_biom(v_position, direction.x, direction.y);
+    aux.ibiom = biom_to_ibiom(aux.biom);
+    return aux;
+}
+
+vec4 transition_aux_color(Aux aux, vec4 biom, ivec4 ibiom, vec4 color, vec2 v_position, vec4 offset, vec2 delta) {
+    if (aux.biom == biom) {
         return color;
     }
 
-    ivec2 ibiom = biom_to_ibiom(biom);
-    ivec2 itransition_biom = biom_to_ibiom(transition_biom);
-
-    if (ibiom_order(ibiom) < ibiom_order(itransition_biom)) {
+    if (ibiom.z > aux.ibiom.z) {
         return color;
     }
 
-    int itransition_biom_index = ibiom_layer_index(itransition_biom);
-    if (itransition_biom_index == -1) {
+    if (aux.ibiom.w == -1) {
         return color;
     }
 
-    int neighbors = calc_neighbors(itransition_biom, v_position, offset);
+    int neighbors = calc_neighbors(aux.ibiom.xy, v_position, offset);
     if (neighbors == 0) {
         return color;
     }
@@ -450,34 +445,23 @@ vec4 transition_aux_color(vec2 direction, vec4 color, vec2 v_position, vec4 offs
         }
     }
 
-    variant; // HACK to terminate if?
 
     if (variant == vec2(0.0, 0.0)) {
         return color;
     }
 
-    vec2 transitions_pos = vec2(variant.x * transition_tile_size / transitions_width,
-                                variant.y * transition_tile_size / transitions_height);
-
-    transitions_pos.x += float(itransition_biom_index) * (transitions_size / transitions_width);
-
-    vec2 p;
-    p.x = mod(v_position.x * map_size, tile_size)/tile_size+delta.x;
-    p.y = mod(v_position.y * map_size, tile_size)/tile_size+delta.y;
-    transitions_pos.x += (p.x * transition_tile_size)/transitions_width;
-    transitions_pos.y += (p.y * transition_tile_size)/transitions_height;
-
-    vec4 transition = texture2D(u_transitions, transitions_pos);
-    return blend(color, transition);
+    vec4 transition = texture2D(u_transitions, ibiom_uv(v_position, variant, delta, aux.ibiom));
+    return mix(color, transition, transition.a);
 }
 
 vec4 transition_main_color(vec2 v_position, vec4 offset, vec2 delta) {
     vec4 biom = texture2D(u_minimap, v_position);
-    vec4 color = biom_color(texture2D(u_minimap, v_position), tex_map_point(v_position));
-    ivec2 ibiom = biom_to_ibiom(biom);
-    int ibiom_index = ibiom_layer_index(ibiom);
-    if (ibiom_index != -1) {
-        int neighbors = calc_neighbors(ibiom, v_position, offset);
+    ivec4 ibiom = biom_to_ibiom(biom);
+    vec4 color;
+    if (ibiom.w == -1) {
+        color = biom_color(texture2D(u_minimap, v_position), tex_map_point(v_position));
+    } else {
+        int neighbors = calc_neighbors(ibiom.xy, v_position, offset);
         vec2 variant;
         if (delta.x == 0.5) {
             if (delta.y == 0.5) {
@@ -508,23 +492,34 @@ vec4 transition_main_color(vec2 v_position, vec4 offset, vec2 delta) {
             }
         }
 
-        const vec2 k = vec2(transition_tile_size / transitions_width, transition_tile_size / transitions_height);
-        vec2 transitions_pos = variant * k;
-
-        vec2 p = v_position * map_size;
-        p.x = mod(p.x, tile_size);
-        p.y = mod(p.y, tile_size);
-        p /= tile_size;
-        p += delta;
-        p *= k;
-
-        transitions_pos.x += float(ibiom_index) * (transitions_size / transitions_width);
-        color = texture2D(u_transitions, transitions_pos + p);
+        color = texture2D(u_transitions, ibiom_uv(v_position, variant, delta, ibiom));
     }
 
-    color = transition_aux_color(vec2(offset.x, 0.0), color, v_position, offset, delta);
-    color = transition_aux_color(vec2(offset.y, offset.z), color, v_position, offset, delta);
-    color = transition_aux_color(vec2(0.0, offset.w), color, v_position, offset, delta);
+    Aux dir0 = transition_biom(vec2(offset.x, 0.0), v_position);
+    Aux dir1 = transition_biom(vec2(offset.x, offset.z), v_position);
+    Aux dir2 = transition_biom(vec2(0.0, offset.w), v_position);
+    Aux tmp;
+    if (dir0.ibiom.z > dir1.ibiom.z) {
+        tmp = dir0;
+        dir0 = dir1;
+        dir1 = tmp;
+    }
+    if (dir1.ibiom.z > dir2.ibiom.z) {
+        tmp = dir1;
+        dir1 = dir2;
+        dir2 = tmp;
+    }
+    if (dir0.ibiom.z > dir1.ibiom.z) {
+        tmp = dir0;
+        dir0 = dir1;
+        dir1 = tmp;
+    }
+
+    color = transition_aux_color(dir0, biom, ibiom, color, v_position, offset, delta);
+    color = transition_aux_color(dir1, biom, ibiom, color, v_position, offset, delta);
+    color = transition_aux_color(dir2, biom, ibiom, color, v_position, offset, delta);
+
+    color.a = 1.0; // fix transparent tiles
     return color;
 }
 

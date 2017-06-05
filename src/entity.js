@@ -180,7 +180,8 @@ Entity.prototype = {
             elements.push(ParamBar.makeParam("Readiness", this.Readiness));
         }
 
-        if (this.Group == "food") {
+        switch (this.Group) {
+        case "food":
             elements.push(dom.hr());
             elements.push(dom.make("label", [
                 T("Fullness") + " " +
@@ -196,23 +197,30 @@ Entity.prototype = {
                 elements.push(elem);
             }.bind(this));
             elements.push(ParamBar.makeValue("Energy", this.Props.Energy, 2));
-
-        } else if (this.Group == "portal") {
+            break;
+        case "portal":
             var input = dom.input("", this.Id);
             input.readonly = true;
             elements.push(input.label);
-        } else if ("Armor" in this) {
-            elements.push(dom.wrap(".param", [T("Armor"), dom.wrap(".value", this.armor())]));
-        } else if ("Damage" in this) {
-            elements.push(dom.wrap(".param", [T("Damage"), dom.wrap(".value", this.damage())]));
-            if (this.Ammo) {
-                elements.push(dom.wrap(".param", [T("Ammo"), dom.wrap(".value", T(this.Ammo.Type))]));
+            break;
+        case "spell-scroll":
+            elements.push(dom.wrap("param", [T("Cooldown"), dom.wrap("value", this.Cooldown/1000 || 5)]));
+            elements.push(dom.wrap("param", [T("Range"), dom.wrap("value", this.Range || 10*CELL_SIZE)]));
+            break;
+        default:
+            if ("Armor" in this) {
+                elements.push(dom.wrap("param", [T("Armor"), dom.wrap("value", this.armor())]));
+            } else if ("Damage" in this) {
+                elements.push(dom.wrap("param", [T("Damage"), dom.wrap("value", this.damage())]));
+                if (this.Ammo) {
+                    elements.push(dom.wrap("param", [T("Ammo"), dom.wrap("value", T(this.Ammo.Type))]));
+                }
+            } else if ("Block" in this) {
+                var block = this.Block;
+                elements.push(ParamBar.makeValue("Block", block));
+            } else if (this.Props.Capacity) {
+                elements.push(ParamBar.makeParam("Capacity", this.Props.Capacity));
             }
-        } else if ("Block" in this) {
-            var block = this.Block;
-            elements.push(ParamBar.makeValue("Block", block));
-        } else if (this.Props.Capacity) {
-            elements.push(ParamBar.makeParam("Capacity", this.Props.Capacity));
         }
 
         if (this.EffectiveParam && this.Lvl > 1) {

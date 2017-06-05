@@ -1,4 +1,4 @@
-/* global T, Panel, dom, ContainerSlot, game, playerStorage */
+/* global T, Panel, dom, ContainerSlot, game, playerStorage, Container */
 
 class QuickBar {
     constructor(modifier) {
@@ -14,6 +14,8 @@ class QuickBar {
             slot.element.check = () => true;
             slot.element.use = (entity) => {
                 this.setSlot(slot, entity, i+1);
+                const from = Container.getEntitySlot(entity);
+                from && from.unlock();
                 return true;
             };
             return slot;
@@ -39,7 +41,11 @@ class QuickBar {
         }
 
         if (entity.Actions.includes("cast")) {
-            entity.cast(() => this.updateSlot(slot, entity, key));
+            entity.cast(() => {
+                this.updateSlot(slot, entity, key);
+                slot.lock();
+                setTimeout(()=> slot.unlock(), entity.Cooldown || 5000);
+            });
             return;
         }
 

@@ -62,9 +62,9 @@ function Settings() {
         },
         "settings.graphics.fullscreen": function(enabled) {
             game.toggleFullscreen();
-            if (enabled && !config.graphics.fastRender) {
-                Settings.toggle("settings.graphics.fastRender");
-            }
+            // if (enabled && !config.graphics.fastRender) {
+            //     Settings.toggle("settings.graphics.fastRender");
+            // }
         },
         "settings.graphics.movingSpace": function(moving) {
             if (moving)
@@ -81,9 +81,9 @@ function Settings() {
             game.world.classList.toggle("snap-left");
         },
         "settings.graphics.fastRender": function(enabled) {
-            if (!enabled && config.graphics.fullscreen) {
-                Settings.toggle("settings.graphics.fullscreen");
-            }
+            // if (!enabled && config.graphics.fullscreen) {
+            //     Settings.toggle("settings.graphics.fullscreen");
+            // }
             game.reload();
         },
         "settings.character.pathfinding": function() {

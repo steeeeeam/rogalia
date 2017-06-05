@@ -104,7 +104,7 @@ class Stats {
             value("Fame"),
             value("Addiction"),
             dom.hr(),
-            param("Speed"),
+            value("Speed"),
             value("Armor"),
             value("Defence"),
             value("Accuracy"),

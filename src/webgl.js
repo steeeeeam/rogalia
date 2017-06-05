@@ -42,21 +42,19 @@ class WebglRenderer {
 
         this.mapTexture = await this.loadImageAndCreateTexture("assets/map/map.png");
 
-        this.transitionsTexture = await this.loadImageAndCreateTexture(
-            "assets/map/transitions.png"
-        );
-        gl.bindTexture(gl.TEXTURE_2D, this.transitionsTexture);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+        this.transitionsTexture = await this.loadImageAndCreateTexture("assets/map/transitions.png", false);
+        // gl.bindTexture(gl.TEXTURE_2D, this.transitionsTexture);
+        // gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+        // gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
 
         const tex = gl.createTexture();
         this.minimapTexture = tex;
         gl.bindTexture(gl.TEXTURE_2D, tex);
-        // gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-        // gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
         gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, game.map.minimapCanvas);
+
+        game.map.ready = true;
     }
 
     async sync(canvas) {
@@ -75,13 +73,15 @@ class WebglRenderer {
         gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, canvas);
     }
 
-    async loadImageAndCreateTexture(url) {
+    async loadImageAndCreateTexture(url, clamp = true) {
         const {gl} = this;
         return new Promise((resolve, reject) => {
             const tex = gl.createTexture();
             gl.bindTexture(gl.TEXTURE_2D, tex);
-            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+            if (clamp) {
+                gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+                gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+            }
             gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
 
             const img = new Image();
@@ -173,6 +173,7 @@ class WebglRenderer {
 
         gl.activeTexture(gl.TEXTURE2);
         gl.bindTexture(gl.TEXTURE_2D, this.transitionsTexture);
+
 
         gl.drawArrays(gl.TRIANGLES, 0, 6);
     }

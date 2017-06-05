@@ -62,7 +62,6 @@ function WorldMap() {
             var loc = game.player.Location;
             this.location.set(loc.X, loc.Y);
             this.data = Data;
-            this.ready = true;
             game.webgl.updateMap(true);
         } else {
             worker.postMessage({

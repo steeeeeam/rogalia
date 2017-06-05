@@ -214,10 +214,14 @@ Entity.find  = function(pattern) {
 
 Entity.wipe = function(pattern) {
     var queue = Entity.find(pattern);
+    console.log(`Found ${queue.length} of ${pattern}`);
     var interval = setInterval(function() {
         if (queue.length > 0) {
-            queue.pop().destroy();
+            const entity = queue.pop();
+            console.log("Wiping", entity);
+            entity.destroy();
         } else {
+            console.log("Done");
             clearInterval(interval);
         }
     }, 500);
