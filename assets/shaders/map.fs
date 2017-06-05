@@ -177,6 +177,8 @@ vec2 top_left_variant(int neighbors) {
         variant = vec2(1.0, 1.0);
     } else if (neighbors == 11) {
         variant = vec2(1.0, 3.0);
+    } else {
+        variant = vec2(0.0, 0.0);
     }
     return variant;
 }
@@ -198,6 +200,8 @@ vec2 top_right_variant(int neighbors) {
         variant = vec2(2.0, 1.0);
     } else if (neighbors == 11) {
         variant = vec2(2.0, 3.0);
+    } else {
+        variant = vec2(0.0, 0.0);
     }
     return variant;
 }
@@ -218,6 +222,8 @@ vec2 bottom_left_variant(int neighbors) {
         variant = vec2(1.0, 1.0);
     } else if (neighbors == 11) {
         variant = vec2(1.0, 2.0);
+    } else {
+        variant = vec2(0.0, 0.0);
     }
     return variant;
 }
@@ -238,6 +244,8 @@ vec2 bottom_right_variant(int neighbors) {
         variant = vec2(2.0, 1.0);
     } else if (neighbors == 11) {
         variant = vec2(2.0, 3.0);
+    } else {
+        variant = vec2(0.0, 0.0);
     }
     return variant;
 }
@@ -274,6 +282,8 @@ vec2 top_left_aux(int neighbors) {
         variant = vec2(1.0, 4.0);
     } else if (neighbors == 11) {
         variant = vec2(0.0, 3.0);
+    } else {
+        variant = vec2(0.0, 0.0);
     }
     return variant;
 }
@@ -294,6 +304,8 @@ vec2 top_right_aux(int neighbors) {
         variant = vec2(0.0, 3.0);
     } else if (neighbors == 111) {
         variant = vec2(1.0, 3.0);
+    } else {
+        variant = vec2(0.0, 0.0);
     }
     return variant;
 }
@@ -316,6 +328,8 @@ vec2 bottom_left_aux(int neighbors) {
         variant = vec2(0.0, 2.0);
     } else if (neighbors == 111) {
         variant = vec2(2.0, 2.0);
+    } else {
+        variant = vec2(0.0, 0.0);
     }
     return variant;
 }
@@ -336,6 +350,8 @@ vec2 bottom_right_aux(int neighbors) {
         variant = vec2(0.0, 2.0);
     } else if (neighbors == 111) {
         variant = vec2(1.0, 2.0);
+    } else {
+        variant = vec2(0.0, 0.0);
     }
 
     return variant;
@@ -429,7 +445,7 @@ vec4 transition_main_color(vec2 v_position, vec4 offset, vec2 delta) {
         color = biom_color(texture2D(u_minimap, v_position), tex_map_point(v_position));
     } else {
         int neighbors = calc_neighbors(ibiom.xy, v_position, offset);
-        vec2 variant;
+        vec2 variant = vec2(0.0, 0.0);
         if (delta.x == 0.5) {
             if (delta.y == 0.5) {
                 variant = top_left_variant(neighbors);
@@ -444,8 +460,9 @@ vec4 transition_main_color(vec2 v_position, vec4 offset, vec2 delta) {
             }
         }
 
-        if (variant == vec2(+0.0, +0.0)) {
-            delta = vec2(0.0);
+
+        if (variant == vec2(0.0, 0.0)) {
+            delta = vec2(0.0, 0.0);
             vec2 p = floor(v_position*map_size / tile_size) + u_location;
             float rand = sin(p.x * p.y) / 2.0; // [0 .. 1]
             if (rand > 0.3) {
@@ -482,11 +499,12 @@ vec4 transition_main_color(vec2 v_position, vec4 offset, vec2 delta) {
         dir1 = tmp;
     }
 
+
     color = transition_aux_color(dir0, biom, ibiom, color, v_position, offset, delta);
     color = transition_aux_color(dir1, biom, ibiom, color, v_position, offset, delta);
     color = transition_aux_color(dir2, biom, ibiom, color, v_position, offset, delta);
 
-    color.a = 1.0; // fix transparent tiles
+    //color.a = 1.0; // fix transparent tiles
     return color;
 }
 
