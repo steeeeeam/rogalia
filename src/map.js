@@ -1,4 +1,4 @@
-/* global game, Point, CELL_SIZE, config, loader, dom */
+/* global game, Point, CELL_SIZE, config, loader, dom, ImageData */
 
 "use strict";
 function WorldMap() {
@@ -91,7 +91,7 @@ function WorldMap() {
 
         this.minimapCanvas.ctx.putImageData(new ImageData(pixels, width, height), 0, 0);
         this.fixNonSquareMap(width, height);
-        game.webgl.sync(this.minimapCanvas);
+        game.webgl.sync(data);
     };
 
     this.fixNonSquareMap = function(width, height) {
@@ -472,7 +472,28 @@ function WorldMap() {
 
     this.initBioms = function(bioms) {
         this.bioms = this._sort(bioms);
-        if (!config.fastRender) {
+        if (config.graphics.fastRender) {
+            this.textureMap = [
+                "grass",
+                "sand",
+                "soil",
+                "plowed-soil",
+                "shallow-water",
+                "deep-water",
+                "leaf-forest",
+                "pine-forest",
+                "ground",
+                "solid-ground",
+                "rock",
+                "stone-tiles",
+                "light-stone-tiles",
+                "red-stone-tiles",
+            ].reduce((map, name, i) => {
+                const color = this.bioms.find(({Name}) => Name == name).Color;
+                map[color] = i;
+                return map;
+            }, {});
+        } else {
             this.loadTiles();
         }
 

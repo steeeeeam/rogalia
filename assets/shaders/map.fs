@@ -28,34 +28,11 @@ const ivec3 light_stone_tiles = ivec3(119, 0, 11);
 const ivec3 red_stone_tiles = ivec3(192, 0, 12);
 const ivec3 solid_ground = ivec3(0, 0, 13);
 
-const int bioms_num = 14;
-ivec3 bioms[bioms_num];
-
-void init_bioms() {
-    bioms[0] = grass;
-    bioms[1] = sand;
-    bioms[2] = soil;
-    bioms[3] = plowed_soil;
-    bioms[4] = shallow_water;
-    bioms[5] = deep_water;
-    bioms[6] = leaf_forest;
-    bioms[7] = pine_forest;
-    bioms[8] = ground;
-    bioms[9] = solid_ground;
-    bioms[10] = rock;
-    bioms[11] = stone_tiles;
-    bioms[12] = light_stone_tiles;
-    bioms[13] = red_stone_tiles;
-}
-
 const float transition_tile_size = 64.0;
 const float transitions_biom_width = transition_tile_size * 4.0;
 const float transitions_biom_height = transitions_biom_width + transition_tile_size;
 const float transitions_size = transitions_biom_width * 8.0;
 const float transitions_k = transition_tile_size / transitions_size;
-
-vec2 quads[4];
-
 
 float tex_map_coord(float coord, float size) {
     float fix = size / tile_size;
@@ -365,17 +342,7 @@ vec2 bottom_right_aux(int neighbors) {
 }
 
 ivec4 biom_to_ibiom(vec4 biom) {
-    int red = int(biom.r * 256.0);
-    // int blue = int(biom.b * 256.0);
-    for (int i = 0; i < bioms_num; i++) {
-        // if ((red == 28 || red == 0) && blue != bioms[i].b) {
-        //     continue;
-        // }
-        if (bioms[i].r == red) {
-            return ivec4(bioms[i], i);
-        }
-    }
-    return ivec4(0, 0, 0, -1);
+    return ivec4(biom * 256.0);
 }
 
 vec2 ibiom_position_offset(vec2 variant, ivec4 ibiom) {
@@ -524,8 +491,6 @@ vec4 transition_main_color(vec2 v_position, vec4 offset, vec2 delta) {
 }
 
 void main() {
-    init_bioms();
-
     vec2 p = tex_map_point_in_tile(v_position);
     if (p.y < tile_size/2.0) {
         if (p.x < tile_size/2.0) {

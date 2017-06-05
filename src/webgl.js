@@ -12,7 +12,7 @@ class WebglRenderer {
         this._loaded = false;
     }
 
-    async load(canvas) {
+    async load(data) {
         const {gl} = this;
 
         const vs = await this.loadShader("map.vs");
@@ -49,28 +49,39 @@ class WebglRenderer {
 
         const tex = gl.createTexture();
         this.minimapTexture = tex;
-        gl.bindTexture(gl.TEXTURE_2D, tex);
+        this.updateMinimap(data);
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
-        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, game.map.minimapCanvas);
-
         game.map.ready = true;
     }
 
-    async sync(canvas) {
+    convertData(data) {
+        const pixels = new Uint8Array(data.length*4);
+        let i = 0;
+        for (const color of data) {
+            pixels[i+0] = game.map.colorMap[color];
+            // pixels[i+1] = 0x00;
+            pixels[i+2] = game.map.colorMap[color];
+            pixels[i+3] = game.map.textureMap[color];
+            i += 4;
+        }
+        return pixels;
+    }
+
+    async sync(data) {
         const {gl} = this;
         if (this._loaded) {
-            this.updateMinimap(canvas);
+            this.updateMinimap(data);
         } else {
             this._loaded = true;
-            this.load(canvas);
+            this.load(data);
         }
     }
 
-    updateMinimap(canvas) {
+    updateMinimap(data) {
         const {gl} = this;
         gl.bindTexture(gl.TEXTURE_2D, this.minimapTexture);
-        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, canvas);
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 64, 64, 0, gl.RGBA, gl.UNSIGNED_BYTE, this.convertData(data));
     }
 
     async loadImageAndCreateTexture(url, clamp = true) {
