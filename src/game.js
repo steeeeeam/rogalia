@@ -220,16 +220,16 @@ class Game {
 
         this.professions = new Professions();
 
-        window.onerror = function(msg, url, line, column) {
+        window.onerror = function(msg, url, line, column, {stack = "NO_STACK"}) {
             window.onerror = null;
-            game.sendError([
-                "Client error:",
+            game.sendError({
                 msg,
-                "Url: " + url,
-                "Line: " + line,
-                "Column: " + column,
-                "UA: " + navigator.userAgent,
-            ].join("|"));
+                url,
+                line,
+                column,
+                ua: navigator.userAgent,
+                stack: stack.split("\n").map(row => row.trim()),
+            });
             game.exit(T("Client error. Refresh page or try again later."));
             return false;
         };
@@ -528,20 +528,16 @@ class Game {
 
     sendError(msg) {
         if (this.network && this.network.socket) {
-            this.network.send("error", {msg: msg});
+            this.network.send("error", {msg});
         }
-    }
-
-    sendErrorf() {
-        this.sendError(sprintf.apply(window, arguments));
     }
 
     inVK() {
         return (window.name.indexOf("fXD") == 0);
     }
 
-    error() {
-        this.sendErrorf.apply(this, arguments);
+    error(msg) {
+        this.sendError(msg);
         this.exit();
         throw "Fatal error";
     }

@@ -427,7 +427,7 @@ Entity.prototype = {
         }
 
         if (!path) {
-            game.error("Entity has no sprite", this);
+            game.error(`Entity has no sprite ${this.Id} of ${this.Type}`);
         }
 
         var spriteVersion = path + this.Dye;
@@ -714,7 +714,7 @@ Entity.prototype = {
             else
                 return cnt;
         }
-        game.sendError("Recursive container: %d", this.Id);
+        game.sendError(`Recursive container: ${this.Id}`);
         return null;
     },
     findContainer: function() {
@@ -1192,7 +1192,7 @@ Entity.prototype = {
         var y = game.controller.world.y;
         var biom = game.map.biomAt(x, y);
         if (!biom) {
-            game.sendErrorf("Biom (%d %d) not found", x, y);
+            game.sendError(`Biom (${x} ${y}) not found`);
             return;
         }
 

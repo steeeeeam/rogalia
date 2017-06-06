@@ -37,7 +37,7 @@ function WorldMap() {
     worker.onmessage = (e) => {
         const data = e.data;
         if (data.error) {
-            game.error(data.error);
+            game.error(data.error.toString());
             return;
         }
 

@@ -938,7 +938,7 @@ class Craft {
             return true;
         var skill = game.player.Skills[recipe.Skill];
         if (!skill)
-            game.error("Skill not found", recipe.Skill);
+            game.error(`Skill ${recipe.Skill} not found`);
         return skill.Value.Current >= recipe.Lvl;
     }
 

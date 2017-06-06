@@ -131,7 +131,6 @@ function Info(message, character) {
             ids.forEach(function(id) {
                 var entity = Entity.get(id);
                 if (!entity) {
-                    // game.sendErrorf("(Info.js) Cannot find item %d", id);
                     return;
                 }
 
