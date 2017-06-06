@@ -10,6 +10,10 @@ class WebglRenderer {
         this.canvas = canvas;
         this.gl = canvas.getContext("webgl");
         this._loaded = false;
+
+        this.width = 64;
+        this.height = 64;
+        this.minimap = new Uint8Array(this.width * this.height * 4);
     }
 
     async load(data) {
@@ -27,7 +31,6 @@ class WebglRenderer {
         this.positionLocation = gl.getAttribLocation(program, "a_position");
         this.matrixLocation = gl.getUniformLocation(program, "u_matrix");
         this.textureLocation = gl.getUniformLocation(program, "u_texture");
-        this.transitionsLocation = gl.getUniformLocation(program, "u_transitions");
         this.minimapLocation = gl.getUniformLocation(program, "u_minimap");
         this.locationLocation = gl.getUniformLocation(program, "u_location");
 
@@ -40,32 +43,24 @@ class WebglRenderer {
             gl.STATIC_DRAW
         );
 
-        this.mapTexture = await this.loadImageAndCreateTexture("assets/map/map.png");
+        this.texture = await this.loadImageAndCreateTexture("assets/map/map.png");
 
-        this.transitionsTexture = await this.loadImageAndCreateTexture("assets/map/transitions.png", false);
-        // gl.bindTexture(gl.TEXTURE_2D, this.transitionsTexture);
-        // gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
-        // gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
-
-        const tex = gl.createTexture();
-        this.minimapTexture = tex;
+        this.minimapTexture = gl.createTexture();
         this.updateMinimap(data);
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+
         game.map.ready = true;
     }
 
     convertData(data) {
-        const pixels = new Uint8Array(data.length*4);
         let i = 0;
         for (const color of data) {
-            pixels[i+0] = game.map.colorMap[color];
-            // pixels[i+1] = 0x00;
-            pixels[i+2] = game.map.colorMap[color];
-            pixels[i+3] = game.map.textureMap[color];
+            this.minimap[i + 0] = game.map.colorMap[color];
+            this.minimap[i + 1] = game.map.textureMap[color];
             i += 4;
         }
-        return pixels;
+        return this.minimap;
     }
 
     async sync(data) {
@@ -81,18 +76,24 @@ class WebglRenderer {
     updateMinimap(data) {
         const {gl} = this;
         gl.bindTexture(gl.TEXTURE_2D, this.minimapTexture);
-        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 64, 64, 0, gl.RGBA, gl.UNSIGNED_BYTE, this.convertData(data));
+        gl.texImage2D(
+            gl.TEXTURE_2D,
+            0,
+            gl.RGBA,
+            this.width,
+            this.height,
+            0,
+            gl.RGBA,
+            gl.UNSIGNED_BYTE,
+            this.convertData(data)
+        );
     }
 
-    async loadImageAndCreateTexture(url, clamp = true) {
+    async loadImageAndCreateTexture(url) {
         const {gl} = this;
         return new Promise((resolve, reject) => {
             const tex = gl.createTexture();
             gl.bindTexture(gl.TEXTURE_2D, tex);
-            if (clamp) {
-                gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-                gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-            }
             gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
 
             const img = new Image();
@@ -142,9 +143,6 @@ class WebglRenderer {
     updateMap() {}
 
     drawMap() {
-        if (!this.mapTexture || !this.transitionsTexture || !this.minimapTexture) {
-            return;
-        }
         const {gl} = this;
         gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
 
@@ -174,17 +172,12 @@ class WebglRenderer {
 
         gl.uniform1i(this.textureLocation, 0);
         gl.uniform1i(this.minimapLocation, 1);
-        gl.uniform1i(this.transitionsLocation, 2);
 
         gl.activeTexture(gl.TEXTURE0);
-        gl.bindTexture(gl.TEXTURE_2D, this.mapTexture);
+        gl.bindTexture(gl.TEXTURE_2D, this.texture);
 
         gl.activeTexture(gl.TEXTURE1);
         gl.bindTexture(gl.TEXTURE_2D, this.minimapTexture);
-
-        gl.activeTexture(gl.TEXTURE2);
-        gl.bindTexture(gl.TEXTURE_2D, this.transitionsTexture);
-
 
         gl.drawArrays(gl.TRIANGLES, 0, 6);
     }

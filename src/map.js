@@ -488,6 +488,7 @@ function WorldMap() {
                 "stone-tiles",
                 "light-stone-tiles",
                 "red-stone-tiles",
+                "space",
             ].reduce((map, name, i) => {
                 const color = this.bioms.find(({Name}) => Name == name).Color;
                 map[color] = i;
