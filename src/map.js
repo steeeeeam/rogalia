@@ -488,6 +488,14 @@ function WorldMap() {
                 "stone-tiles",
                 "light-stone-tiles",
                 "red-stone-tiles",
+                "pavement-floor",
+                "painted-floor",
+                "imperial-floor",
+                "brick-floor",
+                "wooden-floor",
+                "white-stone-floor",
+                "tile-floor",
+                "parquet-floor",
                 "space",
             ].reduce((map, name, i) => {
                 const color = this.bioms.find(({Name}) => Name == name).Color;

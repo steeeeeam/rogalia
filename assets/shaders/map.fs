@@ -339,12 +339,35 @@ vec4 transition_aux_color(Aux aux, vec4 biom, ivec2 ibiom, vec4 color, vec2 v_po
     return mix(color, transition, transition.a);
 }
 
+vec2 random_delta(vec2 v_position) {
+    vec2 delta = vec2(0.0, 0.0);
+    vec2 p = floor(v_position*map_size / tile_size) + u_location;
+    float rand = sin(p.x * p.y) / 2.0; // [0 .. 1]
+    if (rand > 0.3) {
+        delta.y = 1.0;
+    } else if (rand < -0.3) {
+        delta.y = 4.0;
+    }
+
+    if (cos(p.x * p.y) > 0.0) {
+        delta.x = 3.0;
+    }
+
+    return delta;
+}
+
 vec4 transition_main_color(vec2 v_position, vec4 offset, vec2 delta) {
     vec4 biom = texture2D(u_minimap, v_position);
     ivec2 ibiom = biom_to_ibiom(biom);
 
-    int neighbors = calc_neighbors(ibiom.x, v_position, offset);
     vec2 variant = vec2(0.0, 0.0);
+
+    bool no_transitions = ibiom.y > 13;
+    if (no_transitions) {
+        return  texture2D(u_texture, ibiom_uv(v_position, variant, random_delta(v_position), ibiom));
+    }
+    int neighbors = calc_neighbors(ibiom.x, v_position, offset);
+
     if (delta.x == 0.5) {
         if (delta.y == 0.5) {
             variant = top_left_variant(neighbors);
@@ -359,24 +382,12 @@ vec4 transition_main_color(vec2 v_position, vec4 offset, vec2 delta) {
         }
     }
 
-
     if (variant == vec2(0.0, 0.0)) {
-        delta = vec2(0.0, 0.0);
-        vec2 p = floor(v_position*map_size / tile_size) + u_location;
-        float rand = sin(p.x * p.y) / 2.0; // [0 .. 1]
-        if (rand > 0.3) {
-            delta.y = 1.0;
-        } else if (rand < -0.3) {
-            delta.y = 4.0;
-        }
-
-        if (cos(p.x * p.y) > 0.0) {
-            delta.x = 3.0;
-        }
+        delta = random_delta(v_position);
     }
 
     vec4 color = texture2D(u_texture, ibiom_uv(v_position, variant, delta, ibiom));
-    if (ibiom.y > 13) {
+    if (no_transitions) {
         return color;
     }
 
