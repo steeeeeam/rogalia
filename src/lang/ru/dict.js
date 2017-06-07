@@ -653,6 +653,7 @@ T.dict = {
     "Get branch": "Сорвать ветку",
     "Get seed": "Получить семена",
     "Get banana": "Сорвать банан",
+    "Gather all": "Собрать все",
     "Perch": "Окунь",
     "Stone tower": "Каменный столб",
     "Onion seed": "Семена лука",

@@ -319,11 +319,12 @@ Character.spritesInfo = {
         height: 80,
         offset: 30,
         nameOffset: 40,
-},
+    },
     "training-dummy": {
         width: 55,
         height: 67,
         angle: 0,
+        nameOffset: 70,
     },
     "blue-chopper": {
         width: 146,
