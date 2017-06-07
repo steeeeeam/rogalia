@@ -75,7 +75,7 @@ class Game {
 
         this.iso = new IsoDrawer(this.ctx);
 
-        if (config.graphics.fastRender) {
+        if (config.graphics.gpuRender) {
             this.webgl = new WebglRenderer();
             const {canvas} = this.webgl;
             canvas.classList.add("map-canvas");
@@ -395,13 +395,13 @@ class Game {
     }
 
     setStage(name, params) {
-        this.screen.update();
         document.body.classList.remove(this.stage.name + "-stage");
         this.stage.end();
         this.ctx.clear();
         this.stage = new window[name + "Stage"](params);
         this.stage.name = name;
         document.body.classList.add(name + "-stage");
+        this.screen.update();
     }
 
     reload() {

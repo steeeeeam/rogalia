@@ -1,5 +1,7 @@
 /* global T, Panel, dom, ContainerSlot, game, playerStorage, Container */
 
+"use strict";
+
 class QuickBar {
     constructor(modifier) {
         this.modifier = modifier;

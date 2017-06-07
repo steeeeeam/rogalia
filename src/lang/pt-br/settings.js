@@ -107,7 +107,7 @@ Settings.descriptions = {
             "Parades semi-transparentes",
             "Deixar as paredes transparentes próximas ao personagem.",
         ],
-        fastRender: [
+        gpuRender: [
             "Renderização rápida",
             "Simplifica alguns gráficos e usa placa de vídeo(webgl) para renderizar.",
             "Díminui a qualidade de imagem porém aumentará o desempenho, util em computadores mais fracos.",

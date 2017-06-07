@@ -36,6 +36,7 @@ var config = {
     },
     graphics: {
         fullscreen: false,
+        gpuRender: true,
         autoHighlightDoors: false,
         snowflakes: false,
         movingSpace: false,
@@ -43,7 +44,6 @@ var config = {
         autoHideWalls: true,
         autoHideObjects: true,
         semiTransparentWalls: true,
-        fastRender: false,
         topologicalSort: false,
         // drawPath: true,
     },

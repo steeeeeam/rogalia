@@ -58,7 +58,7 @@ function WorldMap() {
 
         this.syncMinimap(Data, Width, Height);
 
-        if (config.graphics.fastRender) {
+        if (config.graphics.gpuRender) {
             var loc = game.player.Location;
             this.location.set(loc.X, loc.Y);
             this.data = Data;
@@ -349,7 +349,7 @@ function WorldMap() {
     };
 
     this.draw = function() {
-        if (config.graphics.fastRender) {
+        if (config.graphics.gpuRender) {
             game.webgl.drawMap();
         } else {
             this.layerDraw();
@@ -472,7 +472,7 @@ function WorldMap() {
 
     this.initBioms = function(bioms) {
         this.bioms = this._sort(bioms);
-        if (config.graphics.fastRender) {
+        if (config.graphics.gpuRender) {
             this.textureMap = [
                 "grass",
                 "sand",
@@ -525,7 +525,7 @@ function WorldMap() {
         y -= this.location.y;
         x = (x / CELL_SIZE) << 0;
         y = (y / CELL_SIZE) << 0;
-        if (config.graphics.fastRender) {
+        if (config.graphics.gpuRender) {
             var color = this.data[y*this.cells_x + x];
             if (!color)
                 return null;

@@ -1,4 +1,4 @@
-/* global game */
+/* global game, T, util, WebSocket */
 
 "use strict";
 function Network() {
@@ -28,8 +28,9 @@ function Network() {
 
         function onDisconnect() {
             game.clearServerInfo();
-            if (game.chat)
+            if (game.chat) {
                 game.chat.addMessage({From: "[Rogalik]", Body: "Disconnected"});
+            }
             game.exit(T("Disconnected"));
         }
 
