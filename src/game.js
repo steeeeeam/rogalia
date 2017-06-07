@@ -277,9 +277,15 @@ class Game {
             return this.proto() + "//" + gateway + "/gateway";
         }
 
-        return (game.args["steam"])
-            ? "http://quasar.rogalik.tatrix.org/gateway"
-            : this.proto() + "//quasar.rogalik.tatrix.org/gateway";
+        if (game.args["steam"]) {
+            return "http://quasar.rogalik.tatrix.org/gateway";
+        }
+
+        if (document.location.pathname == "/centauri/") {
+            return this.proto() + "//rogalik.tatrix.org/gateway";
+        }
+
+        return this.proto() + "//quasar.rogalik.tatrix.org/gateway";
     }
 
     proto() {
