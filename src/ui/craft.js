@@ -893,14 +893,16 @@ class Craft {
         if (ingredients.length != totalRequired) {
             return null;
         }
-        this.slots = ingredients.map(entity => {
-            const slot = Container.getEntitySlot(entity);
-            slot.element.cleanUp = () => {
-                slot.unlock();
-            };
-            slot.lock();
-            return slot;
-        });
+        this.slots = ingredients
+            .map(Container.getEntitySlot)
+            .filter(slot => !!slot)
+            .map(slot => {
+                slot.element.cleanUp = () => {
+                    slot.unlock();
+                };
+                slot.lock();
+                return slot;
+            });
         return ingredients.map(entity => entity.Id);
     }
 
