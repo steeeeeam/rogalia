@@ -127,7 +127,7 @@ function Info(message, character) {
     case "item-gain":
         if (this.character.isPlayer) {
             var ids = ("Ids" in this.data) ? this.data.Ids : [this.data.Id];
-            game.controller.highlight("inventory", true);
+            game.controller.highlightItemsGain(ids.length);
             ids.forEach(function(id) {
                 var entity = Entity.get(id);
                 if (!entity) {

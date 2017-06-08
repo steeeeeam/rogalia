@@ -60,13 +60,13 @@ function Panel(name, title, elements, hooks) {
     }
 
     this.element.appendChild(this.contents);
-    this.element.addEventListener('mousedown', function() {
+    this.element.addEventListener("mousedown", () => {
         var mod = game.controller.modifier;
         if (mod.ctrl || mod.shift || mod.alt)
             return;
         this.toTop();
-    }.bind(this));
-    this.element.addEventListener("mousedown", game.controller.makeHighlightCallback(name, false));
+    });
+    this.element.addEventListener("mousedown", () => game.controller.highlight(name, false));
     this.element.id = name;
     dom.insert(this.element);
 

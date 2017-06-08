@@ -293,6 +293,17 @@ function Controller(game) {
         },
     };
 
+    this.highlightItemsGain = function(num) {
+        this.highlight("inventory", true);
+        const button = this.inventory.panel.button;
+        const tip = dom.wrap("inventory-tip", `+${num}`);
+        console.log(tip);
+        dom.append(button, tip);
+        tip.addEventListener("animationend", () => {
+            dom.remove(tip);
+        });
+    };
+
     this.highlight = function(name, enable) {
         if (!(name in this))
             return;
@@ -305,10 +316,6 @@ function Controller(game) {
             button.classList.add("alert");
         else
             button.classList.remove("alert");
-    };
-
-    this.makeHighlightCallback = function(buttonName, off) {
-        return this.highlight.bind(this, buttonName, off);
     };
 
     var lastTickUpdate = Date.now();
