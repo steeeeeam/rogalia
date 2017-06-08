@@ -1,4 +1,4 @@
-/* global game, dom, Panel, T, sprintf, TS, util */
+/* global game, dom, Panel, T, sprintf, TS, util, fetch, fetch */
 
 "use strict";
 
@@ -49,6 +49,7 @@ function selectServerStage(panel) {
         return dom.table(
             [
                 T("Server"),
+                T("Ping"),
                 T("Population"),
                 T("Description"),
                 T("Status"),
@@ -68,6 +69,7 @@ function selectServerStage(panel) {
 
                 return [
                     server.Name,
+                    ping(server.Addr),
                     population,
                     server.Desc,
                     TS(server.Status),
@@ -76,6 +78,26 @@ function selectServerStage(panel) {
             }),
             "servers"
         );
+    }
+
+    function ping(addr) {
+        const elem = dom.wrap("ping", "?");
+        const started = Date.now();
+        const url = game.proto() + "//" + addr + ":" + game.network.port + "/ping";
+        fetch(url, {method: "HEAD"})
+            .then(response => {
+                const ellapsed = (response.ok) ? Date.now() - started : +Infinity;
+                const {color, title} = game.network.pingQuality(ellapsed);
+                elem.style.backgroundColor = color;
+                elem.title = T(title);
+                elem.textContent = "";
+            })
+            .catch(err => {
+                elem.style.backgroundColor = "black";
+                elem.title = T("Error");
+                elem.textContent = "";
+            });
+        return elem;
     }
 
     function enter(server) {
