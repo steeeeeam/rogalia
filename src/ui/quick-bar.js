@@ -35,6 +35,9 @@ class QuickBar {
     hotkey(key) {
         const index = key - 1;
         const slot = this.slots[index];
+        if (slot.locked) {
+            return;
+        }
         const entity = this.findEntity(index);
 
         if (!entity) {
@@ -61,7 +64,7 @@ class QuickBar {
             slot.lock();
             game.network.send(action, {Id: entity.Id}, () => {
                 slot.unlock();
-                this.updateSlot(slot, entity.Type, index);
+                this.updateSlot(index,entity.Type);
             });
         }
     }
@@ -84,10 +87,14 @@ class QuickBar {
         slot.setSup(`${this.modifier}+${hotkey}`);
     }
 
-    updateSlot(slot, type, index) {
+    clearSlot(index) {
+        this.slots[index].clear();
+    }
+
+    updateSlot(index, type) {
         const items = game.player.findItems([type])[type];
         if (items.length == 0) {
-            slot.clear();
+            this.clearSlot(index);
         } else {
             this.setSlot(index, items[0]);
         }
