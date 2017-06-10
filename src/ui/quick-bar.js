@@ -58,7 +58,9 @@ class QuickBar {
 
         const action = ["Eat", "Consume", "Inject"].find(action => entity.Actions.includes(action));
         if (action) {
+            slot.lock();
             game.network.send(action, {Id: entity.Id}, () => {
+                slot.unlock();
                 this.updateSlot(slot, entity.Type, index);
             });
         }
