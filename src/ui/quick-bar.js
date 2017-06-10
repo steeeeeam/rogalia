@@ -5,7 +5,9 @@
 class QuickBar {
     constructor(modifier) {
         this.modifier = modifier;
-        this.slots = _.range(5).map(i => {
+        const size = 5;
+        this.types = new Array(size);
+        this.slots = _.range(size).map(i => {
             const slot = new ContainerSlot({
                 panel: this.panel,
                 entity: {},
@@ -15,7 +17,7 @@ class QuickBar {
             }, i);
             slot.element.check = () => true;
             slot.element.use = (entity) => {
-                this.setSlot(slot, entity, i+1);
+                this.setSlot(i, entity);
                 const from = Container.getEntitySlot(entity);
                 from && from.unlock();
                 return true;
@@ -31,9 +33,12 @@ class QuickBar {
     }
 
     hotkey(key) {
-        const slot = this.slots[key-1];
-        const {entity} = slot;
+        const index = key - 1;
+        const slot = this.slots[index];
+        const entity = this.findEntity(index);
+
         if (!entity) {
+            slot.clear();
             return;
         }
 
@@ -44,7 +49,7 @@ class QuickBar {
 
         if (entity.Actions.includes("cast")) {
             entity.cast(() => {
-                this.updateSlot(slot, entity, key);
+                this.updateSlot(slot, entity.Type, index);
                 slot.lock();
                 setTimeout(()=> slot.unlock(), entity.Cooldown || 5000);
             });
@@ -54,22 +59,35 @@ class QuickBar {
         const action = ["Eat", "Consume", "Inject"].find(action => entity.Actions.includes(action));
         if (action) {
             game.network.send(action, {Id: entity.Id}, () => {
-                this.updateSlot(slot, entity, key);
+                this.updateSlot(slot, entity.Type, index);
             });
         }
     }
 
-    setSlot(slot, entity, hotkey) {
+    findEntity(index) {
+        const {entity} = this.slots[index];
+        if (entity) {
+            return entity;
+        }
+        const type = this.types[index];
+        const items = game.player.findItems([type])[type];
+        return _.first(items);
+    }
+
+    setSlot(index, entity) {
+        this.types[index] = entity.Type;
+        const slot = this.slots[index];
         slot.set(entity);
+        const hotkey = index + 1;
         slot.setSup(`${this.modifier}+${hotkey}`);
     }
 
-    updateSlot(slot, entity, hotkey) {
-        const items = game.player.findItems([entity.Type])[entity.Type];
+    updateSlot(slot, type, index) {
+        const items = game.player.findItems([type])[type];
         if (items.length == 0) {
             slot.clear();
         } else {
-            this.setSlot(slot, items[0], hotkey);
+            this.setSlot(index, items[0]);
         }
     }
 
@@ -80,7 +98,7 @@ class QuickBar {
         }
         ids.map(Entity.get).forEach((entity, i) => {
             if (entity) {
-                this.setSlot(this.slots[i], entity, i+1);
+                this.setSlot(i, entity);
             }
         });
     }
