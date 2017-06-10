@@ -52,7 +52,7 @@ class QuickBar {
 
         if (entity.Actions.includes("cast")) {
             entity.cast(() => {
-                this.updateSlot(slot, entity.Type, index);
+                this.updateSlot(index, entity.Type);
                 slot.lock();
                 setTimeout(()=> slot.unlock(), entity.Cooldown || 5000);
             });
@@ -64,7 +64,7 @@ class QuickBar {
             slot.lock();
             game.network.send(action, {Id: entity.Id}, () => {
                 slot.unlock();
-                this.updateSlot(index,entity.Type);
+                this.updateSlot(index, entity.Type);
             });
         }
     }
