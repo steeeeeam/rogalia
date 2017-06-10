@@ -499,6 +499,7 @@ class Game {
 
     removeCharacterById(id) {
         var c = this.entities.get(id);
+        c.onremove();
         this.sortedEntities.remove(c);
         var name = c.name || c.Id;
         this.entities.remove(id);

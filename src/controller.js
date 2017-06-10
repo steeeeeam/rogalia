@@ -616,16 +616,18 @@ function Controller(game) {
         [0, 1, 2, 3, 4, 5, 6, 7, 8, 9].forEach(function(key) {
             this.hotkeys[String(key).charCodeAt(0)] = {
                 allowedModifiers: ["ctrl", "alt"],
-                callback: function() {
+                callback: function(event) {
                     if (game.menu.visible)
                         game.menu.activate(key);
                     else if (key > 0 && key <= 5) {
-                        if (this.modifier.ctrl)
+                        event.preventDefault();
+                        if (this.modifier.ctrl) {
                             this.quickBars.ctrl.hotkey(key);
-                        else if (this.modifier.alt)
+                        } else if (this.modifier.alt) {
                             this.quickBars.alt.hotkey(key);
-                        else
+                        } else {
                             this.fight.hotkey(key);
+                        }
                     }
                 }
             };
