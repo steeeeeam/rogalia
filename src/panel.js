@@ -29,7 +29,10 @@ function Panel(name, title, elements, hooks) {
     this.closeButton.onclick = () => this.hide();
 
     this.titleBar = dom.wrap("title-bar", [this.title, this.closeButton]);
-    this.titleBar.ondblclick = () => {
+    this.titleBar.ondblclick = (event) => {
+        if (event.target != this.title) {
+            return;
+        }
         if (this._minimized) {
             this.maximize();
         } else {
