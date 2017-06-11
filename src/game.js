@@ -75,6 +75,10 @@ class Game {
 
         this.iso = new IsoDrawer(this.ctx);
 
+        if (game.args["no-gpu"]) {
+            config.graphics.gpuRender = false;
+        }
+
         if (config.graphics.gpuRender) {
             this.webgl = new WebglRenderer();
             const {canvas} = this.webgl;

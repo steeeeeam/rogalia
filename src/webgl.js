@@ -20,7 +20,7 @@ class WebglRenderer {
         const {gl} = this;
 
         const vs = await this.loadShader("map.vs");
-        const fs = await this.loadShader("map.fs");
+        const fs = await this.loadShader(game.args["no-transitions"] ? "map-no-transitions.fs" : "map.fs");
 
         const vertexShader = this.createShader(gl, gl.VERTEX_SHADER, vs);
         const fragmentShader = this.createShader(gl, gl.FRAGMENT_SHADER, fs);
