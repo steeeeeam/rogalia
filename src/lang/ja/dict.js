@@ -1972,4 +1972,7 @@ T.dict = {
     "Repeat Password": "パスワード（確認）",
     "Create account": "アカウント作成",
     "Open browser client": "ブラウザ版クライアントを開く",
+    "It will be destroyed. Are you sure?": "アイテムは破壊されます。よろしいですか？",
+    "Auto attack": "オートアタック",
+    "Fullscreen": "フルスクリーン（全画面）",
 };
