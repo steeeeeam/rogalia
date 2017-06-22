@@ -16,7 +16,7 @@ class WebglRenderer {
         this.minimap = new Uint8Array(this.width * this.height * 4);
     }
 
-    async load(data) {
+    async load(data, width, height) {
         const {gl} = this;
 
         const vs = await this.loadShader("map.vs");
@@ -46,34 +46,42 @@ class WebglRenderer {
         this.texture = await this.loadImageAndCreateTexture("assets/map/map.png");
 
         this.minimapTexture = gl.createTexture();
-        this.updateMinimap(data);
+        this.updateMinimap(data, width, height);
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
 
         game.map.ready = true;
     }
 
-    convertData(data) {
+    convertData(data, width, height) {
         let i = 0;
-        for (const color of data) {
-            this.minimap[i + 0] = game.map.colorMap[color];
-            this.minimap[i + 1] = game.map.textureMap[color];
-            i += 4;
+        for (let y = 0; y < this.width; y++) {
+            for (let x = 0; x < this.width; x++) {
+                if (x < width || y < height) {
+                    const color = data[y * width + x];
+                    this.minimap[i + 0] = game.map.colorMap[color];
+                    this.minimap[i + 1] = game.map.textureMap[color];
+                } else {
+                    this.minimap[i + 0] = 0;
+                    this.minimap[i + 1] = 0;
+                }
+                i += 4;
+            }
         }
         return this.minimap;
     }
 
-    async sync(data) {
+    async sync(data, width, height) {
         const {gl} = this;
         if (this._loaded) {
-            this.updateMinimap(data);
+            this.updateMinimap(data, width, height);
         } else {
             this._loaded = true;
-            this.load(data);
+            this.load(data, width, height);
         }
     }
 
-    updateMinimap(data) {
+    updateMinimap(data, width, height) {
         const {gl} = this;
         gl.bindTexture(gl.TEXTURE_2D, this.minimapTexture);
         gl.texImage2D(
@@ -85,7 +93,7 @@ class WebglRenderer {
             0,
             gl.RGBA,
             gl.UNSIGNED_BYTE,
-            this.convertData(data)
+            this.convertData(data, width, height)
         );
     }
 

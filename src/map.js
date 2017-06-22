@@ -91,7 +91,7 @@ function WorldMap() {
 
         this.minimapCanvas.ctx.putImageData(new ImageData(pixels, width, height), 0, 0);
         this.fixNonSquareMap(width, height);
-        game.webgl.sync(data);
+        game.webgl.sync(data, width, height);
     };
 
     this.fixNonSquareMap = function(width, height) {
