@@ -1,4 +1,4 @@
-/* global fetch, m4, game, CELL_SIZE, Point, Image */
+/* global fetch, m4, game, CELL_SIZE, Point, Image, Settings */
 
 "use strict";
 
@@ -26,6 +26,13 @@ class WebglRenderer {
         const fragmentShader = this.createShader(gl, gl.FRAGMENT_SHADER, fs);
 
         const program = this.createProgram(gl, vertexShader, fragmentShader);
+        if (!program) {
+            game.popup.alert(T("GPU error occured. Falling back to a soft renderer."), () => {
+                Settings.toggle("settings.graphics.gpuRender");
+                game.reload();
+            });
+            return;
+        }
         this.program = program;
 
         this.positionLocation = gl.getAttribLocation(program, "a_position");
@@ -135,16 +142,22 @@ class WebglRenderer {
 
     createProgram(gl, vertexShader, fragmentShader) {
         const program = gl.createProgram();
-        gl.attachShader(program, vertexShader);
-        gl.attachShader(program, fragmentShader);
-        gl.linkProgram(program);
-        const success = gl.getProgramParameter(program, gl.LINK_STATUS);
-        if (success) {
-            return program;
-        }
+        try {
+            gl.attachShader(program, vertexShader);
+            gl.attachShader(program, fragmentShader);
+            gl.linkProgram(program);
+            const success = gl.getProgramParameter(program, gl.LINK_STATUS);
+            if (success) {
+                return program;
+            }
 
-        console.error(gl.getProgramInfoLog(program));
-        gl.deleteProgram(program);
+            console.error(gl.getProgramInfoLog(program));
+            gl.deleteProgram(program);
+        } catch(error) {
+            // old video cards will fail like
+            // gl.getExtension('WEBGL_lose_context').loseContext();
+            console.error("Webgl:", error);
+        }
         return null;
     }
 

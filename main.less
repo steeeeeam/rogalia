@@ -2532,6 +2532,11 @@ big {
     display: none!important;
 }
 
+.fade-out {
+    transition: opacity 500ms ease-out;
+    opacity: 0;
+}
+
 #exit {
     display: block!important;
     width: 150px;
@@ -3490,12 +3495,16 @@ input[type=number], .lot-quantity > input, .price > input {
 }
 
 #journal {
-    width: 450px;
-
     .contents {
+        width: 450px;
+        height: 450px;
+    }
+
+
+    .journal-contents {
         display: flex;
         justify-content: space-around;
-        min-height: 400px;
+        min-height: 423px;
     }
 
     .journal-list {
@@ -4555,4 +4564,94 @@ input[type=number], .lot-quantity > input, .price > input {
     background: #333;
     padding: 1px;
     font-size: 10px;
+}
+
+.achievements-header {
+    display: flex;
+    align-items: center;
+
+    .param-bar {
+        // background-color: #9f2d21;
+        height: 17px;
+        line-height: 16px;
+        font-size: 12px;
+        margin: 0 10px;
+        background-color: #1173b1;
+    }
+}
+
+.achievements {
+    height: 388px;
+}
+
+.achievement {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 10px;
+
+    border-bottom: 1px solid #333;
+
+    &:hover {
+        filter: brightness(110%);
+    }
+
+    &:last-child {
+        border: none;
+    }
+
+    &.achievement-unlocked {
+        color: #ffca8c;
+    }
+
+    .achievement-icon {
+        width: 64px;
+        height: 64px;
+    }
+
+    .achievement-info {
+        padding: 0 10px;
+        flex-grow: 1;
+
+        .achievement-name {
+            font-size: 17px;
+        }
+
+        .achievement-desc {
+            color: #8a9aa7;
+            margin-top: 5px;
+        }
+    }
+
+    .param-bar {
+        width: 100px;
+        background-color: #6a8e8d;
+
+        .param-status {
+            left: 0;
+            text-align: center;
+        }
+    }
+}
+
+.achievement-alert {
+    .cursor-pointer;
+    position: absolute;
+    bottom: 200px;
+    left: 0;
+    right: 0;
+    margin: auto;
+    width: 300px;
+    border: 1px solid orange;
+    border-radius: 3px;
+    background: @bg-color;
+    display: flex;
+    padding: 5px;
+    justify-content: flex-start;
+    align-items: center;
+    z-index: 8000;
+
+    img {
+        margin-right: 10px;
+    }
 }

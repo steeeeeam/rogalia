@@ -1,4 +1,4 @@
-/* global game, Missile, FONT_SIZE, TT, Container, dom, T, Panel, util, Trade */
+/* global game, Missile, FONT_SIZE, TT, Container, dom, T, Panel, util, Trade, Achievements */
 
 "use strict";
 function Info(message, character) {
@@ -173,6 +173,9 @@ function Info(message, character) {
         return;
     case ".trade":
         game.controller.trade.update(this.data);
+        return;
+    case ".achievement-unlocked":
+        Achievements.showUnlockTooltip(this.data);
         return;
     }
     this.value = util.toFixed(this.value, (this.value < 1) ? 2 : 0);
