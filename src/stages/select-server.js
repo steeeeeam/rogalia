@@ -7,6 +7,20 @@ function selectServerStage(panel) {
     this.panel = panel;
     showServers();
 
+
+    let defaultServer = null;
+    window.addEventListener("keypress", fastenter);
+
+    this.end = function() {
+        window.removeEventListener("keypress", fastenter);
+    };
+
+    function fastenter(event) {
+        if (event.key != "Enter" || !defaultServer)
+            return;
+        enter(defaultServer);
+    }
+
     function showServers() {
         var req = new XMLHttpRequest();
         req.onload = function() {
@@ -14,7 +28,11 @@ function selectServerStage(panel) {
                 game.popup.alert(this.response, quit);
                 return;
             }
-            var servers = JSON.parse(this.response);
+
+            const servers = JSON.parse(this.response);
+
+            defaultServer = _.find(servers, ({Status: status}) => status == "online");
+
             self.panel = new Panel("select-server", "", [
                 dom.wrap("lobby-account", game.getLogin()),
                 serversTable(servers),
@@ -56,9 +74,7 @@ function selectServerStage(panel) {
                 ""
             ],
             _.map(servers, function(server) {
-                const enterButton = dom.button(T("Enter"), "", function() {
-                    enter(server);
-                });
+                const enterButton = dom.button(T("Enter"), "", () => enter(server));
                 if (server.Status != "online") {
                     enterButton.disabled = true;
                 }

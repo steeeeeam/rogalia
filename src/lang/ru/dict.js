@@ -1942,4 +1942,7 @@ T.dict = {
     "Rune of immortality": "Руна бессмертия",
     "Runebook": "Книга рун",
     "watch": "Часы", // stupid firefox https://developer.mozilla.org/ru/docs/Web/JavaScript/Reference/Global_Objects/Object/watch
+    "Achievements": "Достижения",
+    "Quests": "Квесты",
+    "Update": "Обновить",
 };

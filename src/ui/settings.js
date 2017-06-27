@@ -1,4 +1,4 @@
-/* global game, Panel, dom, config, _, TS, util */
+/* global game, Panel, dom, config, _, TS, util, gameStorage, T */
 
 "use strict";
 function Settings() {

@@ -297,7 +297,6 @@ function Controller(game) {
         this.highlight("inventory", true);
         const button = this.inventory.panel.button;
         const tip = dom.wrap("inventory-tip", `+${num}`);
-        console.log(tip);
         dom.append(button, tip);
         tip.addEventListener("animationend", () => {
             dom.remove(tip);
